@@ -1,0 +1,60 @@
+<div class="auth-wrapper">
+  <div class="auth-container">
+
+    <div class="brand">
+      <span class="brand-dot"></span>
+      <h1>Webleb</h1>
+    </div>
+
+    <div class="card">
+      <div class="card-inner">
+
+        <h2>Log In</h2>
+        <p class="subtitle">Welcome back</p>
+
+        <div class="form-group">
+          <i class="uil uil-at input-icon"></i>
+          <input
+            type="email"
+            class="form-style"
+            placeholder="Email"
+            [(ngModel)]="email"
+            name="email"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <i class="uil uil-lock-alt input-icon"></i>
+          <input
+            type="password"
+            class="form-style"
+            placeholder="Password"
+            [(ngModel)]="password"
+            name="password"
+            required
+          />
+        </div>
+
+        <button class="btn-primary" (click)="login()">
+          Login
+        </button>
+
+        <div class="divider">
+          <span>or</span>
+        </div>
+
+        <button class="btn-ghost" (click)="recoverPassword()">
+          Forgot password?
+        </button>
+
+        <p class="switch-text">
+          Don't have an account?
+          <a (click)="goToRegister()">Sign Up</a>
+        </p>
+
+      </div>
+    </div>
+
+  </div>
+</div>

@@ -1,0 +1,130 @@
+<div class="auth-wrapper">
+  <div class="auth-container">
+
+    <div class="toggle-header">
+      <span [class.active]="!isRegister" (click)="isRegister = false">Iniciar Sesión</span>
+      <div class="toggle-track" (click)="toggle()">
+        <div class="toggle-thumb" [class.flipped]="isRegister"></div>
+      </div>
+      <span [class.active]="isRegister" (click)="isRegister = true">Registrar</span>
+    </div>
+
+    <div class="card-3d-wrap">
+      <div class="card-3d-wrapper" [class.flipped]="isRegister">
+
+        <!-- LOGIN -->
+        <div class="card-face card-front">
+          <div class="center-wrap">
+            <h2>Iniciar Sesión</h2>
+            <p class="subtitle">Bienvenido de nuevo</p>
+
+            <div class="form-group">
+              <i class="uil uil-at input-icon"></i>
+              <input type="email" class="form-style" placeholder="Correo Electrónico *"
+                [(ngModel)]="loginEmail" name="loginEmail" #emailRef="ngModel" required />
+              <span class="field-error" *ngIf="emailRef.touched && emailRef.invalid">
+                El correo es obligatorio
+              </span>
+            </div>
+
+            <div class="form-group">
+              <i class="uil uil-lock-alt input-icon"></i>
+              <input type="password" class="form-style" placeholder="Contraseña *"
+                [(ngModel)]="loginPassword" name="loginPassword" #passRef="ngModel" required />
+              <span class="field-error" *ngIf="passRef.touched && passRef.invalid">
+                La contraseña es obligatoria
+              </span>
+            </div>
+
+            <button class="btn-primary" (click)="login()">Iniciar Sesión</button>
+            <button class="btn-ghost" (click)="goToRecover()">¿Olvidaste tu contraseña?</button>
+          </div>
+        </div>
+
+        <!-- REGISTER -->
+        <div class="card-face card-back">
+          <div class="center-wrap">
+            <h2>Registro</h2>
+            <p class="subtitle">Crea tu cuenta</p>
+
+            <form [formGroup]="registerForm">
+              <div class="form-group">
+                <i class="uil uil-user input-icon"></i>
+                <input type="text" class="form-style" placeholder="Nombre Completo *" formControlName="name" />
+                <span class="field-error"
+                  *ngIf="registerForm.get('name')?.touched && registerForm.get('name')?.invalid">
+                  El nombre es obligatorio
+                </span>
+              </div>
+
+              <div class="form-group">
+                <i class="uil uil-credit-card input-icon"></i>
+                <input type="text" class="form-style" placeholder="Documento *" formControlName="Document" />
+                <span class="field-error"
+                  *ngIf="registerForm.get('Document')?.touched && registerForm.get('Document')?.invalid">
+                  Documento inválido (6-12 dígitos)
+                </span>
+              </div>
+
+              <div class="form-group">
+                <i class="uil uil-phone input-icon"></i>
+                <input type="tel" class="form-style" placeholder="Número de Teléfono *" formControlName="telephone" />
+                <span class="field-error"
+                  *ngIf="registerForm.get('telephone')?.touched && registerForm.get('telephone')?.invalid">
+                  El teléfono es obligatorio
+                </span>
+              </div>
+
+              <div class="form-group">
+                <i class="uil uil-at input-icon"></i>
+                <input type="email" class="form-style" placeholder="Correo Electrónico *" formControlName="email" />
+                <span class="field-error"
+                  *ngIf="registerForm.get('email')?.touched && registerForm.get('email')?.invalid">
+                  Ingresa un correo válido
+                </span>
+              </div>
+
+              <div class="form-group">
+                <i class="uil uil-lock-alt input-icon"></i>
+                <input type="password" class="form-style" placeholder="Contraseña *" formControlName="password" />
+                <span class="field-error"
+                  *ngIf="registerForm.get('password')?.touched && registerForm.get('password')?.invalid">
+                  La contraseña es obligatoria
+                </span>
+              </div>
+
+              <div class="consent-wrap">
+                <label class="consent-label">
+                  <input type="checkbox" class="consent-check" formControlName="consentimiento" />
+                  <span class="consent-box">
+                    <i class="uil uil-check"></i>
+                  </span>
+                  <span class="consent-text">
+                    Acepto el
+                    <a href="#" class="consent-link" (click)="$event.preventDefault(); showPolicy = !showPolicy">
+                      tratamiento de mis datos personales
+                    </a>
+                    según la Ley 1581 de 2012.
+                  </span>
+                </label>
+                <div class="policy-box" *ngIf="showPolicy">
+                  <p>
+                    Los datos recopilados serán utilizados exclusivamente para la gestión de su cuenta
+                    y la prestación de los servicios ofrecidos. No serán compartidos con terceros sin
+                    su autorización expresa. Usted podrá ejercer sus derechos de acceso, corrección,
+                    supresión y revocación en cualquier momento.
+                  </p>
+                </div>
+              </div>
+
+              <button class="btn-primary" type="button" (click)="register()"
+                [disabled]="!registerForm.get('consentimiento')?.value">Registrar</button>
+            </form>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>

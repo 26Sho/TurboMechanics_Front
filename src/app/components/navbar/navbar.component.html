@@ -1,0 +1,59 @@
+<nav class="navbar" [class.scrolled]="isScrolled">
+  <div class="navbar__container">
+
+    <!-- Logo -->
+    <a href="#inicio" class="navbar__logo" (click)="scrollTo('inicio'); $event.preventDefault()">
+      <img src="assets/Logo_turbo_final.webp" alt="TurboMechanics Logo" class="navbar__logo-img" />
+    </a>
+
+    <!-- Nav Links -->
+    <ul class="navbar__links">
+      <li>
+        <a class="navbar__link" [class.active]="activeSection === 'inicio'"
+           (click)="scrollTo('inicio'); $event.preventDefault()" href="#inicio">Inicio</a>
+      </li>
+      <li>
+        <a class="navbar__link" [class.active]="activeSection === 'nosotros'"
+           (click)="scrollTo('nosotros'); $event.preventDefault()" href="#nosotros">Nosotros</a>
+      </li>
+      <li>
+        <a class="navbar__link" [class.active]="activeSection === 'servicios'"
+           (click)="scrollTo('servicios'); $event.preventDefault()" href="#servicios">Servicios</a>
+      </li>
+      <li>
+        <a class="navbar__link" [class.active]="activeSection === 'ubicacion'"
+           (click)="scrollTo('ubicacion'); $event.preventDefault()" href="#ubicacion">Ubicación</a>
+      </li>
+      <li>
+        <a class="navbar__link" [class.active]="activeSection === 'contacto'"
+           (click)="scrollTo('contacto'); $event.preventDefault()" href="#contacto">Contacto</a>
+      </li>
+    </ul>
+
+    <!-- Login -->
+    <div class="navbar__auth">
+      <a href="#" class="navbar__login-btn" (click)="onLoginClick($event)">
+        <i class="fas fa-user-circle"></i>
+        <span>Iniciar sesión</span>
+      </a>
+    </div>
+
+    <!-- Hamburger -->
+    <button class="navbar__hamburger" [class.open]="isMobileOpen"
+            (click)="toggleMobile()" aria-label="Menú">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+
+  <!-- Mobile Menu -->
+  <div class="navbar__mobile" [class.open]="isMobileOpen">
+    <ul>
+      <li><a (click)="scrollTo('inicio'); $event.preventDefault()" href="#inicio">Inicio</a></li>
+      <li><a (click)="scrollTo('nosotros'); $event.preventDefault()" href="#nosotros">Nosotros</a></li>
+      <li><a (click)="scrollTo('servicios'); $event.preventDefault()" href="#servicios">Servicios</a></li>
+      <li><a (click)="scrollTo('ubicacion'); $event.preventDefault()" href="#ubicacion">Ubicación</a></li>
+      <li><a (click)="scrollTo('contacto'); $event.preventDefault()" href="#contacto">Contacto</a></li>
+      <li><a href="#" class="mobile-login" (click)="onLoginClick($event)">Iniciar sesión</a></li>
+    </ul>
+  </div>
+</nav>

@@ -1,0 +1,87 @@
+/* ============================================================
+   TurboMechanics - Global Styles
+   ============================================================ */
+
+// ─── VARIABLES ───────────────────────────────────────────────
+$black:         #0D0D0D;
+$gray-dark:     #2B2B2B;
+$gray-mid:      #6E6E6E;
+$gray-light:    #CFCFCF;
+$red:           #D62828;
+$orange:        #F45D01;
+$orange-light:  #FF8C00;
+$yellow:        #FFD60A;
+$white:         #FFFFFF;
+
+$font-display: 'Bebas Neue', sans-serif;
+$font-heading: 'Rajdhani', sans-serif;
+$font-body:    'Inter', sans-serif;
+
+// ─── RESET & BASE ────────────────────────────────────────────
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+  font-size: 16px;
+}
+
+body {
+  background-color: $black;
+  color: $white;
+  font-family: $font-body;
+  line-height: 1.6;
+  overflow-x: hidden;
+}
+
+a { text-decoration: none; color: inherit; }
+ul { list-style: none; }
+img { max-width: 100%; display: block; }
+
+// ─── SCROLLBAR ───────────────────────────────────────────────
+::-webkit-scrollbar { width: 6px; }
+::-webkit-scrollbar-track { background: $gray-dark; }
+::-webkit-scrollbar-thumb { background: $orange; border-radius: 3px; }
+
+// ─── UTILITY BUTTONS ─────────────────────────────────────────
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 30px;
+  border-radius: 4px;
+  font-family: $font-heading;
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+  text-transform: uppercase;
+
+  &--primary {
+    background: linear-gradient(90deg, $red, $orange);
+    color: $white;
+
+    &:hover {
+      background: linear-gradient(90deg, $orange, $orange-light);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba($orange, 0.4);
+    }
+  }
+
+  &--outline {
+    background: transparent;
+    color: $white;
+    border-color: $gray-mid;
+
+    &:hover {
+      border-color: $orange;
+      color: $orange;
+      transform: translateY(-2px);
+    }
+  }
+}

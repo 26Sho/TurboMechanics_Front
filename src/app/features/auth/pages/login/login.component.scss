@@ -1,0 +1,223 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
+@import url('https://unicons.iconscout.com/release/v2.1.9/css/unicons.css');
+
+// ─── Paleta ────────────────────────────────────────────────────────────
+$bg:          #0D0D0D;
+$card-bg:     #2B2B2B;
+$metal:       #6E6E6E;
+$silver:      #CFCFCF;
+$fire-red:    #D62828;
+$fire-orange: #F45D01;
+$fire-mid:    #FF8C00;
+$fire-yellow: #FFD60A;
+
+$flame: linear-gradient(90deg, $fire-red, $fire-orange, $fire-mid, $fire-yellow);
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+.auth-wrapper {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 300;
+  background-color: $bg;
+  background-image: radial-gradient(ellipse at 50% 110%, rgba($fire-red, 0.15) 0%, transparent 65%);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.auth-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 440px;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 2rem;
+
+  .brand-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: $flame;
+  }
+
+  h1 {
+    font-size: 1.5rem;
+    font-weight: 800;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    background: $flame;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+}
+
+.card {
+  width: 100%;
+  background-color: $card-bg;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.7), 0 0 40px rgba($fire-red, 0.1);
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: $flame;
+  }
+}
+
+.card-inner {
+  padding: 2.5rem;
+
+  h2 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin-bottom: 0.25rem;
+    background: $flame;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .subtitle {
+    color: $metal;
+    font-size: 0.85rem;
+    font-weight: 400;
+    margin-bottom: 2rem;
+  }
+}
+
+.form-group {
+  position: relative;
+  margin-bottom: 1rem;
+
+  .input-icon {
+    position: absolute;
+    top: 0; left: 16px;
+    height: 48px;
+    font-size: 22px;
+    line-height: 48px;
+    color: $metal;
+    transition: color 200ms;
+  }
+
+  &:focus-within .input-icon { color: $fire-orange; }
+}
+
+.form-style {
+  width: 100%;
+  height: 48px;
+  padding: 0 20px 0 50px;
+  background-color: $bg;
+  border: 1px solid rgba($metal, 0.35);
+  border-radius: 6px;
+  color: $silver;
+  font-family: 'Poppins', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  outline: none;
+  transition: border-color 200ms, box-shadow 200ms;
+
+  &::placeholder { color: $metal; opacity: 0.7; }
+
+  &:focus {
+    border-color: $fire-orange;
+    box-shadow: 0 0 0 3px rgba($fire-orange, 0.12);
+  }
+}
+
+.btn-primary {
+  display: block;
+  width: 100%;
+  height: 48px;
+  margin-top: 1.5rem;
+  background: $flame;
+  color: $bg;
+  border: none;
+  border-radius: 6px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: opacity 200ms, box-shadow 200ms;
+
+  &:hover {
+    opacity: 0.85;
+    box-shadow: 0 8px 28px rgba($fire-red, 0.45);
+  }
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin: 1.25rem 0;
+
+  &::before, &::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: rgba($metal, 0.25);
+  }
+
+  span {
+    font-size: 12px;
+    color: $metal;
+    opacity: 0.6;
+  }
+}
+
+.btn-ghost {
+  display: block;
+  width: 100%;
+  height: 40px;
+  background: transparent;
+  border: 1px solid rgba($fire-orange, 0.4);
+  border-radius: 6px;
+  color: $fire-orange;
+  font-family: 'Poppins', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: background-color 200ms, border-color 200ms, color 200ms;
+
+  &:hover {
+    background-color: rgba($fire-orange, 0.08);
+    border-color: $fire-yellow;
+    color: $fire-yellow;
+  }
+}
+
+.switch-text {
+  text-align: center;
+  margin-top: 1.5rem;
+  font-size: 13px;
+  color: $metal;
+
+  a {
+    background: $flame;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 600;
+    margin-left: 4px;
+    cursor: pointer;
+    text-decoration: none;
+
+    &:hover { text-decoration: underline; }
+  }
+}

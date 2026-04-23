@@ -1,0 +1,19 @@
+<section class="about" id="nosotros">
+  <div class="about__container">
+    <div class="about__badge">Sobre Nosotros</div>
+    <h2 class="about__title">Un taller de confianza para tu vehículo</h2>
+    <p class="about__intro">
+      En TurboMechanics combinamos experiencia técnica, tecnología de diagnóstico y atención
+      personalizada para ofrecerte el mejor servicio automotriz de la región.
+    </p>
+    <div class="about__cards">
+      <div class="about__card" *ngFor="let card of cards">
+        <div class="about__card-icon">
+          <i [class]="card.icon"></i>
+        </div>
+        <h3>{{ card.title }}</h3>
+        <p>{{ card.description }}</p>
+      </div>
+    </div>
+  </div>
+</section>

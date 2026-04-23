@@ -1,0 +1,24 @@
+<section class="services" id="servicios">
+  <div class="services__container">
+    <div class="services__header">
+      <div class="services__badge">Nuestros Servicios</div>
+      <h2 class="services__title">Lo que hacemos mejor</h2>
+      <p class="services__subtitle">Atendemos los servicios más demandados con procesos claros y técnicos certificados.</p>
+    </div>
+
+    <div class="services__grid">
+      <div class="service-card" *ngFor="let service of services">
+        <div class="service-card__icon">
+          <i [class]="service.icon"></i>
+        </div>
+        <div class="service-card__number">{{ service.number }}</div>
+        <h3>{{ service.title }}</h3>
+        <p>{{ service.description }}</p>
+        <a [href]="'https://wa.me/573000000000?text=' + service.waText"
+           class="service-card__link" target="_blank">
+          Cotizar <i class="fas fa-arrow-right"></i>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>

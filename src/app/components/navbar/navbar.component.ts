@@ -1,0 +1,59 @@
+import { Component, EventEmitter, HostListener, Output } from '@angular/core';
+import { Router } from '@angular/router';
+
+@Component({
+  selector: 'app-navbar',
+  standalone: false,
+  templateUrl: './navbar.component.html',
+  styleUrls: ['./navbar.component.scss']
+})
+
+export class NavbarComponent {
+  @Output() loginClick = new EventEmitter<void>();
+
+  isScrolled = false;
+  isMobileOpen = false;
+  activeSection = 'inicio';
+
+  constructor(private router: Router) {}
+
+  @HostListener('window:scroll')
+  onScroll(): void {
+    this.isScrolled = window.scrollY > 40;
+    this.updateActiveSection();
+  }
+
+  private updateActiveSection(): void {
+    const sections = ['inicio', 'nosotros', 'servicios', 'ubicacion', 'contacto'];
+    for (const id of [...sections].reverse()) {
+      const el = document.getElementById(id);
+      if (el && window.scrollY >= el.offsetTop - 100) {
+        this.activeSection = id;
+        break;
+      }
+    }
+  }
+
+  toggleMobile(): void {
+    this.isMobileOpen = !this.isMobileOpen;
+  }
+
+  closeMobile(): void {
+    this.isMobileOpen = false;
+  }
+
+  onLoginClick(event: Event): void {
+    event.preventDefault();
+    this.closeMobile();
+    this.router.navigate(['/login']);
+  }
+
+  scrollTo(id: string): void {
+    this.closeMobile();
+    const el = document.getElementById(id);
+    if (el) {
+      const top = el.getBoundingClientRect().top + window.scrollY - 80;
+      window.scrollTo({ top, behavior: 'smooth' });
+    }
+  }
+}

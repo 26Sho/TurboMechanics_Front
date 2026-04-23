@@ -1,0 +1,61 @@
+<footer class="footer">
+  <div class="footer__container">
+
+    <!-- Brand -->
+    <div class="footer__brand">
+      <div class="footer__logo">
+        <img src="assets/Logo_turbo_final.webp" alt="TurboMechanics Logo" class="footer__logo-img" />
+      </div>
+      <p>Taller mecánico especializado enfocado en diagnóstico preciso,
+         mantenimiento preventivo y reparaciones con garantía total.</p>
+      <div class="footer__social">
+        <a href="#" aria-label="Facebook"><i class="fab fa-facebook-f"></i></a>
+        <a href="#" aria-label="Instagram"><i class="fab fa-instagram"></i></a>
+        <a href="https://wa.me/573000000000" aria-label="WhatsApp" target="_blank"><i class="fab fa-whatsapp"></i></a>
+        <a href="#" aria-label="TikTok"><i class="fab fa-tiktok"></i></a>
+      </div>
+    </div>
+
+    <!-- Navegación -->
+    <div class="footer__nav">
+      <h4>Navegación</h4>
+      <ul>
+        <li><a (click)="scrollTo('inicio')" style="cursor:pointer">Inicio</a></li>
+        <li><a (click)="scrollTo('nosotros')" style="cursor:pointer">Nosotros</a></li>
+        <li><a (click)="scrollTo('servicios')" style="cursor:pointer">Servicios</a></li>
+        <li><a (click)="scrollTo('ubicacion')" style="cursor:pointer">Ubicación</a></li>
+        <li><a (click)="scrollTo('contacto')" style="cursor:pointer">Contacto</a></li>
+      </ul>
+    </div>
+
+    <!-- Servicios -->
+    <div class="footer__services">
+      <h4>Servicios</h4>
+      <ul>
+        <li><a href="#">Cambio de aceite</a></li>
+        <li><a href="#">Mantenimiento preventivo</a></li>
+        <li><a href="#">Sincronización</a></li>
+        <li><a href="#">Frenos</a></li>
+        <li><a href="#">Suspensión</a></li>
+        <li><a href="#">Sistema eléctrico</a></li>
+      </ul>
+    </div>
+
+    <!-- Contacto -->
+    <div class="footer__contact">
+      <h4>Contacto</h4>
+      <ul>
+        <li><i class="fas fa-map-marker-alt"></i> Armenia, Quindío, Colombia</li>
+        <li><i class="fas fa-phone"></i> +57 300 000 0000</li>
+        <li><i class="fas fa-envelope"></i> info&#64;turbomechanics.com</li>
+        <li><i class="fas fa-clock"></i> Lun–Sáb: 7am – 6pm</li>
+      </ul>
+    </div>
+
+  </div>
+
+  <div class="footer__bottom">
+    <p>&copy; {{ currentYear }} TurboMechanics. Todos los derechos reservados.</p>
+    <p>Armenia, Quindío, Colombia</p>
+  </div>
+</footer>

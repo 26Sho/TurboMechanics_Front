@@ -1,0 +1,27 @@
+<section class="contact" id="contacto">
+  <div class="contact__container">
+    <div class="contact__header">
+      <div class="contact__badge">Contacto</div>
+      <h2 class="contact__title">Agenda tu cita hoy</h2>
+      <p>Contáctanos por el canal que prefieras. Respondemos rápido.</p>
+    </div>
+
+    <div class="contact__channels">
+      <a
+        *ngFor="let ch of channels"
+        [href]="ch.href"
+        class="contact__channel"
+        target="_blank">
+        <div class="contact__channel-icon" [ngClass]="'contact__channel-icon--' + ch.iconType">
+          <i [class]="ch.iconClass"></i>
+        </div>
+        <div>
+          <strong>{{ ch.label }}</strong>
+          <span>{{ ch.value }}</span>
+          <small>{{ ch.detail }}</small>
+        </div>
+        <i class="fas fa-chevron-right contact__channel-arrow"></i>
+      </a>
+    </div>
+  </div>
+</section>

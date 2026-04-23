@@ -1,0 +1,59 @@
+<section class="location" id="ubicacion">
+  <div class="location__container">
+
+    <!-- Info -->
+    <div class="location__info">
+      <div class="location__badge">
+        <i class="fas fa-map-marker-alt"></i> Encuéntranos
+      </div>
+      <h2 class="location__title">Visítanos en Armenia, Quindío</h2>
+      <p class="location__desc">
+        Estamos ubicados en el corazón del Quindío, fácilmente accesibles.
+        Contamos con amplio parqueadero y horario extendido para tu comodidad.
+      </p>
+
+      <div class="location__details">
+        <div class="location__detail-item" *ngFor="let detail of details">
+          <div class="location__detail-icon">
+            <i [class]="detail.icon"></i>
+          </div>
+          <div>
+            <strong>{{ detail.label }}</strong>
+            <span>{{ detail.value }}</span>
+          </div>
+        </div>
+      </div>
+
+      <a href="https://maps.google.com/?q=Armenia,Quindio,Colombia"
+         target="_blank" class="btn btn--primary">
+        <i class="fas fa-directions"></i> Cómo llegar
+      </a>
+    </div>
+
+    <!-- Map -->
+    <div class="location__map-wrap">
+      <div class="location__map-frame">
+        <div class="location__map-header">
+          <i class="fas fa-map-marked-alt"></i>
+          <span>TurboMechanics – Armenia, Quindío</span>
+          <div class="location__map-pulse"></div>
+        </div>
+        <iframe
+          [src]="mapUrl"
+          width="100%"
+          height="100%"
+          style="border:0;"
+          allowfullscreen
+          loading="lazy"
+          referrerpolicy="no-referrer-when-downgrade"
+          title="Ubicación TurboMechanics Armenia Quindío">
+        </iframe>
+        <div class="location__map-overlay-pin">
+          <i class="fas fa-map-marker-alt"></i>
+          <span>Armenia, Quindío</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</section>

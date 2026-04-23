@@ -1,0 +1,395 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
+@import url('https://unicons.iconscout.com/release/v2.1.9/css/unicons.css');
+
+// ─── Paleta ────────────────────────────────────────────────────────────
+$bg:          #0D0D0D;
+$card-bg:     #2B2B2B;
+$metal:       #6E6E6E;
+$silver:      #CFCFCF;
+$white:       #FFFFFF;
+$fire-red:    #D62828;
+$fire-orange: #F45D01;
+$fire-mid:    #FF8C00;
+$fire-yellow: #FFD60A;
+
+$flame: linear-gradient(90deg, $fire-red, $fire-orange, $fire-mid, $fire-yellow);
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+.auth-wrapper {
+  font-family: 'Poppins', sans-serif;
+  font-weight: 300;
+  background-color: $bg;
+  background-image: radial-gradient(ellipse at 50% 110%, rgba($fire-red, 0.15) 0%, transparent 65%);
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.auth-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  max-width: 440px;
+}
+
+// ─── Brand ─────────────────────────────────────────────────────────────
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 1.5rem;
+
+  .brand-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: $flame;
+  }
+
+  h1 {
+    font-size: 1.5rem;
+    font-weight: 800;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    background: $flame;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+}
+
+// ─── Toggle header ─────────────────────────────────────────────────────
+.toggle-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 1.5rem;
+
+  span {
+    font-size: 14px;
+    font-weight: 600;
+    color: $metal;
+    cursor: pointer;
+    letter-spacing: 0.5px;
+    transition: color 300ms;
+    user-select: none;
+
+    &.active {
+      background: $flame;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+  }
+}
+
+.toggle-track {
+  position: relative;
+  width: 52px;
+  height: 16px;
+  background: $flame;
+  border-radius: 8px;
+  cursor: pointer;
+  flex-shrink: 0;
+}
+
+.toggle-thumb {
+  position: absolute;
+  top: -10px;
+  left: -10px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background-color: $bg;
+  border: 2px solid $fire-orange;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 500ms ease;
+
+  &::before {
+    content: '';
+    display: block;
+    width: 10px;
+    height: 10px;
+    border-right: 2.5px solid $fire-yellow;
+    border-top: 2.5px solid $fire-yellow;
+    transform: rotate(45deg) translateX(-2px);
+    transition: transform 500ms ease;
+  }
+
+  &.flipped {
+    transform: translateX(36px);
+    &::before { transform: rotate(225deg) translateX(-2px); }
+  }
+}
+
+// ─── Card 3D flip ──────────────────────────────────────────────────────
+.card-3d-wrap {
+  position: relative;
+  width: 100%;
+  max-width: 440px;
+  height: 480px;                               // ← reducida para el login
+  perspective: 800px;
+
+  @media (max-width: 480px) { height: 520px; }
+}
+
+.card-3d-wrapper {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform 600ms ease-out;
+
+  &.flipped { transform: rotateY(180deg); }
+}
+
+.card-face {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-color: $card-bg;
+  border-radius: 12px;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  box-shadow:
+    0 24px 64px rgba(0, 0, 0, 0.7),
+    0 0 40px rgba($fire-red, 0.1);
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: $flame;
+    border-radius: 12px 12px 0 0;
+  }
+}
+
+.card-back {
+  transform: rotateY(180deg);
+  overflow-y: auto;                            // ← el registro hace scroll si no cabe
+}
+
+// ─── Center wrap ───────────────────────────────────────────────────────
+.center-wrap {
+  padding: 1.75rem 2.5rem;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+
+  h2 {
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin-bottom: 0.15rem;
+    background: $flame;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-align: center;
+  }
+
+  .subtitle {
+    color: $metal;
+    font-size: 0.8rem;
+    font-weight: 400;
+    margin-bottom: 1.25rem;
+    text-align: center;
+  }
+}
+
+.card-front .center-wrap {
+  padding: 1.25rem 2.5rem;                     // ← menos padding en login
+}
+
+// ─── Form ──────────────────────────────────────────────────────────────
+.form-group {
+  position: relative;
+  margin-bottom: 0.6rem;
+
+  .input-icon {
+    position: absolute;
+    top: 0; left: 14px;
+    height: 44px;
+    font-size: 20px;
+    line-height: 44px;
+    color: $metal;
+    transition: color 200ms;
+  }
+
+  &:focus-within .input-icon { color: $fire-orange; }
+}
+
+.form-style {
+  width: 100%;
+  height: 44px;
+  padding: 0 16px 0 46px;
+  background-color: $bg;
+  border: 1px solid rgba($metal, 0.35);
+  border-radius: 6px;
+  color: $silver;
+  font-family: 'Poppins', sans-serif;
+  font-size: 13px;
+  font-weight: 500;
+  outline: none;
+  transition: border-color 200ms, box-shadow 200ms;
+
+  &::placeholder { color: $metal; opacity: 0.7; }
+
+  &:focus {
+    border-color: $fire-orange;
+    box-shadow: 0 0 0 3px rgba($fire-orange, 0.12);
+  }
+}
+
+// ─── Botones ───────────────────────────────────────────────────────────
+.btn-primary {
+  display: block;
+  width: 100%;
+  height: 44px;
+  margin-top: 1.25rem;
+  background: $flame;
+  color: $bg;
+  border: none;
+  border-radius: 6px;
+  font-family: 'Poppins', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 1.5px;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: opacity 200ms, box-shadow 200ms;
+
+  &:hover {
+    opacity: 0.85;
+    box-shadow: 0 8px 28px rgba($fire-red, 0.45);
+  }
+}
+
+.btn-ghost {
+  display: block;
+  width: 100%;
+  height: 36px;
+  margin-top: 0.75rem;
+  background: transparent;
+  border: 1px solid rgba($fire-orange, 0.4);
+  border-radius: 6px;
+  color: $fire-orange;
+  font-family: 'Poppins', sans-serif;
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: background-color 200ms, border-color 200ms, color 200ms;
+
+  &:hover {
+    background-color: rgba($fire-orange, 0.08);
+    border-color: $fire-yellow;
+    color: $fire-yellow;
+  }
+}
+
+// ─── Consentimiento ────────────────────────────────────────────────────
+.consent-wrap {
+  margin-top: 0.75rem;
+}
+
+.consent-label {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  cursor: pointer;
+
+  input.consent-check {
+    display: none;
+
+    &:checked + .consent-box {
+      background: $flame;
+      border-color: transparent;
+
+      i { opacity: 1; transform: scale(1); }
+    }
+  }
+}
+
+.consent-box {
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba($fire-orange, 0.5);
+  border-radius: 4px;
+  background: $bg;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-top: 1px;
+  transition: background 200ms, border-color 200ms;
+
+  i {
+    color: $bg;
+    font-size: 13px;
+    font-weight: 700;
+    opacity: 0;
+    transform: scale(0.5);
+    transition: opacity 200ms, transform 200ms;
+  }
+}
+
+.consent-text {
+  font-size: 11.5px;
+  color: $metal;
+  line-height: 1.5;
+  font-weight: 400;
+}
+
+.consent-link {
+  color: $fire-orange;
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 200ms;
+
+  &:hover { color: $fire-yellow; }
+}
+
+.policy-box {
+  margin-top: 0.5rem;
+  padding: 0.75rem 1rem;
+  background: rgba($bg, 0.6);
+  border-left: 3px solid $fire-orange;
+  border-radius: 0 6px 6px 0;
+  animation: fadeIn 200ms ease;
+
+  p {
+    font-size: 11px;
+    color: $metal;
+    line-height: 1.6;
+    margin: 0;
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+
+.btn-primary:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.field-error {
+  font-size: 0.68rem;
+  color: #D62828;
+  font-weight: 500;
+  margin-top: 3px;
+  display: block;
+  padding-left: 4px;
+}
