@@ -19,8 +19,8 @@ export class LocationComponent {
   details: LocationDetail[] = [
     { icon: 'fas fa-map-pin',    label: 'Dirección', value: 'Armenia, Quindío, Colombia' },
     { icon: 'fas fa-clock',      label: 'Horario',   value: 'Lun – Sáb: 7:00 AM – 6:00 PM' },
-    { icon: 'fas fa-phone',      label: 'Teléfono',  value: '+57 300 000 0000' },
-    { icon: 'fab fa-whatsapp',   label: 'WhatsApp',  value: '+57 300 000 0000' }
+    { icon: 'fas fa-phone',      label: 'Teléfono',  value: '+57 321 213 9466' },
+    { icon: 'fab fa-whatsapp',   label: 'WhatsApp',  value: '+57 321 213 9466' }
   ];
 
   constructor(private sanitizer: DomSanitizer) {

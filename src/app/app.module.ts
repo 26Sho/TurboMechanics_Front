@@ -10,7 +10,6 @@ import { ServicesComponent } from './components/services/services.component';
 import { LocationComponent } from './components/location/location.component';
 import { ContactComponent } from './components/contact/contact.component';
 import { FooterComponent } from './components/footer/footer.component';
-import { LoginModalComponent } from './components/login-modal/login-modal.component';
 import { AppRoutingModule } from './app-routing.module';
 import { HttpClientModule } from '@angular/common/http';
 import { AuthModule } from './features/auth/auth.module';
@@ -27,7 +26,6 @@ import { HomeComponent } from './components/home/home.component';
     LocationComponent,
     ContactComponent,
     FooterComponent,
-    LoginModalComponent,
     HomeComponent
   ],
   imports: [

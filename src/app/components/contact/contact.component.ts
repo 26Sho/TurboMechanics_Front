@@ -21,17 +21,17 @@ export class ContactComponent {
       iconClass: 'fab fa-whatsapp',
       iconType: 'whatsapp',
       label: 'WhatsApp',
-      value: '+57 300 000 0000',
+      value: '+57 321 213 9466',
       detail: 'Respuesta inmediata',
-      href: 'https://wa.me/573000000000'
+      href: 'https://wa.me/573212139466'
     },
     {
       iconClass: 'fas fa-phone',
       iconType: 'phone',
       label: 'Llamada',
-      value: '+57 300 000 0000',
+      value: '+57 321 213 9466',
       detail: 'Lun–Sáb 7am–6pm',
-      href: 'tel:573000000000'
+      href: 'tel:573212139466'
     },
     {
       iconClass: 'fas fa-envelope',
