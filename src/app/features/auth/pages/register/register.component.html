@@ -14,27 +14,31 @@
 
         <form [formGroup]="form">
 
+          <!-- username -->
           <div class="form-group">
             <i class="uil uil-user input-icon"></i>
-            <input type="text" class="form-style" placeholder="Full Name" formControlName="name" required />
+            <input type="text" class="form-style" placeholder="Full Name" formControlName="username" required />
           </div>
 
+          <!-- identification -->
           <div class="form-group">
             <i class="uil uil-id-card input-icon"></i>
-            <input type="text" class="form-style" placeholder="Identification" formControlName="Identification"
-              required />
+            <input type="text" class="form-style" placeholder="Identification" formControlName="identification" required />
           </div>
 
+          <!-- phone (este faltaba) -->
           <div class="form-group">
-            <i class="uil uil-id-card input-icon"></i>
-            <input type="text" class="form-style" placeholder="Cédula" formControlName="cedula" required />
+            <i class="uil uil-phone input-icon"></i>
+            <input type="text" class="form-style" placeholder="Phone" formControlName="phone" required />
           </div>
 
+          <!-- email -->
           <div class="form-group">
             <i class="uil uil-at input-icon"></i>
             <input type="email" class="form-style" placeholder="Email" formControlName="email" required />
           </div>
 
+          <!-- password -->
           <div class="form-group">
             <i class="uil uil-lock-alt input-icon"></i>
             <input type="password" class="form-style" placeholder="Password" formControlName="password" required />

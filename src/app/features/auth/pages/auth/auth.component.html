@@ -48,33 +48,38 @@
             <p class="subtitle">Crea tu cuenta</p>
 
             <form [formGroup]="registerForm">
+
+              <!-- username -->
               <div class="form-group">
                 <i class="uil uil-user input-icon"></i>
-                <input type="text" class="form-style" placeholder="Nombre Completo *" formControlName="name" />
+                <input type="text" class="form-style" placeholder="Nombre Completo *" formControlName="username" />
                 <span class="field-error"
-                  *ngIf="registerForm.get('name')?.touched && registerForm.get('name')?.invalid">
+                  *ngIf="registerForm.get('username')?.touched && registerForm.get('username')?.invalid">
                   El nombre es obligatorio
                 </span>
               </div>
 
+              <!-- identification -->
               <div class="form-group">
                 <i class="uil uil-credit-card input-icon"></i>
-                <input type="text" class="form-style" placeholder="Documento *" formControlName="Document" />
+                <input type="text" class="form-style" placeholder="Documento *" formControlName="identification" />
                 <span class="field-error"
-                  *ngIf="registerForm.get('Document')?.touched && registerForm.get('Document')?.invalid">
+                  *ngIf="registerForm.get('identification')?.touched && registerForm.get('identification')?.invalid">
                   Documento inválido (6-12 dígitos)
                 </span>
               </div>
 
+              <!-- phone -->
               <div class="form-group">
                 <i class="uil uil-phone input-icon"></i>
-                <input type="tel" class="form-style" placeholder="Número de Teléfono *" formControlName="telephone" />
+                <input type="tel" class="form-style" placeholder="Número de Teléfono *" formControlName="phone" />
                 <span class="field-error"
-                  *ngIf="registerForm.get('telephone')?.touched && registerForm.get('telephone')?.invalid">
+                  *ngIf="registerForm.get('phone')?.touched && registerForm.get('phone')?.invalid">
                   El teléfono es obligatorio
                 </span>
               </div>
 
+              <!-- email -->
               <div class="form-group">
                 <i class="uil uil-at input-icon"></i>
                 <input type="email" class="form-style" placeholder="Correo Electrónico *" formControlName="email" />
@@ -84,6 +89,7 @@
                 </span>
               </div>
 
+              <!-- password -->
               <div class="form-group">
                 <i class="uil uil-lock-alt input-icon"></i>
                 <input type="password" class="form-style" placeholder="Contraseña *" formControlName="password" />
@@ -93,6 +99,7 @@
                 </span>
               </div>
 
+              <!-- consentimiento -->
               <div class="consent-wrap">
                 <label class="consent-label">
                   <input type="checkbox" class="consent-check" formControlName="consentimiento" />
@@ -107,18 +114,21 @@
                     según la Ley 1581 de 2012.
                   </span>
                 </label>
+
                 <div class="policy-box" *ngIf="showPolicy">
                   <p>
                     Los datos recopilados serán utilizados exclusivamente para la gestión de su cuenta
                     y la prestación de los servicios ofrecidos. No serán compartidos con terceros sin
-                    su autorización expresa. Usted podrá ejercer sus derechos de acceso, corrección,
-                    supresión y revocación en cualquier momento.
+                    su autorización expresa.
                   </p>
                 </div>
               </div>
 
               <button class="btn-primary" type="button" (click)="register()"
-                [disabled]="!registerForm.get('consentimiento')?.value">Registrar</button>
+                [disabled]="!registerForm.get('consentimiento')?.value">
+                Registrar
+              </button>
+
             </form>
           </div>
         </div>

@@ -1,11 +1,12 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from 'src/app/core/services/auth.service';
+import { LoginResponse } from 'src/app/core/models/auth';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
-  styleUrl: './login.component.scss'
+  styleUrls: ['./login.component.scss']
 })
 export class LoginComponent {
 
@@ -18,16 +19,24 @@ export class LoginComponent {
   ) {}
 
   login() {
-    this.authService.login(this.email, this.password).subscribe({
-      next: (response) => {
+    if (!this.email || !this.password) {
+      alert('Todos los campos son obligatorios');
+      return;
+    }
+
+    this.authService.login({
+      email: this.email,
+      password: this.password
+    }).subscribe({
+      next: (response: LoginResponse) => {
         if (response?.jwt) {
           this.router.navigate(['/home']);
         } else {
-          alert(response?.message || 'Este usuario no se encuentra registrado');
+          alert(response.message);
         }
       },
       error: (err) => {
-        alert('Error: ' + (err.error?.message || 'Contraseña incorrecta'));
+        alert(err.error?.message || 'Error en login');
       }
     });
   }

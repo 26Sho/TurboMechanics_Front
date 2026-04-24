@@ -6,23 +6,30 @@ import { AuthService } from 'src/app/core/services/auth.service';
 @Component({
   selector: 'app-auth',
   templateUrl: './auth.component.html',
-  styleUrl: './auth.component.scss'
+  styleUrls: ['./auth.component.scss']
 })
 export class AuthComponent {
 
-  // ── Toggle flip ─────────────────────────────────────────────────────
   isRegister = false;
 
   toggle() {
     this.isRegister = !this.isRegister;
   }
 
-  // ── Login ────────────────────────────────────────────────────────────
-  loginEmail    = '';
+  // LOGIN
+  loginEmail = '';
   loginPassword = '';
 
   login() {
-    this.authService.login(this.loginEmail, this.loginPassword).subscribe({
+    if (!this.loginEmail || !this.loginPassword) {
+      alert('Todos los campos son obligatorios');
+      return;
+    }
+
+    this.authService.login({
+      email: this.loginEmail,
+      password: this.loginPassword
+    }).subscribe({
       next: (response) => {
         if (response?.jwt) {
           this.router.navigate(['/home']);
@@ -31,7 +38,7 @@ export class AuthComponent {
         }
       },
       error: (err) => {
-        alert('Error: ' + (err.error?.message || 'Contraseña incorrecta'));
+        alert(err.error?.message || 'Error en login');
       }
     });
   }
@@ -40,40 +47,39 @@ export class AuthComponent {
     this.router.navigate(['/recover-password']);
   }
 
-  // ── Register ─────────────────────────────────────────────────────────
+  // REGISTER
   registerForm: FormGroup;
   showPolicy = false;
 
   register() {
     if (!this.registerForm.valid) {
-      alert('Por favor completa todos los campos y acepta el tratamiento de datos.');
+      alert('Completa todos los campos y acepta el tratamiento de datos.');
       return;
     }
 
     this.authService.register(this.registerForm.value).subscribe({
       next: () => {
-        alert('¡Registro exitoso! Ya puedes iniciar sesión.');
+        alert('¡Registro exitoso!');
         this.registerForm.reset();
         this.isRegister = false;
       },
       error: (err) => {
-        alert('Error: ' + (err.error?.message || 'No se pudo registrar'));
+        alert(err.error?.message || 'Error en registro');
       }
     });
   }
 
-  // ── Constructor ──────────────────────────────────────────────────────
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
     private router: Router
   ) {
     this.registerForm = this.fb.group({
-      name:           ['', Validators.required],
-      Document:       ['', [Validators.required, Validators.pattern(/^\d{6,12}$/)]],
-      telephone:      ['', Validators.required],
-      email:          ['', [Validators.required, Validators.email]],
-      password:       ['', Validators.required],
+      username: ['', Validators.required],
+      identification: ['', [Validators.required, Validators.pattern(/^\d{6,12}$/)]],
+      phone: ['', Validators.required],
+      email: ['', [Validators.required, Validators.email]],
+      password: ['', Validators.required],
       consentimiento: [false, Validators.requiredTrue]
     });
   }

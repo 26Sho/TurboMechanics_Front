@@ -2,33 +2,33 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { tap } from 'rxjs/operators';
+import { LoginRequest, LoginResponse, MessageResponse, RefreshTokenResponse, RegisterRequest } from '../models/auth';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AuthService {
 
-  private apiUrl = 'http://localhost:9090';
+  private apiUrl = 'http://localhost:9090/auth';
 
   constructor(private http: HttpClient) {}
 
-  register(user: any): Observable<any> {
-    const body = {
-      username: user.name,
-      identification: user.Identification,
-      phone: user.telephone,
-      email: user.email,
-      password: user.password
-    };
-    return this.http.post(`${this.apiUrl}/auth/register`, body);
+  register(data: RegisterRequest): Observable<MessageResponse> {
+    return this.http.post<MessageResponse>(`${this.apiUrl}/register`, data);
   }
 
-  login(email: string, password: string): Observable<any> {
-    return this.http.post(`${this.apiUrl}/auth/login`, { email, password }).pipe(
-      tap((response: any) => {
-        if (response?.jwt) {
-          localStorage.setItem('token', response.jwt);
-        }
+  login(data: LoginRequest): Observable<LoginResponse> {
+    return this.http.post<LoginResponse>(`${this.apiUrl}/login`, data).pipe(
+      tap(res => {
+        if (res.jwt) localStorage.setItem('token', res.jwt);
+      })
+    );
+  }
+
+  refreshToken(): Observable<RefreshTokenResponse> {
+    return this.http.get<RefreshTokenResponse>(`${this.apiUrl}/refreshToken`).pipe(
+      tap(res => {
+        if (res.jwt) localStorage.setItem('token', res.jwt);
       })
     );
   }

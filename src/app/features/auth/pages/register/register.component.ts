@@ -6,7 +6,7 @@ import { AuthService } from 'src/app/core/services/auth.service';
 @Component({
   selector: 'app-register',
   templateUrl: './register.component.html',
-  styleUrl: './register.component.scss'
+  styleUrls: ['./register.component.scss']
 })
 export class RegisterComponent {
 
@@ -18,27 +18,27 @@ export class RegisterComponent {
     private router: Router
   ) {
     this.form = this.fb.group({
-      name: ['', Validators.required],
-      Identification: ['', [Validators.required, Validators.pattern(/^\d{6,12}$/)]],
-      telephone: ['', Validators.required],
+      username: ['', Validators.required],
+      identification: ['', Validators.required],
+      phone: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
       password: ['', Validators.required]
     });
   }
 
   register() {
-    if (!this.form.valid) {
+    if (this.form.invalid) {
       alert('Formulario inválido');
       return;
     }
 
     this.authService.register(this.form.value).subscribe({
-      next: () => {
-        alert('Registro exitoso');
+      next: (res) => {
+        alert(res.message);
         this.router.navigate(['/login']);
       },
       error: (err) => {
-        alert('Error: ' + (err.error?.message || 'No se pudo registrar'));
+        alert(err.error?.message || 'Error en registro');
       }
     });
   }
