@@ -39,7 +39,10 @@ $font-display: 'Bebas Neue', sans-serif;
     display: flex;
     align-items: center;
     transition: opacity 0.2s;
-    &:hover { opacity: 0.9; }
+
+    &:hover {
+      opacity: 0.9;
+    }
   }
 
   &__logo-img {
@@ -57,7 +60,9 @@ $font-display: 'Bebas Neue', sans-serif;
     padding: 0;
     margin: 0;
 
-    @media (max-width: 1024px) { display: none; }
+    @media (max-width: 1024px) {
+      display: none;
+    }
   }
 
   &__link {
@@ -86,14 +91,20 @@ $font-display: 'Bebas Neue', sans-serif;
       transition: transform 0.25s ease;
     }
 
-    &:hover, &.active {
+    &:hover,
+    &.active {
       color: $white;
-      &::after { transform: translateX(-50%) scaleX(1); }
+
+      &::after {
+        transform: translateX(-50%) scaleX(1);
+      }
     }
   }
 
   &__auth {
-    @media (max-width: 1024px) { display: none; }
+    @media (max-width: 1024px) {
+      display: none;
+    }
   }
 
   &__login-btn {
@@ -112,13 +123,63 @@ $font-display: 'Bebas Neue', sans-serif;
     transition: all 0.3s ease;
     cursor: pointer;
 
-    i { font-size: 1.1rem; }
+    i {
+      font-size: 1.1rem;
+    }
 
     &:hover {
       background: rgba($orange, 0.12);
       border-color: $orange;
       box-shadow: 0 0 16px rgba($orange, 0.25);
       color: $orange-light;
+    }
+  }
+
+  &__user {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: $gray-light;
+    font-family: $font-heading;
+
+    i {
+      font-size: 1.1rem;
+      color: $orange;
+    }
+  }
+
+  &__username {
+    font-size: 0.9rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    color: $white;
+    max-width: 160px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__logout-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border: 1.5px solid rgba(#e74c3c, 0.6);
+    border-radius: 4px;
+    background: none;
+    font-family: $font-heading;
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: #e74c3c;
+    cursor: pointer;
+    transition: all 0.3s ease;
+
+    &:hover {
+      background: rgba(#e74c3c, 0.12);
+      border-color: #e74c3c;
+      box-shadow: 0 0 16px rgba(#e74c3c, 0.2);
     }
   }
 
@@ -131,7 +192,9 @@ $font-display: 'Bebas Neue', sans-serif;
     cursor: pointer;
     padding: 4px;
 
-    @media (max-width: 1024px) { display: flex; }
+    @media (max-width: 1024px) {
+      display: flex;
+    }
 
     span {
       display: block;
@@ -143,9 +206,17 @@ $font-display: 'Bebas Neue', sans-serif;
     }
 
     &.open {
-      span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
-      span:nth-child(2) { opacity: 0; }
-      span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
+      span:nth-child(1) {
+        transform: translateY(7px) rotate(45deg);
+      }
+
+      span:nth-child(2) {
+        opacity: 0;
+      }
+
+      span:nth-child(3) {
+        transform: translateY(-7px) rotate(-45deg);
+      }
     }
   }
 
@@ -155,9 +226,15 @@ $font-display: 'Bebas Neue', sans-serif;
     border-top: 1px solid rgba($orange, 0.2);
     padding: 16px 0;
 
-    &.open { display: block; }
+    &.open {
+      display: block;
+    }
 
-    ul { list-style: none; padding: 0; margin: 0; }
+    ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
 
     li a {
       display: block;
@@ -171,7 +248,10 @@ $font-display: 'Bebas Neue', sans-serif;
       transition: color 0.2s, background 0.2s;
       cursor: pointer;
 
-      &:hover { color: $orange; background: rgba($orange, 0.06); }
+      &:hover {
+        color: $orange;
+        background: rgba($orange, 0.06);
+      }
 
       &.mobile-login {
         color: $orange;
@@ -179,6 +259,30 @@ $font-display: 'Bebas Neue', sans-serif;
         margin-top: 8px;
         padding-top: 20px;
       }
+    }
+
+    .mobile-user {
+      border-top: 1px solid rgba($gray-mid, 0.3);
+      margin-top: 8px;
+      padding-top: 8px;
+    }
+
+    .mobile-username {
+      display: block;
+      padding: 10px 24px;
+      color: $white;
+      font-family: $font-heading;
+      font-weight: 600;
+      font-size: 0.9rem;
+
+      i {
+        color: $orange;
+        margin-right: 6px;
+      }
+    }
+
+    .mobile-logout {
+      color: #e74c3c !important;
     }
   }
 }

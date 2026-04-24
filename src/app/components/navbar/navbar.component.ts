@@ -1,5 +1,7 @@
-import { Component, EventEmitter, HostListener, Output } from '@angular/core';
+import { Component, EventEmitter, HostListener, OnDestroy, OnInit, Output } from '@angular/core';
 import { Router } from '@angular/router';
+import { Subscription } from 'rxjs';
+import { AuthService } from 'src/app/core/services/auth.service';
 
 @Component({
   selector: 'app-navbar',
@@ -7,15 +9,38 @@ import { Router } from '@angular/router';
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.scss']
 })
-
-export class NavbarComponent {
+export class NavbarComponent implements OnInit, OnDestroy {
   @Output() loginClick = new EventEmitter<void>();
 
   isScrolled = false;
   isMobileOpen = false;
   activeSection = 'inicio';
+  isLoggedIn = false;
+  username = '';
 
-  constructor(private router: Router) {}
+  private authSub!: Subscription;
+
+  constructor(private router: Router, private authService: AuthService) {}
+
+  ngOnInit(): void {
+    this.isLoggedIn = this.authService.isLoggedIn();
+    this.username = this.authService.getUsername();
+
+    this.authSub = this.authService.authChanged.subscribe(loggedIn => {
+      this.isLoggedIn = loggedIn;
+      this.username = loggedIn ? this.authService.getUsername() : '';
+    });
+  }
+
+  ngOnDestroy(): void {
+    this.authSub?.unsubscribe();
+  }
+
+  onLogout(): void {
+    this.authService.logout();
+    this.router.navigate(['/home']);
+    this.closeMobile();
+  }
 
   @HostListener('window:scroll')
   onScroll(): void {
@@ -34,13 +59,8 @@ export class NavbarComponent {
     }
   }
 
-  toggleMobile(): void {
-    this.isMobileOpen = !this.isMobileOpen;
-  }
-
-  closeMobile(): void {
-    this.isMobileOpen = false;
-  }
+  toggleMobile(): void { this.isMobileOpen = !this.isMobileOpen; }
+  closeMobile(): void { this.isMobileOpen = false; }
 
   onLoginClick(event: Event): void {
     event.preventDefault();

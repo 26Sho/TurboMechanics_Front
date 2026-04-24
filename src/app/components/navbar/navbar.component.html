@@ -30,12 +30,20 @@
       </li>
     </ul>
 
-    <!-- Login -->
+    <!-- Auth -->
     <div class="navbar__auth">
-      <a href="#" class="navbar__login-btn" (click)="onLoginClick($event)">
+      <a *ngIf="!isLoggedIn" href="#" class="navbar__login-btn" (click)="onLoginClick($event)">
         <i class="fas fa-user-circle"></i>
         <span>Iniciar sesión</span>
       </a>
+      <div *ngIf="isLoggedIn" class="navbar__user">
+        <i class="fas fa-user-circle"></i>
+        <span class="navbar__username">{{ username }}</span>
+        <button class="navbar__logout-btn" (click)="onLogout()">
+          <i class="fas fa-sign-out-alt"></i>
+          <span>Cerrar sesión</span>
+        </button>
+      </div>
     </div>
 
     <!-- Hamburger -->
@@ -53,7 +61,15 @@
       <li><a (click)="scrollTo('servicios'); $event.preventDefault()" href="#servicios">Servicios</a></li>
       <li><a (click)="scrollTo('ubicacion'); $event.preventDefault()" href="#ubicacion">Ubicación</a></li>
       <li><a (click)="scrollTo('contacto'); $event.preventDefault()" href="#contacto">Contacto</a></li>
-      <li><a href="#" class="mobile-login" (click)="onLoginClick($event)">Iniciar sesión</a></li>
+      <li *ngIf="!isLoggedIn">
+        <a href="#" class="mobile-login" (click)="onLoginClick($event)">Iniciar sesión</a>
+      </li>
+      <li *ngIf="isLoggedIn" class="mobile-user">
+        <span class="mobile-username"><i class="fas fa-user-circle"></i> {{ username }}</span>
+        <a href="#" class="mobile-logout" (click)="onLogout(); $event.preventDefault()">
+          <i class="fas fa-sign-out-alt"></i> Cerrar sesión
+        </a>
+      </li>
     </ul>
   </div>
 </nav>
