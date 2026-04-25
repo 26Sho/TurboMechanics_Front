@@ -1,0 +1,95 @@
+@import url('https://unicons.iconscout.com/release/v2.1.9/css/unicons.css');
+
+$success: #22c55e;
+$error:   #ef4444;
+$warning: #f59e0b;
+$info:    #3b82f6;
+$bg:      #1e1e1e;
+$text:    #f1f5f9;
+
+.toast-container {
+  position: fixed;
+  top: 24px;
+  right: 24px;
+  z-index: 99999;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  pointer-events: none;
+  max-width: 360px;
+  width: 100%;
+}
+
+.toast {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: 10px;
+  background: $bg;
+  border: 1px solid rgba(255,255,255,0.08);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.45), 0 2px 8px rgba(0,0,0,0.3);
+  color: $text;
+  font-family: 'Poppins', sans-serif;
+  font-size: 13px;
+  font-weight: 400;
+  cursor: pointer;
+  pointer-events: all;
+  position: relative;
+  overflow: hidden;
+  animation: slideIn 0.35s cubic-bezier(0.21, 1.02, 0.73, 1) forwards;
+
+  &--success { border-left: 4px solid $success; .toast__icon { color: $success; } }
+  &--error   { border-left: 4px solid $error;   .toast__icon { color: $error;   } }
+  &--warning { border-left: 4px solid $warning;  .toast__icon { color: $warning; } }
+  &--info    { border-left: 4px solid $info;     .toast__icon { color: $info;    } }
+
+  &__icon {
+    font-size: 20px;
+    flex-shrink: 0;
+  }
+
+  &__message {
+    flex: 1;
+    line-height: 1.4;
+  }
+
+  &__close {
+    background: none;
+    border: none;
+    color: rgba($text, 0.4);
+    cursor: pointer;
+    padding: 2px;
+    display: flex;
+    align-items: center;
+    font-size: 16px;
+    flex-shrink: 0;
+    transition: color 0.2s;
+    &:hover { color: $text; }
+  }
+
+  &__progress {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 3px;
+    width: 100%;
+    transform-origin: left;
+    animation: progress 4s linear forwards;
+
+    &--success { background: $success; }
+    &--error   { background: $error;   }
+    &--warning { background: $warning; }
+    &--info    { background: $info;    }
+  }
+}
+
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(110%); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes progress {
+  from { transform: scaleX(1); }
+  to   { transform: scaleX(0); }
+}

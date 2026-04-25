@@ -32,3 +32,18 @@ export interface JwtPayload {
   iat: number;
   exp: number;
 }
+
+// ─── Password Reset ───────────────────────────────────────────────────────────
+
+export interface ForgotPasswordRequest {
+  email: string;
+}
+ 
+export interface ValidateResetTokenRequest {
+  token: string;
+}
+ 
+export interface ResetPasswordRequest {
+  token: string;
+  newPassword: string;
+}

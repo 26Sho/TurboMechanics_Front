@@ -15,6 +15,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { AuthModule } from './features/auth/auth.module';
 import { CoreModule } from './core/core.module';
 import { HomeComponent } from './components/home/home.component';
+import { ToastComponent } from './shared/components/toast/toast.component';
 
 @NgModule({
   declarations: [
@@ -26,7 +27,8 @@ import { HomeComponent } from './components/home/home.component';
     LocationComponent,
     ContactComponent,
     FooterComponent,
-    HomeComponent
+    HomeComponent,
+    ToastComponent
   ],
   imports: [
     BrowserModule,

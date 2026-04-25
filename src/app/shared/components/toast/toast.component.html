@@ -1,0 +1,14 @@
+<div class="toast-container">
+  <div
+    class="toast toast--{{ t.type }}"
+    *ngFor="let t of toasts"
+    (click)="remove(t.id)"
+  >
+    <i class="uil {{ icon(t.type) }} toast__icon"></i>
+    <span class="toast__message">{{ t.message }}</span>
+    <button class="toast__close" (click)="remove(t.id); $event.stopPropagation()">
+      <i class="uil uil-times"></i>
+    </button>
+    <div class="toast__progress toast__progress--{{ t.type }}"></div>
+  </div>
+</div>

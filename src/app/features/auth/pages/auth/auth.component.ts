@@ -2,6 +2,7 @@ import { Component } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from 'src/app/core/services/auth.service';
+import { ToastService } from 'src/app/shared/services/toast.service';
 
 @Component({
   selector: 'app-auth',
@@ -11,60 +12,60 @@ import { AuthService } from 'src/app/core/services/auth.service';
 export class AuthComponent {
 
   isRegister = false;
-
-  toggle() {
-    this.isRegister = !this.isRegister;
-  }
+  toggle() { this.isRegister = !this.isRegister; }
 
   // LOGIN
   loginEmail = '';
   loginPassword = '';
+  loginLoading = false;
 
   login() {
     if (!this.loginEmail || !this.loginPassword) {
-      alert('Todos los campos son obligatorios');
+      this.toast.warning('Todos los campos son obligatorios.');
       return;
     }
-
-    this.authService.login({
-      email: this.loginEmail,
-      password: this.loginPassword
-    }).subscribe({
+    this.loginLoading = true;
+    this.authService.login({ email: this.loginEmail, password: this.loginPassword }).subscribe({
       next: (response) => {
+        this.loginLoading = false;
         if (response?.jwt) {
+          this.toast.success('¡Bienvenido!');
           this.router.navigate(['/home']);
         } else {
-          alert(response?.message || 'Usuario no encontrado');
+          this.toast.error(response?.message || 'Usuario no encontrado.');
         }
       },
       error: (err) => {
-        alert(err.error?.message || 'Error en login');
+        this.loginLoading = false;
+        this.toast.error(err.error?.message || 'Error al iniciar sesión.');
       }
     });
   }
 
-  goToRecover() {
-    this.router.navigate(['/recover-password']);
-  }
+  goToRecover() { this.router.navigate(['/recover-password']); }
 
   // REGISTER
   registerForm: FormGroup;
   showPolicy = false;
+  registerLoading = false;
 
   register() {
     if (!this.registerForm.valid) {
-      alert('Completa todos los campos y acepta el tratamiento de datos.');
+      this.registerForm.markAllAsTouched();
+      this.toast.warning('Completa todos los campos y acepta el tratamiento de datos.');
       return;
     }
-
+    this.registerLoading = true;
     this.authService.register(this.registerForm.value).subscribe({
       next: () => {
-        alert('¡Registro exitoso!');
+        this.registerLoading = false;
+        this.toast.success('¡Registro exitoso! Ya puedes iniciar sesión.');
         this.registerForm.reset();
         this.isRegister = false;
       },
       error: (err) => {
-        alert(err.error?.message || 'Error en registro');
+        this.registerLoading = false;
+        this.toast.error(err.error?.message || 'Error en el registro.');
       }
     });
   }
@@ -72,14 +73,15 @@ export class AuthComponent {
   constructor(
     private fb: FormBuilder,
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private toast: ToastService
   ) {
     this.registerForm = this.fb.group({
-      username: ['', Validators.required],
+      username:       ['', Validators.required],
       identification: ['', [Validators.required, Validators.pattern(/^\d{6,12}$/)]],
-      phone: ['', Validators.required],
-      email: ['', [Validators.required, Validators.email]],
-      password: ['', Validators.required],
+      phone:          ['', Validators.required],
+      email:          ['', [Validators.required, Validators.email]],
+      password:       ['', Validators.required],
       consentimiento: [false, Validators.requiredTrue]
     });
   }

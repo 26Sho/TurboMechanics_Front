@@ -1,6 +1,7 @@
 import { Component } from '@angular/core';
 import { Router } from '@angular/router';
 import { AuthService } from 'src/app/core/services/auth.service';
+import { ToastService } from 'src/app/shared/services/toast.service';
 import { LoginResponse } from 'src/app/core/models/auth';
 
 @Component({
@@ -10,42 +11,39 @@ import { LoginResponse } from 'src/app/core/models/auth';
 })
 export class LoginComponent {
 
-  email: string = '';
-  password: string = '';
+  email = '';
+  password = '';
+  isLoading = false;
 
   constructor(
     private authService: AuthService,
-    private router: Router
+    private router: Router,
+    private toast: ToastService
   ) {}
 
   login() {
     if (!this.email || !this.password) {
-      alert('Todos los campos son obligatorios');
+      this.toast.warning('Todos los campos son obligatorios.');
       return;
     }
-
-    this.authService.login({
-      email: this.email,
-      password: this.password
-    }).subscribe({
+    this.isLoading = true;
+    this.authService.login({ email: this.email, password: this.password }).subscribe({
       next: (response: LoginResponse) => {
+        this.isLoading = false;
         if (response?.jwt) {
+          this.toast.success('¡Bienvenido!');
           this.router.navigate(['/home']);
         } else {
-          alert(response.message);
+          this.toast.error(response.message || 'Credenciales incorrectas.');
         }
       },
       error: (err) => {
-        alert(err.error?.message || 'Error en login');
+        this.isLoading = false;
+        this.toast.error(err.error?.message || 'Error al iniciar sesión.');
       }
     });
   }
 
-  goToRegister() {
-    this.router.navigate(['/register']);
-  }
-
-  recoverPassword() {
-    this.router.navigate(['/recover-password']);
-  }
+  goToRegister()    { this.router.navigate(['/register']); }
+  recoverPassword() { this.router.navigate(['/recover-password']); }
 }
