@@ -28,7 +28,7 @@ export interface RefreshTokenResponse {
 export interface JwtPayload {
   userId: number;
   rolId: number;
-  sub: string; // normalmente es el email
+  sub: string;
   iat: number;
   exp: number;
 }
@@ -38,12 +38,14 @@ export interface JwtPayload {
 export interface ForgotPasswordRequest {
   emailOrPhone: string;
 }
- 
+
 export interface ValidateResetTokenRequest {
-  token: string;
+  emailOrPhone: string; // ← agregado
+  code: string;         // ← era "token"
 }
- 
+
 export interface ResetPasswordRequest {
-  token: string;
+  emailOrPhone: string; // ← agregado
+  code: string;         // ← era "token"
   newPassword: string;
 }

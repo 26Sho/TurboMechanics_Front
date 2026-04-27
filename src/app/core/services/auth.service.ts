@@ -2,7 +2,10 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { tap } from 'rxjs/operators';
-import { LoginRequest, LoginResponse, MessageResponse, RefreshTokenResponse, RegisterRequest, ForgotPasswordRequest, ValidateResetTokenRequest, ResetPasswordRequest } from '../models/auth';
+import {
+  LoginRequest, LoginResponse, MessageResponse, RefreshTokenResponse,
+  RegisterRequest, ForgotPasswordRequest, ValidateResetTokenRequest, ResetPasswordRequest
+} from '../models/auth';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -48,6 +51,7 @@ export class AuthService {
     localStorage.removeItem('username');
     this.authState$.next(false);
   }
+
   // ─── Password Reset ─────────────────────────────────────────────────────────
 
   forgotPassword(data: ForgotPasswordRequest): Observable<MessageResponse> {
@@ -55,7 +59,7 @@ export class AuthService {
   }
 
   validateResetToken(data: ValidateResetTokenRequest): Observable<MessageResponse> {
-    return this.http.post<MessageResponse>(`${this.apiUrl}/validate-reset-token`, data);
+    return this.http.post<MessageResponse>(`${this.apiUrl}/validate-code`, data); // ← URL corregida
   }
 
   resetPassword(data: ResetPasswordRequest): Observable<MessageResponse> {

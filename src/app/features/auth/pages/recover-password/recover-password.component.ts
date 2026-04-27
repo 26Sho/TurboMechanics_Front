@@ -14,7 +14,7 @@ export class RecoverPasswordComponent {
   isLoading = false;
 
   email = '';
-  token = '';
+  code = '';        // ← era "token"
   newPassword = '';
 
   constructor(
@@ -23,7 +23,7 @@ export class RecoverPasswordComponent {
     private router: Router
   ) {}
 
-  // Step 1 — send email to backend, which emails the reset token
+  // Step 1 — envía el email al backend para recibir el código
   sendEmail() {
     if (!this.email.trim()) {
       this.toastService.warning('Please enter your email address.');
@@ -43,14 +43,17 @@ export class RecoverPasswordComponent {
     });
   }
 
-  // Step 2 — validate the token the user received by email
+  // Step 2 — valida el código recibido por correo
   validateToken() {
-    if (!this.token.trim()) {
+    if (!this.code.trim()) {
       this.toastService.warning('Please enter the reset code.');
       return;
     }
     this.isLoading = true;
-    this.authService.validateResetToken({ token: this.token.trim() }).subscribe({
+    this.authService.validateResetToken({
+      emailOrPhone: this.email.trim(), // ← agregado
+      code: this.code.trim()           // ← era token
+    }).subscribe({
       next: (res) => {
         this.isLoading = false;
         this.toastService.success(res.message || 'Code validated.');
@@ -63,14 +66,18 @@ export class RecoverPasswordComponent {
     });
   }
 
-  // Step 3 — set the new password
+  // Step 3 — establece la nueva contraseña
   resetPassword() {
     if (!this.newPassword.trim()) {
       this.toastService.warning('Please enter a new password.');
       return;
     }
     this.isLoading = true;
-    this.authService.resetPassword({ token: this.token.trim(), newPassword: this.newPassword }).subscribe({
+    this.authService.resetPassword({
+      emailOrPhone: this.email.trim(), // ← agregado
+      code: this.code.trim(),          // ← era token
+      newPassword: this.newPassword
+    }).subscribe({
       next: (res) => {
         this.isLoading = false;
         this.toastService.success(res.message || 'Password updated successfully!');
