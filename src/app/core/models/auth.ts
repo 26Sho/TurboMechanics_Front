@@ -36,7 +36,7 @@ export interface JwtPayload {
 // ─── Password Reset ───────────────────────────────────────────────────────────
 
 export interface ForgotPasswordRequest {
-  email: string;
+  emailOrPhone: string;
 }
  
 export interface ValidateResetTokenRequest {
