@@ -1,0 +1,550 @@
+<div class="auth-wrapper">
+  <div class="wo-container">
+
+    <!-- Brand -->
+    <div class="brand">
+      <span class="brand-dot"></span>
+      <h1>TurboMechanics</h1>
+      <span class="brand-sub">Órdenes de trabajo</span>
+    </div>
+
+    <!-- Tabs -->
+    <div class="wo-tabs">
+      <button class="wo-tab" [class.active]="activeTab === 'nueva'"  (click)="setTab('nueva')">Nueva orden</button>
+      <button class="wo-tab" [class.active]="activeTab === 'lista'"  (click)="setTab('lista')">Lista</button>
+      <button class="wo-tab" [class.active]="activeTab === 'buscar'" (click)="setTab('buscar')">Buscar</button>
+    </div>
+
+    <!-- ══ TAB: NUEVA ORDEN ══════════════════════════════════════════════════ -->
+    <ng-container *ngIf="activeTab === 'nueva'">
+
+      <!-- Cliente -->
+      <div class="wo-card">
+        <div class="wo-card-title">Datos del cliente</div>
+
+        <div class="wo-alert wo-alert-warning" *ngIf="clientNotFound">
+          <span class="wo-alert-icon">⚠️</span>
+          <div>
+            <strong>Cliente no registrado</strong>
+            <p>Este cliente no está en el sistema. Se creará la orden con los datos ingresados manualmente.</p>
+          </div>
+        </div>
+
+        <div class="wo-grid">
+          <div class="form-group">
+            <label class="wo-label">Nombre completo *</label>
+            <input type="text" class="form-style" placeholder="Ej. Juan Pérez"
+              [(ngModel)]="clientname" name="clientname" />
+          </div>
+          <div class="form-group">
+            <label class="wo-label">Identificación *</label>
+            <input type="text" class="form-style" placeholder="Cédula o NIT"
+              [(ngModel)]="clientidentification" name="clientidentification"
+              (blur)="onIdentificationBlur()" />
+          </div>
+          <div class="form-group wo-full">
+            <label class="wo-label">Teléfono *</label>
+            <input type="text" class="form-style" placeholder="+57 300 000 0000"
+              [(ngModel)]="clientphone" name="clientphone" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Vehículo -->
+      <div class="wo-card">
+        <div class="wo-card-title">Datos del vehículo</div>
+
+        <div class="wo-alert wo-alert-info" *ngIf="vehicleNotFound">
+          <span class="wo-alert-icon">ℹ️</span>
+          <div>
+            <strong>Vehículo no registrado</strong>
+            <p>Esta placa no está registrada. Complete los datos del vehículo manualmente.</p>
+          </div>
+        </div>
+
+        <div class="wo-grid wo-grid-3">
+          <div class="form-group">
+            <label class="wo-label">Placa *</label>
+            <input type="text" class="form-style" placeholder="ABC-123"
+              [(ngModel)]="vehicleplate" name="vehicleplate"
+              style="text-transform:uppercase"
+              (blur)="onPlateBlur()" />
+          </div>
+          <div class="form-group">
+            <label class="wo-label">Marca *</label>
+            <input type="text" class="form-style" placeholder="Toyota"
+              [(ngModel)]="vehiclebrand" name="vehiclebrand" />
+          </div>
+          <div class="form-group">
+            <label class="wo-label">Modelo *</label>
+            <input type="text" class="form-style" placeholder="Corolla"
+              [(ngModel)]="vehiclemodel" name="vehiclemodel" />
+          </div>
+          <div class="form-group">
+            <label class="wo-label">Año *</label>
+            <input type="number" class="form-style" placeholder="2020"
+              [(ngModel)]="vehicleyear" name="vehicleyear" min="1900" max="2100" />
+          </div>
+          <div class="form-group">
+            <label class="wo-label">Color</label>
+            <input type="text" class="form-style" placeholder="Blanco"
+              [(ngModel)]="vehiclecolor" name="vehiclecolor" />
+          </div>
+          <div class="form-group">
+            <label class="wo-label">Entrega estimada</label>
+            <input type="date" class="form-style"
+              [(ngModel)]="dateestimateddelivery" name="dateestimateddelivery"
+              [min]="todayStr" />
+            <span class="wo-field-error" *ngIf="dateError">{{ dateError }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Diagnóstico -->
+      <div class="wo-card">
+        <div class="wo-card-title">Diagnóstico y condiciones</div>
+
+        <div class="form-group wo-full" style="margin-bottom: 1.2rem;">
+          <label class="wo-label">Fallas reportadas *</label>
+          <textarea class="form-style wo-textarea" placeholder="Describa las fallas o síntomas..."
+            [(ngModel)]="failuresreported" name="failuresreported"></textarea>
+        </div>
+
+        <div class="wo-grid" style="margin-bottom: 1rem;">
+
+          <!-- Nivel de combustible -->
+          <div class="form-group">
+            <label class="wo-label">Nivel de combustible</label>
+            <div class="wo-fuel-row">
+              <span class="fuel-label">E</span>
+              <div class="wo-fuel-bar">
+                <div *ngFor="let f of fuelLevels; let i = index"
+                  class="fuel-seg"
+                  [class.active]="levelfuel !== null && fuelIndex(levelfuel) > i"
+                  (click)="levelfuel = f.value"
+                  [title]="f.label">
+                </div>
+              </div>
+              <span class="fuel-label">F</span>
+              {{ levelfuel ? fuelLevels[fuelIndex(levelfuel) - 1].label : '—' }}
+            </div>
+          </div>
+
+          <!-- Prioridad -->
+          <div class="form-group">
+            <label class="wo-label">Prioridad</label>
+            <div class="wo-priority-row">
+              <button *ngFor="let p of priorities"
+                class="prio-btn"
+                [class]="'prio-btn prio-' + p.value.toLowerCase() + (priority === p.value ? ' selected' : '')"
+                (click)="priority = p.value">
+                {{ p.label }}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="wo-grid">
+
+          <!-- Rayones -->
+          <div class="form-group">
+            <label class="wo-label">Rayones</label>
+            <div class="wo-cond-row">
+              <button *ngFor="let c of conditions"
+                class="cond-btn"
+                [class.selected]="statescratches === c.value"
+                (click)="statescratches = c.value">
+                {{ c.label }}
+              </button>
+            </div>
+          </div>
+
+          <!-- Abolladuras -->
+          <div class="form-group">
+            <label class="wo-label">Abolladuras</label>
+            <div class="wo-cond-row">
+              <button *ngFor="let c of conditions"
+                class="cond-btn"
+                [class.selected]="statedents === c.value"
+                (click)="statedents = c.value">
+                {{ c.label }}
+              </button>
+            </div>
+          </div>
+
+          <!-- Accesorios -->
+          <div class="form-group wo-full">
+            <label class="wo-label">Observaciones de accesorios</label>
+            <input type="text" class="form-style" placeholder="Radio, llanta de repuesto, gato..."
+              [(ngModel)]="accessoriesobservations" name="accessoriesobservations" />
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Acciones -->
+      <div class="wo-actions">
+        <button class="btn-secondary" (click)="clearForm()">Limpiar</button>
+        <button class="btn-primary" (click)="submitOrder()" [disabled]="isLoading">
+          {{ isLoading ? 'Creando...' : 'Crear orden' }}
+        </button>
+      </div>
+
+    </ng-container>
+
+    <!-- ══ TAB: LISTA ════════════════════════════════════════════════════════ -->
+    <ng-container *ngIf="activeTab === 'lista'">
+      <div class="wo-card">
+        <div class="wo-card-title">
+          Órdenes registradas
+          <button class="btn-icon" (click)="loadOrders()" title="Recargar">↻</button>
+        </div>
+
+        <div *ngIf="isLoading" class="wo-empty">Cargando...</div>
+
+        <div *ngIf="!isLoading && orders.length === 0" class="wo-empty">
+          No hay órdenes registradas.
+        </div>
+
+        <div class="wo-table-wrap" *ngIf="!isLoading && orders.length > 0">
+          <p class="wo-table-hint">Haz clic en una fila para ver el detalle de la orden</p>
+          <table class="wo-table">
+            <thead>
+              <tr>
+                <th>N° Orden</th>
+                <th>Cliente</th>
+                <th>Placa</th>
+                <th>Vehículo</th>
+                <th>Estado</th>
+                <th>Prioridad</th>
+                <th>Fecha ingreso</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let o of orders" (click)="openDetail(o)" class="wo-row-clickable">
+                <td class="col-number">{{ o.numberorder }}</td>
+                <td>
+                  {{ o.clientname }}<br>
+                  <span class="col-sub">{{ o.clientphone }}</span>
+                </td>
+                <td class="col-plate">{{ o.vehicleplate }}</td>
+                <td>{{ o.vehiclebrand }} {{ o.vehiclemodel }} {{ o.vehicleyear }}</td>
+                <td>
+                  <span class="wo-badge" [ngClass]="stateBadgeClass(o.stateorder)">
+                    {{ stateLabels[o.stateorder] }}
+                  </span>
+                </td>
+                <td>
+                  <span class="wo-badge" [ngClass]="priorityBadgeClass(o.priority)">
+                    {{ o.priority }}
+                  </span>
+                </td>
+                <td class="col-sub">{{ o.dateentry | date:'dd/MM/yyyy HH:mm' }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </ng-container>
+
+    <!-- ══ TAB: BUSCAR ═══════════════════════════════════════════════════════ -->
+    <ng-container *ngIf="activeTab === 'buscar'">
+      <div class="wo-card">
+        <div class="wo-card-title">Buscar orden</div>
+
+        <div class="wo-search-row">
+          <!-- Tipo de búsqueda -->
+          <select class="form-style wo-select" [(ngModel)]="searchType" name="searchType"
+            (ngModelChange)="onSearchTypeChange()">
+            <option value="number">Por N° orden</option>
+            <option value="plate">Por placa</option>
+            <option value="client">Por identificación</option>
+            <option value="state">Por estado</option>
+          </select>
+
+          <!-- Input dinámico: select para estado, texto para el resto -->
+          <ng-container *ngIf="searchType === 'state'; else textSearchInput">
+            <select class="form-style wo-search-input" [(ngModel)]="searchValue" name="searchValueState">
+              <option value="">Selecciona un estado...</option>
+              <option *ngFor="let s of stateOrders" [value]="s.value">{{ s.label }}</option>
+            </select>
+          </ng-container>
+          <ng-template #textSearchInput>
+            <input type="text" class="form-style wo-search-input" placeholder="Ingresa el valor..."
+              [(ngModel)]="searchValue" name="searchValue"
+              (keyup.enter)="doSearch()" />
+          </ng-template>
+
+          <button class="btn-primary" (click)="doSearch()" [disabled]="isLoading">
+            {{ isLoading ? '...' : 'Buscar' }}
+          </button>
+        </div>
+
+        <!-- Estado inicial (sin búsqueda aún) -->
+        <div *ngIf="!isLoading && !searchPerformed" class="wo-empty">
+          Selecciona un criterio e ingresa un valor para buscar.
+        </div>
+
+        <!-- Sin resultados después de buscar -->
+        <div *ngIf="!isLoading && searchPerformed && searchResults.length === 0" class="wo-empty">
+          No se encontraron órdenes con ese criterio.
+        </div>
+
+        <!-- Tabla de resultados -->
+        <div class="wo-table-wrap" *ngIf="!isLoading && searchResults.length > 0">
+          <p class="wo-table-hint">Haz clic en una fila para ver el detalle de la orden</p>
+          <table class="wo-table">
+            <thead>
+              <tr>
+                <th>N° Orden</th>
+                <th>Cliente</th>
+                <th>Placa</th>
+                <th>Vehículo</th>
+                <th>Estado</th>
+                <th>Prioridad</th>
+                <th>Fecha ingreso</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let o of searchResults" (click)="openDetail(o)" class="wo-row-clickable">
+                <td class="col-number">{{ o.numberorder }}</td>
+                <td>
+                  {{ o.clientname }}<br>
+                  <span class="col-sub">{{ o.clientphone }}</span>
+                </td>
+                <td class="col-plate">{{ o.vehicleplate }}</td>
+                <td>{{ o.vehiclebrand }} {{ o.vehiclemodel }} {{ o.vehicleyear }}</td>
+                <td>
+                  <span class="wo-badge" [ngClass]="stateBadgeClass(o.stateorder)">
+                    {{ stateLabels[o.stateorder] }}
+                  </span>
+                </td>
+                <td>
+                  <span class="wo-badge" [ngClass]="priorityBadgeClass(o.priority)">
+                    {{ o.priority }}
+                  </span>
+                </td>
+                <td class="col-sub">{{ o.dateentry | date:'dd/MM/yyyy HH:mm' }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </ng-container>
+
+  </div>
+</div>
+
+<!-- ══ MODAL: CONFIRMACIÓN DE ORDEN CREADA ══════════════════════════════════ -->
+<div class="modal-overlay" *ngIf="showConfirmation" (click)="closeConfirmation()">
+  <div class="modal-card" (click)="$event.stopPropagation()">
+
+    <div class="modal-header">
+      <div class="modal-success-icon">✓</div>
+      <h2 class="modal-title">¡Orden creada exitosamente!</h2>
+      <p class="modal-subtitle">La orden ha sido registrada en el sistema</p>
+    </div>
+
+    <div class="modal-number">
+      <span class="modal-number-label">Número de orden</span>
+      <span class="modal-number-value">{{ confirmedOrder?.numberorder }}</span>
+    </div>
+
+    <div class="modal-sections" *ngIf="confirmedOrder">
+
+      <div class="modal-section">
+        <div class="modal-section-title">Cliente</div>
+        <div class="modal-row">
+          <span class="modal-key">Nombre</span>
+          <span class="modal-val">{{ confirmedOrder.clientname }}</span>
+        </div>
+        <div class="modal-row">
+          <span class="modal-key">Identificación</span>
+          <span class="modal-val">{{ confirmedOrder.clientidentification }}</span>
+        </div>
+        <div class="modal-row">
+          <span class="modal-key">Teléfono</span>
+          <span class="modal-val">{{ confirmedOrder.clientphone }}</span>
+        </div>
+      </div>
+
+      <div class="modal-section">
+        <div class="modal-section-title">Vehículo</div>
+        <div class="modal-row">
+          <span class="modal-key">Placa</span>
+          <span class="modal-val modal-plate">{{ confirmedOrder.vehicleplate }}</span>
+        </div>
+        <div class="modal-row">
+          <span class="modal-key">Vehículo</span>
+          <span class="modal-val">{{ confirmedOrder.vehiclebrand }} {{ confirmedOrder.vehiclemodel }} {{ confirmedOrder.vehicleyear }}</span>
+        </div>
+        <div class="modal-row" *ngIf="confirmedOrder.vehiclecolor">
+          <span class="modal-key">Color</span>
+          <span class="modal-val">{{ confirmedOrder.vehiclecolor }}</span>
+        </div>
+      </div>
+
+      <div class="modal-section">
+        <div class="modal-section-title">Diagnóstico</div>
+        <div class="modal-row">
+          <span class="modal-key">Fallas</span>
+          <span class="modal-val">{{ confirmedOrder.failuresreported }}</span>
+        </div>
+        <div class="modal-row">
+          <span class="modal-key">Prioridad</span>
+          <span class="modal-val">
+            <span class="wo-badge" [ngClass]="priorityBadgeClass(confirmedOrder.priority)">
+              {{ confirmedOrder.priority }}
+            </span>
+          </span>
+        </div>
+        <div class="modal-row">
+          <span class="modal-key">Estado</span>
+          <span class="modal-val">
+            <span class="wo-badge badge-recibido">Recibido</span>
+          </span>
+        </div>
+        <div class="modal-row" *ngIf="confirmedOrder.dateestimateddelivery">
+          <span class="modal-key">Entrega estimada</span>
+          <span class="modal-val">{{ confirmedOrder.dateestimateddelivery | date:'dd/MM/yyyy' }}</span>
+        </div>
+        <div class="modal-row">
+          <span class="modal-key">Fecha ingreso</span>
+          <span class="modal-val">{{ confirmedOrder.dateentry | date:'dd/MM/yyyy HH:mm' }}</span>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn-secondary" (click)="closeConfirmation()">Cerrar</button>
+      <button class="btn-primary" (click)="goToList()">Ver lista de órdenes</button>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══ MODAL: DETALLE DE ORDEN ═══════════════════════════════════════════════ -->
+<div class="modal-overlay" *ngIf="showDetail" (click)="closeDetail()">
+  <div class="modal-card modal-card--detail" (click)="$event.stopPropagation()">
+
+    <!-- Header -->
+    <div class="modal-header">
+      <div class="modal-detail-icon">🔧</div>
+      <h2 class="modal-title">Detalle de Orden</h2>
+      <p class="modal-subtitle">Información completa de la orden de trabajo</p>
+    </div>
+
+    <!-- Número de orden -->
+    <div class="modal-number" *ngIf="detailOrder">
+      <span class="modal-number-label">Número de orden</span>
+      <span class="modal-number-value">{{ detailOrder.numberorder }}</span>
+    </div>
+
+    <!-- Contenido -->
+    <div class="modal-sections" *ngIf="detailOrder">
+
+      <!-- Estado y prioridad -->
+      <div class="modal-section">
+        <div class="modal-section-title">Estado y prioridad</div>
+        <div class="modal-row">
+          <span class="modal-key">Estado actual</span>
+          <span class="modal-val">
+            <span class="wo-badge" [ngClass]="stateBadgeClass(detailOrder.stateorder)">
+              {{ stateLabels[detailOrder.stateorder] }}
+            </span>
+          </span>
+        </div>
+        <div class="modal-row">
+          <span class="modal-key">Prioridad</span>
+          <span class="modal-val">
+            <span class="wo-badge" [ngClass]="priorityBadgeClass(detailOrder.priority)">
+              {{ detailOrder.priority }}
+            </span>
+          </span>
+        </div>
+        <div class="modal-row">
+          <span class="modal-key">Fecha ingreso</span>
+          <span class="modal-val">{{ detailOrder.dateentry | date:'dd/MM/yyyy HH:mm' }}</span>
+        </div>
+        <div class="modal-row" *ngIf="detailOrder.dateestimateddelivery">
+          <span class="modal-key">Entrega estimada</span>
+          <span class="modal-val">{{ detailOrder.dateestimateddelivery | date:'dd/MM/yyyy' }}</span>
+        </div>
+        <div class="modal-row" *ngIf="detailOrder.createdBy">
+          <span class="modal-key">Creado por</span>
+          <span class="modal-val">{{ detailOrder.createdBy }}</span>
+        </div>
+      </div>
+
+      <!-- Cliente -->
+      <div class="modal-section">
+        <div class="modal-section-title">Cliente</div>
+        <div class="modal-row">
+          <span class="modal-key">Nombre</span>
+          <span class="modal-val">{{ detailOrder.clientname }}</span>
+        </div>
+        <div class="modal-row">
+          <span class="modal-key">Identificación</span>
+          <span class="modal-val">{{ detailOrder.clientidentification }}</span>
+        </div>
+        <div class="modal-row">
+          <span class="modal-key">Teléfono</span>
+          <span class="modal-val">{{ detailOrder.clientphone }}</span>
+        </div>
+      </div>
+
+      <!-- Vehículo -->
+      <div class="modal-section">
+        <div class="modal-section-title">Vehículo</div>
+        <div class="modal-row">
+          <span class="modal-key">Placa</span>
+          <span class="modal-val modal-plate">{{ detailOrder.vehicleplate }}</span>
+        </div>
+        <div class="modal-row">
+          <span class="modal-key">Marca / Modelo</span>
+          <span class="modal-val">{{ detailOrder.vehiclebrand }} {{ detailOrder.vehiclemodel }}</span>
+        </div>
+        <div class="modal-row">
+          <span class="modal-key">Año</span>
+          <span class="modal-val">{{ detailOrder.vehicleyear }}</span>
+        </div>
+        <div class="modal-row" *ngIf="detailOrder.vehiclecolor">
+          <span class="modal-key">Color</span>
+          <span class="modal-val">{{ detailOrder.vehiclecolor }}</span>
+        </div>
+      </div>
+
+      <!-- Diagnóstico -->
+      <div class="modal-section">
+        <div class="modal-section-title">Diagnóstico y condiciones</div>
+        <div class="modal-row">
+          <span class="modal-key">Fallas reportadas</span>
+          <span class="modal-val">{{ detailOrder.failuresreported }}</span>
+        </div>
+        <div class="modal-row" *ngIf="detailOrder.levelfuel">
+          <span class="modal-key">Combustible</span>
+          <span class="modal-val">{{ fuelLevels[fuelIndex(detailOrder.levelfuel) - 1].label }}</span>
+        </div>
+        <div class="modal-row">
+          <span class="modal-key">Rayones</span>
+          <span class="modal-val">{{ conditionLabels[detailOrder.statescratches!] }}</span>
+        </div>
+        <div class="modal-row">
+          <span class="modal-key">Abolladuras</span>
+          <span class="modal-val">{{ conditionLabels[detailOrder.statedents!] }}</span>
+        </div>
+        <div class="modal-row" *ngIf="detailOrder.accessoriesobservations">
+          <span class="modal-key">Accesorios</span>
+          <span class="modal-val">{{ detailOrder.accessoriesobservations }}</span>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn-secondary" (click)="closeDetail()">Cerrar</button>
+    </div>
+
+  </div>
+</div>

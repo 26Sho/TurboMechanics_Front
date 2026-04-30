@@ -159,6 +159,39 @@ $font-display: 'Bebas Neue', sans-serif;
     white-space: nowrap;
   }
 
+  // ── Botón Órdenes de trabajo ─────────────────────────────────────────────
+  &__workorder-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 8px 16px;
+    border: 1.5px solid rgba($orange, 0.6);
+    border-radius: 4px;
+    background: none;
+    font-family: $font-heading;
+    font-size: 0.85rem;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: $orange;
+    cursor: pointer;
+    transition: all 0.3s ease;
+
+    i {
+      font-size: 1rem;
+      color: $orange;
+    }
+
+    &:hover {
+      background: rgba($orange, 0.12);
+      border-color: $orange;
+      box-shadow: 0 0 16px rgba($orange, 0.25);
+      color: $orange-light;
+
+      i { color: $orange-light; }
+    }
+  }
+
   &__logout-btn {
     display: flex;
     align-items: center;
@@ -278,6 +311,18 @@ $font-display: 'Bebas Neue', sans-serif;
       i {
         color: $orange;
         margin-right: 6px;
+      }
+    }
+
+    // ── Mobile: botón órdenes ──────────────────────────────────────────────
+    .mobile-workorder {
+      color: $orange !important;
+
+      i { margin-right: 6px; }
+
+      &:hover {
+        color: $orange-light !important;
+        background: rgba($orange, 0.06);
       }
     }
 

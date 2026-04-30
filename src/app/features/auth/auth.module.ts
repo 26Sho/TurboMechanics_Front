@@ -6,11 +6,12 @@ import { RecoverPasswordComponent } from './pages/recover-password/recover-passw
 import { RegisterComponent } from './pages/register/register.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
+import { WorkOrderComponent } from './pages/work-order/work-order.component';
 
 
 
 @NgModule({
-  declarations: [AuthComponent, LoginComponent, RecoverPasswordComponent, RegisterComponent],
+  declarations: [AuthComponent, LoginComponent, RecoverPasswordComponent, RegisterComponent, WorkOrderComponent],
   imports: [
     CommonModule,
     FormsModule,

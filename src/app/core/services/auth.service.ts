@@ -27,6 +27,7 @@ export class AuthService {
         if (res.jwt) {
           localStorage.setItem('token', res.jwt);
           localStorage.setItem('username', data.email);
+          localStorage.setItem('rolId', String(res.rolId));
           this.authState$.next(true);
         }
       })
@@ -35,6 +36,10 @@ export class AuthService {
 
   getUsername(): string {
     return localStorage.getItem('username') || '';
+  }
+
+  getRolId(): number {
+    return Number(localStorage.getItem('rolId'));
   }
 
   refreshToken(): Observable<RefreshTokenResponse> {
@@ -49,6 +54,7 @@ export class AuthService {
   logout() {
     localStorage.removeItem('token');
     localStorage.removeItem('username');
+    localStorage.removeItem('rolId');
     this.authState$.next(false);
   }
 

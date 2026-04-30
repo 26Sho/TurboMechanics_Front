@@ -6,6 +6,7 @@ export interface LoginRequest {
 export interface LoginResponse {
   message: string;
   jwt: string;
+  rolId: number;
 }
 
 export interface RegisterRequest {

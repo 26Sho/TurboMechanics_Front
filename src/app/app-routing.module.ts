@@ -5,6 +5,7 @@ import { RecoverPasswordComponent } from './features/auth/pages/recover-password
 import { HomeComponent } from './components/home/home.component';
 import { authGuard } from './core/guards/auth.guard';
 import { noAuthGuard } from './core/guards/no-auth.guard';
+import { WorkOrderComponent } from './features/auth/pages/work-order/work-order.component';
 
 const routes: Routes = [
   // Rutas públicas
@@ -14,6 +15,9 @@ const routes: Routes = [
   // Rutas solo para NO autenticados (si ya iniciaste sesión te manda al home)
   { path: 'login',             component: AuthComponent,            canActivate: [noAuthGuard] },
   { path: 'recover-password',  component: RecoverPasswordComponent, canActivate: [noAuthGuard] },
+
+  // Rutas protegidas (requieren autenticación)
+  { path: 'work-order',    component: WorkOrderComponent,           canActivate: [authGuard] },
 
   // Ruta comodín
   { path: '**', redirectTo: 'home' },

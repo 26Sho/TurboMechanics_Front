@@ -39,6 +39,13 @@
       <div *ngIf="isLoggedIn" class="navbar__user">
         <i class="fas fa-user-circle"></i>
         <span class="navbar__username">{{ username }}</span>
+
+        <!-- Solo visible para mecánico (2) y admin (3) -->
+        <button *ngIf="isMecanicoOrAdmin" class="navbar__workorder-btn" (click)="goToWorkOrder()">
+          <i class="fas fa-clipboard-list"></i>
+          <span>Órdenes</span>
+        </button>
+
         <button class="navbar__logout-btn" (click)="onLogout()">
           <i class="fas fa-sign-out-alt"></i>
           <span>Cerrar sesión</span>
@@ -66,6 +73,10 @@
       </li>
       <li *ngIf="isLoggedIn" class="mobile-user">
         <span class="mobile-username"><i class="fas fa-user-circle"></i> {{ username }}</span>
+        <a *ngIf="isMecanicoOrAdmin" href="#" class="mobile-workorder"
+           (click)="goToWorkOrder(); $event.preventDefault()">
+          <i class="fas fa-clipboard-list"></i> Órdenes de trabajo
+        </a>
         <a href="#" class="mobile-logout" (click)="onLogout(); $event.preventDefault()">
           <i class="fas fa-sign-out-alt"></i> Cerrar sesión
         </a>
