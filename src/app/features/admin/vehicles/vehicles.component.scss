@@ -1,0 +1,159 @@
+@use '../../../../styles/variables' as *;
+
+
+.page { 
+  animation: fadeSlideIn 0.4s ease; 
+  padding: 24px; 
+}
+
+@keyframes fadeSlideIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.page-header { 
+  display: flex; 
+  align-items: flex-start; 
+  justify-content: space-between; 
+  margin-bottom: 24px; 
+  gap: 16px; 
+  flex-wrap: wrap; 
+}
+
+.page-title { 
+  font-family: 'Barlow Condensed', sans-serif; 
+  font-size: 34px; 
+  font-weight: 900; 
+  color: #FFFFFF; 
+  line-height: 1; 
+  margin-bottom: 6px; 
+}
+
+.page-sub { 
+  font-size: 13px; 
+  color: #6E6E6E; 
+}
+
+//BARRA DE FILTROS Y BÚSQUEDA
+.search-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.search-label {
+  font-size: 11px; 
+  font-weight: 600; 
+  letter-spacing: 0.08em; 
+  text-transform: uppercase; 
+  color: #6E6E6E;
+}
+
+// TABLA DE DATOS
+.turbo-table {
+  width: 100%; 
+  border-collapse: collapse;
+
+  th { 
+    text-align: left; 
+    padding: 12px; 
+    color: #6E6E6E; 
+    font-size: 11px; 
+    text-transform: uppercase; 
+    border-bottom: 1px solid #3A3A3A; 
+  }
+
+  td { 
+    padding: 12px; 
+    border-bottom: 1px solid rgba(58, 58, 58, 0.5); 
+    vertical-align: middle; 
+  }
+}
+
+// ELEMENTOS DE FILA 
+.car-icon { 
+  width: 36px; 
+  height: 36px; 
+  border-radius: 8px; 
+  background: rgba(244, 93, 1, 0.1); 
+  border: 1px solid rgba(244, 93, 1, 0.2); 
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+  color: #F45D01; 
+  flex-shrink: 0; 
+}
+
+.car-name { 
+  color: #CFCFCF; 
+  font-weight: 600; 
+  font-size: 13px; 
+  margin: 0; 
+}
+
+.plate { 
+  font-family: monospace; 
+  font-size: 13px; 
+  font-weight: 700; 
+  color: #CFCFCF; 
+  background: rgba(255, 255, 255, 0.06); 
+  border: 1px solid #3A3A3A; 
+  padding: 3px 10px; 
+  border-radius: 4px; 
+  letter-spacing: 0.1em; 
+}
+
+.color-dot { 
+  width: 12px; 
+  height: 12px; 
+  border-radius: 50%; 
+  border: 1px solid rgba(255, 255, 255, 0.2); 
+  flex-shrink: 0; 
+}
+
+.btn-icon { 
+  width: 30px; 
+  height: 30px; 
+  border-radius: 6px; 
+  background: rgba(255, 255, 255, 0.05); 
+  border: 1px solid #3A3A3A; 
+  color: #6E6E6E; 
+  cursor: pointer; 
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+  transition: all 0.2s; 
+
+  &:hover { 
+    background: rgba(244, 93, 1, 0.1); 
+    border-color: #F45D01; 
+    color: #F45D01; 
+  }
+}
+
+.btn-ghost {
+  background: transparent; 
+  border: none; 
+  color: #6E6E6E; 
+  font-size: 12px; 
+  cursor: pointer; 
+  text-decoration: underline;
+
+  &:hover { color: #F45D01; }
+}
+
+.badge {
+  padding: 4px 8px; 
+  border-radius: 4px; 
+  font-size: 11px; 
+  font-weight: 700;
+
+  &--neutral { 
+    background: #2A2A2A; 
+    color: #6E6E6E; 
+  }
+}
+
+.text-accent { 
+  color: #F45D01; 
+}

@@ -1,0 +1,74 @@
+<div class="dashboard page">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Dashboard</h1>
+      <p class="page-sub">Resumen operativo — <span class="text-accent">Abril 2025</span></p>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-ghost">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+        Exportar
+      </button>
+      <button class="btn btn-primary">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Nueva Orden
+      </button>
+    </div>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card card" *ngFor="let stat of stats; let i = index">
+      <div class="stat-icon" [style.background]="stat.accent + '22'" [style.color]="stat.accent" [innerHTML]="stat.icon"></div>
+      <div class="stat-body">
+        <p class="stat-label">{{ stat.label }}</p>
+        <p class="stat-value">{{ stat.value }}</p>
+        <p class="stat-sub">{{ stat.sub }} 
+          <span [class]="stat.change >= 0 ? 'stat-change up' : 'stat-change down'">
+            {{ stat.change >= 0 ? '↑' : '↓' }} {{ Math.abs(stat.change) }}%
+          </span>
+        </p>
+      </div>
+    </div>
+  </div>
+
+  <div class="main-grid">
+    <div class="card orders-card">
+      <div class="card-header">
+        <h2 class="card-title">Órdenes Recientes</h2>
+        <a class="link-accent" href="/admin/ordenes">Ver todas →</a>
+      </div>
+      <div class="table-wrap">
+        <table class="turbo-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Cliente / Vehículo</th>
+              <th>Servicio</th>
+              <th>Técnico</th>
+              <th>Estado</th>
+              <th>Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let order of orders()">
+              <td><span class="order-id">#{{ order.id }}</span></td>
+              <td>
+                <p class="fw-semibold" style="color: #CFCFCF; font-size:13px; margin:0;">{{ order.client }}</p>
+                <p style="color:#6E6E6E; font-size:12px; margin:0;">{{ order.vehicle }}</p>
+              </td>
+              <td style="font-size:13px; color:#CFCFCF;">{{ order.service }}</td>
+              <td>
+                <div class="tech-chip">
+                  <span class="tech-avatar">{{ order.tech[0] }}</span>
+                  {{ order.tech }}
+                </div>
+              </td>
+              <td>
+                <span class="badge" [class]="statusClass(order.status)">{{ order.status }}</span>
+              </td>
+              <td class="fw-semibold text-accent">{{ order.total }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>

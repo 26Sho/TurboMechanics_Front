@@ -1,0 +1,210 @@
+@use '../../../../styles/variables' as *;
+
+// 1. CONTENEDOR PRINCIPAL (LAYOUT)
+// ---------------------------------------------------------
+.sidebar {
+  position: fixed; 
+  left: 0; top: 0; bottom: 0;
+  width: $sidebar-width;
+  background: $gris-osc; 
+  border-right: 1px solid $color-border;
+  display: flex; 
+  flex-direction: column;
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  z-index: 100; 
+  overflow: hidden;
+
+  &.collapsed {
+    width: $sidebar-collapsed;
+    
+    .logo-img { width: 36px; height: 36px; }
+    .nav-item  { justify-content: center; padding: 12px 0; }
+    .user-avatar-sm { margin: 4px auto; }
+  }
+}
+
+// 2. LOGOTIPO Y BRANDING (TOP)
+// ---------------------------------------------------------
+.sidebar__logo {
+  display: flex; 
+  align-items: center; 
+  gap: 12px;
+  padding: 20px 18px; 
+  min-height: $topbar-height;
+}
+
+.logo-img {
+  width: 42px; 
+  height: 42px; 
+  object-fit: contain;
+  filter: drop-shadow(0 0 8px rgba($naranja, 0.5));
+  flex-shrink: 0; 
+  transition: all 0.3s;
+}
+
+.logo-text { 
+  display: flex; 
+  flex-direction: column; 
+  line-height: 1; 
+  white-space: nowrap; 
+}
+
+.logo-brand {
+  font-family: $font-display; 
+  font-size: 22px; 
+  font-weight: 900;
+  background: linear-gradient(135deg, $naranja, $naranja-c, $amarillo);
+  -webkit-background-clip: text;
+  background-clip: text; 
+  -webkit-text-fill-color: transparent;
+}
+
+.logo-sub {
+  font-family: $font-display; 
+  font-size: 11px;
+  font-weight: 600; 
+  letter-spacing: 0.15em; 
+  color: $gris-med;
+}
+
+.sidebar__divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, $color-border, transparent);
+  margin: 0 18px;
+}
+
+// 3. NAVEGACIÓN PRINCIPAL (BODY)
+// ---------------------------------------------------------
+.sidebar__nav {
+  flex: 1; 
+  padding: 16px 12px;
+  display: flex; 
+  flex-direction: column; 
+  gap: 2px;
+  overflow-y: auto;
+}
+
+.nav-section-label {
+  font-size: 10px; 
+  font-weight: 700; 
+  letter-spacing: 0.12em;
+  color: $gris-med; 
+  padding: 4px 10px 8px; 
+  display: block;
+}
+
+.nav-item {
+  display: flex; 
+  align-items: center; 
+  gap: 12px;
+  padding: 11px 14px; 
+  border-radius: $border-radius;
+  color: $gris-med; 
+  text-decoration: none;
+  font-size: 14px; 
+  font-weight: 500;
+  position: relative; 
+  transition: all 0.2s; 
+  white-space: nowrap;
+
+  &:hover { 
+    background: rgba($naranja, 0.08); 
+    color: $plateado; 
+  }
+
+  &.active {
+    background: rgba($naranja, 0.12); 
+    color: $blanco;
+
+    &::before {
+      content: ''; 
+      position: absolute;
+      left: 0; top: 50%; 
+      transform: translateY(-50%);
+      width: 3px; height: 60%;
+      background: linear-gradient(180deg, $naranja, $naranja-c);
+      border-radius: 0 3px 3px 0;
+    }
+
+    .nav-icon { 
+      color: $naranja; 
+      filter: drop-shadow(0 0 6px rgba($naranja, 0.5)); 
+    }
+  }
+}
+
+.nav-icon { 
+  width: 18px; 
+  height: 18px; 
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+  flex-shrink: 0; 
+}
+
+.nav-label { flex: 1; }
+
+.nav-badge {
+  background: $naranja; 
+  color: $negro; 
+  font-size: 10px; 
+  font-weight: 700;
+  min-width: 18px; 
+  height: 18px; 
+  border-radius: 9px;
+  display: flex; 
+  align-items: center; 
+  justify-content: center; 
+  padding: 0 5px;
+}
+
+// 4. PERFIL Y FOOTER (BOTTOM)
+// ---------------------------------------------------------
+.sidebar__bottom { 
+  padding: 12px 12px 20px; 
+  flex-shrink: 0; 
+}
+
+.user-card {
+  display: flex; 
+  align-items: center; 
+  gap: 10px; 
+  padding: 10px 12px;
+  border-radius: $border-radius; 
+  background: rgba($blanco, 0.04); 
+  border: 1px solid $color-border;
+}
+
+.user-avatar {
+  width: 34px; 
+  height: 34px; 
+  border-radius: 50%;
+  background: linear-gradient(135deg, $naranja, $naranja-c);
+  display: flex; 
+  align-items: center; 
+  justify-content: center;
+  font-size: 12px; 
+  font-weight: 700; 
+  color: $negro; 
+  flex-shrink: 0;
+}
+
+.user-avatar-sm { 
+  @extend .user-avatar; 
+}
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+}
+
+.user-name { 
+  font-size: 13px; 
+  font-weight: 600; 
+  color: $plateado; 
+}
+
+.user-role { 
+  font-size: 11px; 
+  color: $gris-med; 
+}

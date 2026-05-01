@@ -1,0 +1,89 @@
+<div class="page">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Clientes</h1>
+      <p class="page-sub">Base de clientes — <span class="text-accent">{{ clients.length }} registros</span></p>
+    </div>
+    <button class="btn btn-primary" (click)="nuevoCliente()">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round">
+        <line x1="12" y1="5" x2="12" y2="19"></line>
+        <line x1="5" y1="12" x2="19" y2="12"></line>
+      </svg>
+      Nuevo Cliente
+    </button>
+  </div>
+
+  <div class="filters-bar card">
+    <div class="search-group">
+      <label class="search-label">Buscar por documento</label>
+      <input type="text" class="turbo-input" placeholder="Ej: 1094567890" [(ngModel)]="search" />
+    </div>
+    <div class="spacer"></div>
+    <span class="text-muted">{{ filteredClients.length }} resultado(s)</span>
+  </div>
+
+  <div class="clients-grid">
+    <div class="client-card card" *ngFor="let c of filteredClients" (click)="verDetalles(c)">
+      <div class="client-header">
+        <div class="client-avatar" [style.background]="c.avatarColor">{{ c.initials }}</div>
+        <div class="client-info">
+          <p class="client-name">{{ c.name }}</p>
+          <p class="client-since">Cliente desde {{ c.since }}</p>
+        </div>
+        <span class="badge" [ngClass]="c.vip ? 'badge--accent' : 'badge--neutral'">
+          {{ c.vip ? 'VIP' : 'Regular' }}
+        </span>
+      </div>
+
+      <div class="client-meta">
+        <div class="meta-item">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path
+              d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a19.79 19.79 0 01-3.07-8.63A2 2 0 012 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 14.92z" />
+          </svg>
+          {{ c.phone }}
+        </div>
+        <div class="meta-item">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+            <polyline points="22,6 12,13 2,6" />
+          </svg>
+          {{ c.email }}
+        </div>
+      </div>
+
+      <div class="client-stats">
+        <div class="cstat">
+          <span class="cstat-val">{{ c.orders }}</span>
+          <span class="cstat-label">Órdenes</span>
+        </div>
+
+        <div class="client-actions">
+          <button class="btn btn-sm btn-edit" (click)="editClient(c)">
+            Editar
+          </button>
+          <button class="btn btn-sm btn-delete" (click)="deleteClient(c)">
+            Eliminar
+          </button>
+        </div>
+
+        <div class="cstat-divider"></div>
+        <div class="cstat">
+          <span class="cstat-val">{{ c.vehicles }}</span>
+          <span class="cstat-label">Vehículos</span>
+        </div>
+        <div class="cstat-divider"></div>
+        <div class="cstat">
+          <span class="cstat-val text-accent">{{ c.spent }}</span>
+          <span class="cstat-label">Facturado</span>
+        </div>
+      </div>
+
+      <div class="card-actions">
+        <button class="btn-action edit" (click)="$event.stopPropagation(); editar(c)">Editar</button>
+        <button class="btn-action delete" (click)="$event.stopPropagation(); eliminar(c)">Eliminar</button>
+      </div>
+    </div>
+  </div>
+</div>

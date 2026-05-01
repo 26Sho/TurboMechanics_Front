@@ -15,7 +15,15 @@ const routes: Routes = [
   { path: 'login',             component: AuthComponent,            canActivate: [noAuthGuard] },
   { path: 'recover-password',  component: RecoverPasswordComponent, canActivate: [noAuthGuard] },
 
-  // Ruta comodín
+  //Ruta admin
+  {
+    path: 'admin',
+    //canActivate: [authGuard],
+    loadChildren: () =>
+    import('./features/admin/admin.module').then(m => m.AdminModule),
+  },
+
+    // Ruta comodín
   { path: '**', redirectTo: 'home' },
 ];
 

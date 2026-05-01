@@ -1,0 +1,66 @@
+<div class="page">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Órdenes de Trabajo</h1>
+      <p class="page-sub">Gestión de órdenes — <span class="text-accent">{{ orders().length }} registros en BD</span></p>
+    </div>
+    <button class="btn btn-primary" (click)="nuevaOrden()">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Nueva Orden
+    </button>
+  </div>
+
+  <div class="filters-bar card">
+    <input type="text" class="turbo-input search-input" placeholder="Buscar por cliente, vehículo o ID..."
+           [value]="search" (input)="onSearchChange($event)" />
+    <select class="turbo-select status-select" [value]="filterStatus" (change)="onStatusChange($event)">
+      <option value="">Todos los estados</option>
+      <option value="En proceso">En proceso</option>
+      <option value="Pendiente">Pendiente</option>
+      <option value="Listo">Listo</option>
+      <option value="Entregado">Entregado</option>
+    </select>
+    <div class="filters-spacer"></div>
+    <span class="text-muted results-count">{{ filteredOrders.length }} resultado(s)</span>
+  </div>
+
+  <div class="card table-card">
+    <div class="table-wrapper">
+      <table class="turbo-table">
+        <thead>
+          <tr>
+            <th>ID Orden</th>
+            <th>Fecha</th>
+            <th>Cliente</th>
+            <th>Vehículo</th>
+            <th>Técnico</th>
+            <th>Estado</th>
+            <th>Total</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let o of filteredOrders">
+            <td><span class="order-id">#{{ o.id }}</span></td>
+            <td><span class="date-cell">{{ o.date }}</span></td>
+            <td><p class="client-cell">{{ o.client }}</p></td>
+            <td><span class="vehicle-cell">{{ o.vehicle }}</span></td>
+            <td>
+              <div class="tech-chip">
+                <span class="tech-avatar">{{ o.tech[0] }}</span>
+                {{ o.tech }}
+              </div>
+            </td>
+            <td><span class="badge" [class]="statusClass(o.status)">{{ o.status }}</span></td>
+            <td><span class="fw-semibold text-accent">{{ o.total }}</span></td>
+            <td>
+              <button class="btn-icon">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
