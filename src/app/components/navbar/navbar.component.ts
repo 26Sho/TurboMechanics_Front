@@ -50,6 +50,11 @@ export class NavbarComponent implements OnInit, OnDestroy {
     this.router.navigate(['/work-order']);
   }
 
+  goToVehicles(): void {
+    this.closeMobile();
+    this.router.navigate(['/vehicles']);
+  }
+
   @HostListener('window:scroll')
   onScroll(): void {
     this.isScrolled = window.scrollY > 40;

@@ -45,6 +45,10 @@
           <i class="fas fa-clipboard-list"></i>
           <span>Órdenes</span>
         </button>
+        <button *ngIf="isMecanicoOrAdmin" class="navbar__workorder-btn" (click)="goToVehicles()">
+          <i class="fas fa-car"></i>
+          <span>Vehículos</span>
+        </button>
 
         <button class="navbar__logout-btn" (click)="onLogout()">
           <i class="fas fa-sign-out-alt"></i>
@@ -76,6 +80,10 @@
         <a *ngIf="isMecanicoOrAdmin" href="#" class="mobile-workorder"
            (click)="goToWorkOrder(); $event.preventDefault()">
           <i class="fas fa-clipboard-list"></i> Órdenes de trabajo
+        </a>
+        <a *ngIf="isMecanicoOrAdmin" href="#" class="mobile-workorder"
+           (click)="goToVehicles(); $event.preventDefault()">
+          <i class="fas fa-car"></i> Vehículos
         </a>
         <a href="#" class="mobile-logout" (click)="onLogout(); $event.preventDefault()">
           <i class="fas fa-sign-out-alt"></i> Cerrar sesión

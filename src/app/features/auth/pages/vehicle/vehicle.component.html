@@ -1,0 +1,359 @@
+<div class="auth-wrapper">
+  <div class="wo-container">
+
+    <!-- Brand -->
+    <div class="brand">
+      <span class="brand-dot"></span>
+      <h1>TurboMechanics</h1>
+      <span class="brand-sub">Gestión de Vehículos</span>
+    </div>
+
+    <!-- Tabs -->
+    <div class="wo-tabs">
+      <button class="wo-tab" [class.active]="activeTab === 'registrar'" (click)="setTab('registrar')">Registrar</button>
+      <button class="wo-tab" [class.active]="activeTab === 'asociar'"   (click)="setTab('asociar')">Asociar cliente</button>
+      <button class="wo-tab" [class.active]="activeTab === 'lista'"     (click)="setTab('lista')">Lista</button>
+    </div>
+
+    <!-- ══ TAB: REGISTRAR ═══════════════════════════════════════════════════ -->
+    <ng-container *ngIf="activeTab === 'registrar'">
+
+      <!-- Datos del vehículo -->
+      <div class="wo-card">
+        <div class="wo-card-title">Datos del vehículo</div>
+        <div class="wo-grid wo-grid-3">
+          <div class="form-group">
+            <label class="wo-label">Placa *</label>
+            <input type="text" class="form-style" placeholder="ABC-123"
+              [(ngModel)]="plate" name="plate" style="text-transform:uppercase" />
+          </div>
+          <div class="form-group">
+            <label class="wo-label">Marca *</label>
+            <input type="text" class="form-style" placeholder="Toyota"
+              [(ngModel)]="brand" name="brand" />
+          </div>
+          <div class="form-group">
+            <label class="wo-label">Modelo *</label>
+            <input type="text" class="form-style" placeholder="Corolla"
+              [(ngModel)]="model" name="model" />
+          </div>
+          <div class="form-group">
+            <label class="wo-label">Año *</label>
+            <input type="number" class="form-style" placeholder="2020"
+              [(ngModel)]="year" name="year" min="1900" max="2100" />
+          </div>
+          <div class="form-group">
+            <label class="wo-label">Color</label>
+            <input type="text" class="form-style" placeholder="Blanco"
+              [(ngModel)]="color" name="color" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Propietario -->
+      <div class="wo-card">
+        <div class="wo-card-title">Propietario del vehículo</div>
+
+        <!-- Propietario seleccionado -->
+        <div class="owner-selected" *ngIf="selectedOwnerId">
+          <div class="owner-selected-info">
+            <span class="owner-icon">👤</span>
+            <span>{{ selectedOwnerName }}</span>
+          </div>
+          <button class="btn-clear-owner" (click)="clearOwnerSelection()">✕ Cambiar</button>
+        </div>
+
+        <!-- Buscador de propietario -->
+        <ng-container *ngIf="!selectedOwnerId">
+          <div class="search-row">
+            <input type="text" class="form-style" placeholder="Buscar por nombre, cédula o correo..."
+              [(ngModel)]="ownerSearch" name="ownerSearch"
+              (keyup.enter)="searchOwnerForRegister()" />
+            <button class="btn-search" (click)="searchOwnerForRegister()" [disabled]="isLoading">
+              <span *ngIf="!isLoading">Buscar</span>
+              <span *ngIf="isLoading" class="spinner-sm"></span>
+            </button>
+          </div>
+
+          <!-- Resultados búsqueda -->
+          <div class="owner-results" *ngIf="ownerSearched">
+            <div class="wo-alert wo-alert-warning" *ngIf="ownerNotFound">
+              <span class="wo-alert-icon">⚠️</span>
+              <div><strong>No se encontraron clientes</strong>
+                <p>Verifica que el cliente esté registrado en el sistema.</p></div>
+            </div>
+            <div class="owner-list" *ngIf="ownerResults.length > 0">
+              <div class="owner-item" *ngFor="let u of ownerResults" (click)="selectOwner(u)">
+                <div class="owner-item-name">{{ u.username }}</div>
+                <div class="owner-item-meta">
+                  <span>Cédula: {{ u.identification }}</span>
+                  <span>{{ u.email }}</span>
+                  <span>📞 {{ u.phone }}</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </ng-container>
+      </div>
+
+      <!-- Acciones -->
+      <div class="wo-actions">
+        <button class="btn btn--outline" (click)="clearRegisterForm()">Limpiar</button>
+        <button class="btn btn--primary" (click)="submitVehicle()" [disabled]="isLoading">
+          <span *ngIf="!isLoading">Registrar vehículo</span>
+          <span *ngIf="isLoading" class="spinner-sm"></span>
+        </button>
+      </div>
+
+    </ng-container>
+
+    <!-- ══ TAB: ASOCIAR CLIENTE ══════════════════════════════════════════════ -->
+    <ng-container *ngIf="activeTab === 'asociar'">
+
+      <!-- Éxito -->
+      <div class="assoc-success-card" *ngIf="assocSuccess && assocUpdatedVehicle">
+        <div class="success-icon">✅</div>
+        <h3>Propietario actualizado</h3>
+        <div class="success-vehicle-info">
+          <div class="success-row">
+            <span class="success-label">Vehículo</span>
+            <span class="success-value">{{ assocUpdatedVehicle.plate }} — {{ assocUpdatedVehicle.brand }} {{ assocUpdatedVehicle.model }} {{ assocUpdatedVehicle.year }}</span>
+          </div>
+          <div class="success-row">
+            <span class="success-label">Nuevo propietario</span>
+            <span class="success-value">{{ assocUpdatedVehicle.ownerName }}</span>
+          </div>
+          <div class="success-row">
+            <span class="success-label">Cédula</span>
+            <span class="success-value">{{ assocUpdatedVehicle.ownerIdentification }}</span>
+          </div>
+          <div class="success-row">
+            <span class="success-label">Teléfono</span>
+            <span class="success-value">{{ assocUpdatedVehicle.ownerPhone }}</span>
+          </div>
+        </div>
+        <button class="btn btn--primary" (click)="resetAssocForm()">Nueva asociación</button>
+      </div>
+
+      <ng-container *ngIf="!assocSuccess">
+        <!-- Paso 1: Buscar vehículo -->
+        <div class="wo-card">
+          <div class="wo-card-title">
+            <span class="step-badge">1</span>
+            Buscar vehículo por placa
+          </div>
+          <div class="search-row">
+            <input type="text" class="form-style" placeholder="Ej. ABC-123"
+              [(ngModel)]="assocPlate" name="assocPlate" style="text-transform:uppercase"
+              (keyup.enter)="searchVehicleByPlate()" />
+            <button class="btn-search" (click)="searchVehicleByPlate()" [disabled]="isLoading">
+              <span *ngIf="!isLoading">Buscar</span>
+              <span *ngIf="isLoading" class="spinner-sm"></span>
+            </button>
+          </div>
+
+          <!-- No encontrado -->
+          <div class="wo-alert wo-alert-warning" *ngIf="assocVehicleNotFound">
+            <span class="wo-alert-icon">⚠️</span>
+            <div><strong>Vehículo no encontrado</strong>
+              <p>No existe un vehículo con esa placa registrado en el sistema.</p></div>
+          </div>
+
+          <!-- Vehículo encontrado -->
+          <div class="vehicle-found-card" *ngIf="assocVehicle">
+            <div class="vehicle-found-header">
+              <span class="vehicle-plate-badge">{{ assocVehicle.plate }}</span>
+              <span class="vehicle-found-label">Vehículo encontrado</span>
+            </div>
+            <div class="vehicle-found-grid">
+              <div class="vf-item">
+                <span class="vf-label">Marca</span>
+                <span class="vf-value">{{ assocVehicle.brand }}</span>
+              </div>
+              <div class="vf-item">
+                <span class="vf-label">Modelo</span>
+                <span class="vf-value">{{ assocVehicle.model }}</span>
+              </div>
+              <div class="vf-item">
+                <span class="vf-label">Año</span>
+                <span class="vf-value">{{ assocVehicle.year }}</span>
+              </div>
+              <div class="vf-item" *ngIf="assocVehicle.color">
+                <span class="vf-label">Color</span>
+                <span class="vf-value">{{ assocVehicle.color }}</span>
+              </div>
+            </div>
+            <div class="current-owner-box">
+              <span class="co-label">Propietario actual:</span>
+              <span class="co-value">{{ assocVehicle.ownerName }} (Cédula: {{ assocVehicle.ownerIdentification }})</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Paso 2: Seleccionar nuevo propietario -->
+        <div class="wo-card" *ngIf="assocVehicle">
+          <div class="wo-card-title">
+            <span class="step-badge">2</span>
+            Seleccionar nuevo propietario
+          </div>
+
+          <!-- Nuevo propietario seleccionado -->
+          <div class="owner-selected" *ngIf="assocSelectedOwnerId">
+            <div class="owner-selected-info">
+              <span class="owner-icon">👤</span>
+              <span>{{ assocSelectedOwnerName }}</span>
+            </div>
+            <button class="btn-clear-owner" (click)="clearAssocOwnerSelection()">✕ Cambiar</button>
+          </div>
+
+          <!-- Buscador -->
+          <ng-container *ngIf="!assocSelectedOwnerId">
+            <div class="search-row">
+              <input type="text" class="form-style" placeholder="Buscar por nombre, cédula o correo..."
+                [(ngModel)]="assocOwnerSearch" name="assocOwnerSearch"
+                (keyup.enter)="searchOwnerForAssoc()" />
+              <button class="btn-search" (click)="searchOwnerForAssoc()" [disabled]="isLoading">
+                <span *ngIf="!isLoading">Buscar</span>
+                <span *ngIf="isLoading" class="spinner-sm"></span>
+              </button>
+            </div>
+
+            <div class="owner-results" *ngIf="assocOwnerSearched">
+              <div class="wo-alert wo-alert-warning" *ngIf="assocOwnerNotFound">
+                <span class="wo-alert-icon">⚠️</span>
+                <div><strong>No se encontraron clientes</strong></div>
+              </div>
+              <div class="owner-list" *ngIf="assocOwnerResults.length > 0">
+                <div class="owner-item" *ngFor="let u of assocOwnerResults" (click)="selectAssocOwner(u)"
+                  [class.owner-item--current]="u.id === assocVehicle?.ownerId">
+                  <div class="owner-item-name">
+                    {{ u.username }}
+                    <span class="current-badge" *ngIf="u.id === assocVehicle?.ownerId">Propietario actual</span>
+                  </div>
+                  <div class="owner-item-meta">
+                    <span>Cédula: {{ u.identification }}</span>
+                    <span>{{ u.email }}</span>
+                    <span>📞 {{ u.phone }}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </ng-container>
+        </div>
+
+        <!-- Confirmar asociación -->
+        <div class="wo-actions" *ngIf="assocVehicle && assocSelectedOwnerId">
+          <button class="btn btn--outline" (click)="resetAssocForm()">Cancelar</button>
+          <button class="btn btn--primary" (click)="submitAssociation()" [disabled]="isLoading">
+            <span *ngIf="!isLoading">Confirmar asociación</span>
+            <span *ngIf="isLoading" class="spinner-sm"></span>
+          </button>
+        </div>
+      </ng-container>
+
+    </ng-container>
+
+    <!-- ══ TAB: LISTA ════════════════════════════════════════════════════════ -->
+    <ng-container *ngIf="activeTab === 'lista'">
+
+      <!-- Filtros -->
+      <div class="wo-card">
+        <div class="wo-card-title">Filtrar vehículos</div>
+        <div class="wo-grid">
+          <div class="form-group">
+            <label class="wo-label">Por placa</label>
+            <input type="text" class="form-style" placeholder="Buscar placa..."
+              [(ngModel)]="filterPlate" name="filterPlate" />
+          </div>
+          <div class="form-group">
+            <label class="wo-label">Por propietario</label>
+            <input type="text" class="form-style" placeholder="Nombre o cédula..."
+              [(ngModel)]="filterOwner" name="filterOwner" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Loading -->
+      <div class="loading-state" *ngIf="isLoading">
+        <div class="spinner"></div>
+        <span>Cargando vehículos...</span>
+      </div>
+
+      <!-- Sin resultados -->
+      <div class="empty-state" *ngIf="!isLoading && filteredVehicles.length === 0 && vehicles.length > 0">
+        <span>🔍</span>
+        <p>Ningún vehículo coincide con el filtro</p>
+      </div>
+
+      <div class="empty-state" *ngIf="!isLoading && vehicles.length === 0">
+        <span>🚗</span>
+        <p>No hay vehículos registrados</p>
+      </div>
+
+      <!-- Tabla -->
+      <div class="vehicle-table-wrapper" *ngIf="!isLoading && filteredVehicles.length > 0">
+        <table class="vehicle-table">
+          <thead>
+            <tr>
+              <th>Placa</th>
+              <th>Marca / Modelo</th>
+              <th>Año</th>
+              <th>Color</th>
+              <th>Propietario</th>
+              <th>Cédula</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let v of filteredVehicles">
+              <td><span class="plate-chip">{{ v.plate }}</span></td>
+              <td>{{ v.brand }} {{ v.model }}</td>
+              <td>{{ v.year }}</td>
+              <td>{{ v.color || '—' }}</td>
+              <td>{{ v.ownerName }}</td>
+              <td>{{ v.ownerIdentification }}</td>
+              <td>
+                <button class="btn-detail" (click)="openDetail(v)">Ver</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="table-count">{{ filteredVehicles.length }} vehículo(s) encontrado(s)</div>
+      </div>
+
+    </ng-container>
+
+  </div><!-- /wo-container -->
+</div><!-- /auth-wrapper -->
+
+<!-- ══ MODAL DETALLE ════════════════════════════════════════════════════════ -->
+<div class="modal-overlay" *ngIf="showDetail" (click)="closeDetail()">
+  <div class="modal-box" (click)="$event.stopPropagation()">
+    <button class="modal-close" (click)="closeDetail()">✕</button>
+    <div class="modal-title">Detalle del vehículo</div>
+
+    <ng-container *ngIf="detailVehicle">
+      <div class="detail-plate">{{ detailVehicle.plate }}</div>
+
+      <div class="detail-section-title">Datos del vehículo</div>
+      <div class="detail-grid">
+        <div class="detail-item"><span class="detail-label">Marca</span><span class="detail-value">{{ detailVehicle.brand }}</span></div>
+        <div class="detail-item"><span class="detail-label">Modelo</span><span class="detail-value">{{ detailVehicle.model }}</span></div>
+        <div class="detail-item"><span class="detail-label">Año</span><span class="detail-value">{{ detailVehicle.year }}</span></div>
+        <div class="detail-item"><span class="detail-label">Color</span><span class="detail-value">{{ detailVehicle.color || '—' }}</span></div>
+      </div>
+
+      <div class="detail-section-title">Propietario</div>
+      <div class="detail-grid">
+        <div class="detail-item"><span class="detail-label">Nombre</span><span class="detail-value">{{ detailVehicle.ownerName }}</span></div>
+        <div class="detail-item"><span class="detail-label">Cédula</span><span class="detail-value">{{ detailVehicle.ownerIdentification }}</span></div>
+        <div class="detail-item"><span class="detail-label">Teléfono</span><span class="detail-value">{{ detailVehicle.ownerPhone }}</span></div>
+        <div class="detail-item wo-full"><span class="detail-label">Correo</span><span class="detail-value">{{ detailVehicle.ownerEmail }}</span></div>
+      </div>
+
+      <div class="detail-date" *ngIf="detailVehicle.associationDate">
+        Asociado el {{ detailVehicle.associationDate | date:'dd/MM/yyyy HH:mm' }}
+      </div>
+    </ng-container>
+  </div>
+</div>

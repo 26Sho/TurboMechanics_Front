@@ -6,6 +6,7 @@ import { HomeComponent } from './components/home/home.component';
 import { authGuard } from './core/guards/auth.guard';
 import { noAuthGuard } from './core/guards/no-auth.guard';
 import { WorkOrderComponent } from './features/auth/pages/work-order/work-order.component';
+import { VehicleComponent } from './features/auth/pages/vehicle/vehicle.component';
 
 const routes: Routes = [
   // Rutas públicas
@@ -18,6 +19,7 @@ const routes: Routes = [
 
   // Rutas protegidas (requieren autenticación)
   { path: 'work-order',    component: WorkOrderComponent,           canActivate: [authGuard] },
+  { path: 'vehicles',      component: VehicleComponent,             canActivate: [authGuard] },
 
   // Ruta comodín
   { path: '**', redirectTo: 'home' },

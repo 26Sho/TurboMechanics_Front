@@ -7,11 +7,12 @@ import { RegisterComponent } from './pages/register/register.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { WorkOrderComponent } from './pages/work-order/work-order.component';
+import { VehicleComponent } from './pages/vehicle/vehicle.component';
 
 
 
 @NgModule({
-  declarations: [AuthComponent, LoginComponent, RecoverPasswordComponent, RegisterComponent, WorkOrderComponent],
+  declarations: [AuthComponent, LoginComponent, RecoverPasswordComponent, RegisterComponent, WorkOrderComponent, VehicleComponent],
   imports: [
     CommonModule,
     FormsModule,
