@@ -225,7 +225,7 @@
               </div>
               <div class="owner-list" *ngIf="assocOwnerResults.length > 0">
                 <div class="owner-item" *ngFor="let u of assocOwnerResults" (click)="selectAssocOwner(u)"
-                  [class.owner-item--current]="u.id === assocVehicle?.ownerId">
+                  [class.owner-item--current]="u.id === assocVehicle!.ownerId">
                   <div class="owner-item-name">
                     {{ u.username }}
                     <span class="current-badge" *ngIf="u.id === assocVehicle?.ownerId">Propietario actual</span>

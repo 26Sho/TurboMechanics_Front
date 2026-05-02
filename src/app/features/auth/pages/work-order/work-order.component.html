@@ -10,8 +10,8 @@
 
     <!-- Tabs -->
     <div class="wo-tabs">
-      <button class="wo-tab" [class.active]="activeTab === 'nueva'"  (click)="setTab('nueva')">Nueva orden</button>
-      <button class="wo-tab" [class.active]="activeTab === 'lista'"  (click)="setTab('lista')">Lista</button>
+      <button class="wo-tab" [class.active]="activeTab === 'nueva'" (click)="setTab('nueva')">Nueva orden</button>
+      <button class="wo-tab" [class.active]="activeTab === 'lista'" (click)="setTab('lista')">Lista</button>
       <button class="wo-tab" [class.active]="activeTab === 'buscar'" (click)="setTab('buscar')">Buscar</button>
     </div>
 
@@ -32,20 +32,19 @@
 
         <div class="wo-grid">
           <div class="form-group">
-            <label class="wo-label">Nombre completo *</label>
-            <input type="text" class="form-style" placeholder="Ej. Juan Pérez"
-              [(ngModel)]="clientname" name="clientname" />
+            <label class="wo-label">Identificación *</label>
+            <input type="text" class="form-style" placeholder="Cédula o NIT" [(ngModel)]="clientidentification"
+              name="clientidentification" (blur)="onIdentificationBlur()" />
           </div>
           <div class="form-group">
-            <label class="wo-label">Identificación *</label>
-            <input type="text" class="form-style" placeholder="Cédula o NIT"
-              [(ngModel)]="clientidentification" name="clientidentification"
-              (blur)="onIdentificationBlur()" />
+            <label class="wo-label">Nombre completo *</label>
+            <input type="text" class="form-style" placeholder="Ej. Juan Pérez" [(ngModel)]="clientname"
+              name="clientname" />
           </div>
           <div class="form-group wo-full">
             <label class="wo-label">Teléfono *</label>
-            <input type="text" class="form-style" placeholder="+57 300 000 0000"
-              [(ngModel)]="clientphone" name="clientphone" />
+            <input type="text" class="form-style" placeholder="+57 300 000 0000" [(ngModel)]="clientphone"
+              name="clientphone" />
           </div>
         </div>
       </div>
@@ -65,35 +64,30 @@
         <div class="wo-grid wo-grid-3">
           <div class="form-group">
             <label class="wo-label">Placa *</label>
-            <input type="text" class="form-style" placeholder="ABC-123"
-              [(ngModel)]="vehicleplate" name="vehicleplate"
-              style="text-transform:uppercase"
-              (blur)="onPlateBlur()" />
+            <input type="text" class="form-style" placeholder="ABC-123" [(ngModel)]="vehicleplate" name="vehicleplate"
+              style="text-transform:uppercase" (blur)="onPlateBlur()" />
           </div>
           <div class="form-group">
             <label class="wo-label">Marca *</label>
-            <input type="text" class="form-style" placeholder="Toyota"
-              [(ngModel)]="vehiclebrand" name="vehiclebrand" />
+            <input type="text" class="form-style" placeholder="Toyota" [(ngModel)]="vehiclebrand" name="vehiclebrand" />
           </div>
           <div class="form-group">
             <label class="wo-label">Modelo *</label>
-            <input type="text" class="form-style" placeholder="Corolla"
-              [(ngModel)]="vehiclemodel" name="vehiclemodel" />
+            <input type="text" class="form-style" placeholder="Corolla" [(ngModel)]="vehiclemodel"
+              name="vehiclemodel" />
           </div>
           <div class="form-group">
             <label class="wo-label">Año *</label>
-            <input type="number" class="form-style" placeholder="2020"
-              [(ngModel)]="vehicleyear" name="vehicleyear" min="1900" max="2100" />
+            <input type="number" class="form-style" placeholder="2020" [(ngModel)]="vehicleyear" name="vehicleyear"
+              min="1900" max="2100" />
           </div>
           <div class="form-group">
             <label class="wo-label">Color</label>
-            <input type="text" class="form-style" placeholder="Blanco"
-              [(ngModel)]="vehiclecolor" name="vehiclecolor" />
+            <input type="text" class="form-style" placeholder="Blanco" [(ngModel)]="vehiclecolor" name="vehiclecolor" />
           </div>
           <div class="form-group">
             <label class="wo-label">Entrega estimada</label>
-            <input type="date" class="form-style"
-              [(ngModel)]="dateestimateddelivery" name="dateestimateddelivery"
+            <input type="date" class="form-style" [(ngModel)]="dateestimateddelivery" name="dateestimateddelivery"
               [min]="todayStr" />
             <span class="wo-field-error" *ngIf="dateError">{{ dateError }}</span>
           </div>
@@ -118,10 +112,8 @@
             <div class="wo-fuel-row">
               <span class="fuel-label">E</span>
               <div class="wo-fuel-bar">
-                <div *ngFor="let f of fuelLevels; let i = index"
-                  class="fuel-seg"
-                  [class.active]="levelfuel !== null && fuelIndex(levelfuel) > i"
-                  (click)="levelfuel = f.value"
+                <div *ngFor="let f of fuelLevels; let i = index" class="fuel-seg"
+                  [class.active]="levelfuel !== null && fuelIndex(levelfuel) > i" (click)="levelfuel = f.value"
                   [title]="f.label">
                 </div>
               </div>
@@ -134,8 +126,7 @@
           <div class="form-group">
             <label class="wo-label">Prioridad</label>
             <div class="wo-priority-row">
-              <button *ngFor="let p of priorities"
-                class="prio-btn"
+              <button *ngFor="let p of priorities" class="prio-btn"
                 [class]="'prio-btn prio-' + p.value.toLowerCase() + (priority === p.value ? ' selected' : '')"
                 (click)="priority = p.value">
                 {{ p.label }}
@@ -150,9 +141,7 @@
           <div class="form-group">
             <label class="wo-label">Rayones</label>
             <div class="wo-cond-row">
-              <button *ngFor="let c of conditions"
-                class="cond-btn"
-                [class.selected]="statescratches === c.value"
+              <button *ngFor="let c of conditions" class="cond-btn" [class.selected]="statescratches === c.value"
                 (click)="statescratches = c.value">
                 {{ c.label }}
               </button>
@@ -163,9 +152,7 @@
           <div class="form-group">
             <label class="wo-label">Abolladuras</label>
             <div class="wo-cond-row">
-              <button *ngFor="let c of conditions"
-                class="cond-btn"
-                [class.selected]="statedents === c.value"
+              <button *ngFor="let c of conditions" class="cond-btn" [class.selected]="statedents === c.value"
                 (click)="statedents = c.value">
                 {{ c.label }}
               </button>
@@ -271,8 +258,7 @@
           </ng-container>
           <ng-template #textSearchInput>
             <input type="text" class="form-style wo-search-input" placeholder="Ingresa el valor..."
-              [(ngModel)]="searchValue" name="searchValue"
-              (keyup.enter)="doSearch()" />
+              [(ngModel)]="searchValue" name="searchValue" (keyup.enter)="doSearch()" />
           </ng-template>
 
           <button class="btn-primary" (click)="doSearch()" [disabled]="isLoading">
@@ -376,7 +362,8 @@
         </div>
         <div class="modal-row">
           <span class="modal-key">Vehículo</span>
-          <span class="modal-val">{{ confirmedOrder.vehiclebrand }} {{ confirmedOrder.vehiclemodel }} {{ confirmedOrder.vehicleyear }}</span>
+          <span class="modal-val">{{ confirmedOrder.vehiclebrand }} {{ confirmedOrder.vehiclemodel }} {{
+            confirmedOrder.vehicleyear }}</span>
         </div>
         <div class="modal-row" *ngIf="confirmedOrder.vehiclecolor">
           <span class="modal-key">Color</span>
