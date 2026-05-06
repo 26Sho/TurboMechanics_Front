@@ -21,7 +21,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
   private authSub!: Subscription;
 
-  constructor(private router: Router, private authService: AuthService) {}
+  constructor(private router: Router, private authService: AuthService) { }
 
   ngOnInit(): void {
     this.isLoggedIn = this.authService.isLoggedIn();
@@ -53,6 +53,11 @@ export class NavbarComponent implements OnInit, OnDestroy {
   goToVehicles(): void {
     this.closeMobile();
     this.router.navigate(['/vehicles']);
+  }
+
+  goToVehicleHistory(): void {
+    this.closeMobile();
+    this.router.navigate(['/vehicle-history']);
   }
 
   @HostListener('window:scroll')

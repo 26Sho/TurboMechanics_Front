@@ -10,23 +10,23 @@
     <ul class="navbar__links">
       <li>
         <a class="navbar__link" [class.active]="activeSection === 'inicio'"
-           (click)="scrollTo('inicio'); $event.preventDefault()" href="#inicio">Inicio</a>
+          (click)="scrollTo('inicio'); $event.preventDefault()" href="#inicio">Inicio</a>
       </li>
       <li>
         <a class="navbar__link" [class.active]="activeSection === 'nosotros'"
-           (click)="scrollTo('nosotros'); $event.preventDefault()" href="#nosotros">Nosotros</a>
+          (click)="scrollTo('nosotros'); $event.preventDefault()" href="#nosotros">Nosotros</a>
       </li>
       <li>
         <a class="navbar__link" [class.active]="activeSection === 'servicios'"
-           (click)="scrollTo('servicios'); $event.preventDefault()" href="#servicios">Servicios</a>
+          (click)="scrollTo('servicios'); $event.preventDefault()" href="#servicios">Servicios</a>
       </li>
       <li>
         <a class="navbar__link" [class.active]="activeSection === 'ubicacion'"
-           (click)="scrollTo('ubicacion'); $event.preventDefault()" href="#ubicacion">Ubicación</a>
+          (click)="scrollTo('ubicacion'); $event.preventDefault()" href="#ubicacion">Ubicación</a>
       </li>
       <li>
         <a class="navbar__link" [class.active]="activeSection === 'contacto'"
-           (click)="scrollTo('contacto'); $event.preventDefault()" href="#contacto">Contacto</a>
+          (click)="scrollTo('contacto'); $event.preventDefault()" href="#contacto">Contacto</a>
       </li>
     </ul>
 
@@ -49,6 +49,10 @@
           <i class="fas fa-car"></i>
           <span>Vehículos</span>
         </button>
+        <button *ngIf="isMecanicoOrAdmin" class="navbar__workorder-btn" (click)="goToVehicleHistory()">
+          <i class="fas fa-history"></i>
+          <span>Historial</span>
+        </button>
 
         <button class="navbar__logout-btn" (click)="onLogout()">
           <i class="fas fa-sign-out-alt"></i>
@@ -58,8 +62,7 @@
     </div>
 
     <!-- Hamburger -->
-    <button class="navbar__hamburger" [class.open]="isMobileOpen"
-            (click)="toggleMobile()" aria-label="Menú">
+    <button class="navbar__hamburger" [class.open]="isMobileOpen" (click)="toggleMobile()" aria-label="Menú">
       <span></span><span></span><span></span>
     </button>
   </div>
@@ -78,12 +81,16 @@
       <li *ngIf="isLoggedIn" class="mobile-user">
         <span class="mobile-username"><i class="fas fa-user-circle"></i> {{ username }}</span>
         <a *ngIf="isMecanicoOrAdmin" href="#" class="mobile-workorder"
-           (click)="goToWorkOrder(); $event.preventDefault()">
+          (click)="goToWorkOrder(); $event.preventDefault()">
           <i class="fas fa-clipboard-list"></i> Órdenes de trabajo
         </a>
         <a *ngIf="isMecanicoOrAdmin" href="#" class="mobile-workorder"
-           (click)="goToVehicles(); $event.preventDefault()">
+          (click)="goToVehicles(); $event.preventDefault()">
           <i class="fas fa-car"></i> Vehículos
+        </a>
+        <a *ngIf="isMecanicoOrAdmin" href="#" class="mobile-workorder"
+          (click)="goToVehicleHistory(); $event.preventDefault()">
+          <i class="fas fa-history"></i> Historial de servicios
         </a>
         <a href="#" class="mobile-logout" (click)="onLogout(); $event.preventDefault()">
           <i class="fas fa-sign-out-alt"></i> Cerrar sesión

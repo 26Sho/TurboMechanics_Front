@@ -8,11 +8,12 @@ import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 import { WorkOrderComponent } from './pages/work-order/work-order.component';
 import { VehicleComponent } from './pages/vehicle/vehicle.component';
+import { VehicleHistoryComponent } from './pages/vehicle-history/vehicle-history.component';
 
 
 
 @NgModule({
-  declarations: [AuthComponent, LoginComponent, RecoverPasswordComponent, RegisterComponent, WorkOrderComponent, VehicleComponent],
+  declarations: [AuthComponent, LoginComponent, RecoverPasswordComponent, RegisterComponent, WorkOrderComponent, VehicleComponent, VehicleHistoryComponent],
   imports: [
     CommonModule,
     FormsModule,
