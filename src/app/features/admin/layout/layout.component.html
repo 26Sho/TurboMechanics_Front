@@ -1,0 +1,14 @@
+<div class="layout">
+
+  <app-sidebar></app-sidebar>
+
+  <app-topbar></app-topbar>
+
+  <main
+    class="main-content"
+    [class.expanded]="sidebarService.collapsed()"
+  >
+    <router-outlet></router-outlet>
+  </main>
+
+</div>

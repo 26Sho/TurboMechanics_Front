@@ -1,6 +1,11 @@
-@use '../../../styles/variables' as *;
+$sidebar-collapsed: 64px;
+$sidebar-width: 240px;
+$topbar-height: 60px;
 
-.layout { display: flex; min-height: 100vh; }
+.layout {
+  display: flex;
+  min-height: 100vh;
+}
 
 .main-content {
   flex: 1;
@@ -8,7 +13,7 @@
   margin-top: $topbar-height;
   padding: 28px;
   transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  background: #2c2c2c;
+  background: #0D0D0D;
   min-height: calc(100vh - #{$topbar-height});
   animation: fadeSlideIn 0.4s ease;
 

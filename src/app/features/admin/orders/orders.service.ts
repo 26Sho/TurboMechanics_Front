@@ -7,7 +7,7 @@ import { Observable } from 'rxjs';
 })
 export class OrdersService {
   // URL de backend 
-  private apiUrl = ''; 
+  private apiUrl = 'http://localhost:9090/workorder'; 
 
   constructor(private http: HttpClient) { }
 

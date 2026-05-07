@@ -1,7 +1,21 @@
-@use '../../../../styles/variables' as *;
+$sidebar-width: 240px;
+$sidebar-collapsed: 64px;
+$topbar-height: 60px;
+$negro: #0D0D0D;
+$gris-osc: #141414;
+$gris-med: #6E6E6E;
+$plateado: #CFCFCF;
+$blanco: #FFFFFF;
+$naranja: #F45D01;
+$naranja-c: #FF8C00;
+$amarillo: #FFD60A;
+$color-border: #2A2A2A;
+$color-success: #2ECC71;
+$font-display: 'Barlow Condensed', sans-serif;
+$font-mono: 'JetBrains Mono', monospace;
+$border-radius: 8px;
 
-// 1. CONTENEDOR PRINCIPAL (LAYOUT)
-// ---------------------------------------------------------
+
 .sidebar {
   position: fixed; 
   left: 0; top: 0; bottom: 0;
