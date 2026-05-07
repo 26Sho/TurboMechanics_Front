@@ -1,0 +1,77 @@
+<div class="page">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Vehículos</h1>
+      <p class="page-sub">Registro de vehículos — <span class="text-accent">{{ vehicles().length }} registros</span></p>
+    </div>
+    <button class="btn btn-primary" (click)="nuevoVehiculo()">
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Nuevo Vehículo
+    </button>
+  </div>
+
+  <div class="filters-bar card">
+    <div class="search-group">
+      <label class="search-label">Buscar por placa o marca</label>
+      <div style="display:flex; align-items:center; gap:8px;">
+        <input type="text" class="turbo-input" placeholder="Ej: ABC-123"
+               style="max-width:200px; text-transform:uppercase;"
+               [value]="search" (input)="search = $any($event.target).value" />
+        <button class="btn-ghost" (click)="search = ''" *ngIf="search">Limpiar</button>
+      </div>
+    </div>
+    <div style="flex:1"></div>
+    <span class="text-muted" style="font-size:13px;">{{ filteredVehicles.length }} resultado(s)</span>
+  </div>
+
+  <div class="card" style="overflow:hidden;">
+    <div style="overflow-x:auto;">
+      <table class="turbo-table">
+        <thead>
+          <tr>
+            <th>Vehículo</th>
+            <th>Placa</th>
+            <th>Tipo</th>
+            <th>Año</th>
+            <th>Color</th>
+            <th>Propietario</th>
+            <th>Último Servicio</th>
+            <th>Km</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let v of filteredVehicles">
+            <td>
+              <div style="display:flex; align-items:center; gap:10px;">
+                <div class="car-icon">
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+                </div>
+                <div>
+                  <p class="car-name">{{ v.brand }} {{ v.model }}</p>
+                </div>
+              </div>
+            </td>
+            <td><span class="plate">{{ v.plate }}</span></td>
+            <td><span class="badge badge--neutral">{{ v.type }}</span></td>
+            <td style="color:#6E6E6E;">{{ v.year }}</td>
+            <td>
+              <div style="display:flex; align-items:center; gap:6px;">
+                <span class="color-dot" [style.background]="v.colorHex"></span>
+                <span style="color:#6E6E6E; font-size:13px;">{{ v.color }}</span>
+              </div>
+            </td>
+            <td style="color:#CFCFCF; font-size:13px;">{{ v.owner }}</td>
+            <td style="color:#6E6E6E; font-size:12px;">{{ v.lastService }}</td>
+            <td style="font-family:monospace; font-size:12px; color:#6E6E6E;">{{ v.km }} km</td>
+            <td>
+              <button class="btn-icon" (click)="verHistorial(v)" title="Ver historial">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              </button>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>

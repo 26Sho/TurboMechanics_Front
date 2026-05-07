@@ -30,7 +30,12 @@ export class AuthComponent {
         this.loginLoading = false;
         if (response?.jwt) {
           this.toast.success('¡Bienvenido!');
-          this.router.navigate(['/home']);
+          const rolId = this.authService.getRolId();
+          if (rolId === 3) {
+            this.router.navigate(['/admin']);
+          } else {
+            this.router.navigate(['/home']);
+          }
         } else {
           this.toast.error(response?.message || 'Usuario no encontrado.');
         }
