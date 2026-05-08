@@ -205,6 +205,7 @@
                 <th>Estado</th>
                 <th>Prioridad</th>
                 <th>Fecha ingreso</th>
+                <th>Acciones</th>
               </tr>
             </thead>
             <tbody>
@@ -227,6 +228,10 @@
                   </span>
                 </td>
                 <td class="col-sub">{{ o.dateentry | date:'dd/MM/yyyy HH:mm' }}</td>
+                <td class="col-actions" (click)="$event.stopPropagation()">
+                  <button class="btn-action btn-edit" *ngIf="canEdit(o)" (click)="openEdit(o, $event)" title="Editar orden">✏️</button>
+                  <button class="btn-action btn-cancel" *ngIf="isAdmin() && canEdit(o)" (click)="openCancel(o, $event)" title="Cancelar orden">✕</button>
+                </td>
               </tr>
             </tbody>
           </table>
@@ -289,6 +294,7 @@
                 <th>Estado</th>
                 <th>Prioridad</th>
                 <th>Fecha ingreso</th>
+                <th>Acciones</th>
               </tr>
             </thead>
             <tbody>
@@ -311,6 +317,10 @@
                   </span>
                 </td>
                 <td class="col-sub">{{ o.dateentry | date:'dd/MM/yyyy HH:mm' }}</td>
+                <td class="col-actions" (click)="$event.stopPropagation()">
+                  <button class="btn-action btn-edit" *ngIf="canEdit(o)" (click)="openEdit(o, $event)" title="Editar orden">✏️</button>
+                  <button class="btn-action btn-cancel" *ngIf="isAdmin() && canEdit(o)" (click)="openCancel(o, $event)" title="Cancelar orden">✕</button>
+                </td>
               </tr>
             </tbody>
           </table>
@@ -531,6 +541,184 @@
 
     <div class="modal-actions">
       <button class="btn-secondary" (click)="closeDetail()">Cerrar</button>
+      <button class="btn-warning" *ngIf="detailOrder && canEdit(detailOrder)" (click)="openEdit(detailOrder)">
+        ✏️ Actualizar información
+      </button>
+      <button class="btn-danger" *ngIf="detailOrder && isAdmin() && canEdit(detailOrder)" (click)="openCancel(detailOrder)">
+        ✕ Cancelar orden
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══ MODAL: EDITAR ORDEN ═══════════════════════════════════════════════════ -->
+<div class="modal-overlay" *ngIf="showEdit" (click)="closeEdit()">
+  <div class="modal-card modal-card--edit" (click)="$event.stopPropagation()">
+
+    <div class="modal-header">
+      <div class="modal-detail-icon">✏️</div>
+      <h2 class="modal-title">Actualizar Orden</h2>
+      <p class="modal-subtitle">Modifica la información de la orden {{ editOrder?.numberorder }}</p>
+    </div>
+
+    <div class="modal-edit-body" *ngIf="editOrder">
+
+      <!-- Cliente -->
+      <div class="modal-section">
+        <div class="modal-section-title">Datos del cliente</div>
+        <div class="wo-grid">
+          <div class="form-group">
+            <label class="wo-label">Identificación *</label>
+            <input type="text" class="form-style" [(ngModel)]="editClientidentification" name="editClientidentification" />
+          </div>
+          <div class="form-group">
+            <label class="wo-label">Nombre completo *</label>
+            <input type="text" class="form-style" [(ngModel)]="editClientname" name="editClientname" />
+          </div>
+          <div class="form-group wo-full">
+            <label class="wo-label">Teléfono *</label>
+            <input type="text" class="form-style" [(ngModel)]="editClientphone" name="editClientphone" />
+          </div>
+        </div>
+      </div>
+
+      <!-- Vehículo -->
+      <div class="modal-section">
+        <div class="modal-section-title">Datos del vehículo</div>
+        <div class="wo-grid wo-grid-3">
+          <div class="form-group">
+            <label class="wo-label">Placa *</label>
+            <input type="text" class="form-style" [(ngModel)]="editVehicleplate" name="editVehicleplate" style="text-transform:uppercase" />
+          </div>
+          <div class="form-group">
+            <label class="wo-label">Marca *</label>
+            <input type="text" class="form-style" [(ngModel)]="editVehiclebrand" name="editVehiclebrand" />
+          </div>
+          <div class="form-group">
+            <label class="wo-label">Modelo *</label>
+            <input type="text" class="form-style" [(ngModel)]="editVehiclemodel" name="editVehiclemodel" />
+          </div>
+          <div class="form-group">
+            <label class="wo-label">Año *</label>
+            <input type="number" class="form-style" [(ngModel)]="editVehicleyear" name="editVehicleyear" min="1900" max="2100" />
+          </div>
+          <div class="form-group">
+            <label class="wo-label">Color</label>
+            <input type="text" class="form-style" [(ngModel)]="editVehiclecolor" name="editVehiclecolor" />
+          </div>
+          <div class="form-group">
+            <label class="wo-label">Entrega estimada</label>
+            <input type="date" class="form-style" [(ngModel)]="editDateestimateddelivery" name="editDateestimateddelivery" [min]="todayStr" />
+            <span class="wo-field-error" *ngIf="editDateError">{{ editDateError }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Diagnóstico -->
+      <div class="modal-section">
+        <div class="modal-section-title">Diagnóstico y condiciones</div>
+
+        <div class="form-group wo-full" style="margin-bottom: 1.2rem;">
+          <label class="wo-label">Fallas reportadas *</label>
+          <textarea class="form-style wo-textarea" [(ngModel)]="editFailuresreported" name="editFailuresreported"></textarea>
+        </div>
+
+        <div class="wo-grid" style="margin-bottom: 1rem;">
+          <div class="form-group">
+            <label class="wo-label">Nivel de combustible</label>
+            <div class="wo-fuel-row">
+              <span class="fuel-label">E</span>
+              <div class="wo-fuel-bar">
+                <div *ngFor="let f of fuelLevels; let i = index" class="fuel-seg"
+                  [class.active]="editLevelfuel !== null && fuelIndex(editLevelfuel) > i"
+                  (click)="editLevelfuel = f.value" [title]="f.label">
+                </div>
+              </div>
+              <span class="fuel-label">F</span>
+              {{ editLevelfuel ? fuelLevels[fuelIndex(editLevelfuel) - 1].label : '—' }}
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="wo-label">Prioridad</label>
+            <div class="wo-priority-row">
+              <button *ngFor="let p of priorities" class="prio-btn"
+                [class]="'prio-btn prio-' + p.value.toLowerCase() + (editPriority === p.value ? ' selected' : '')"
+                (click)="editPriority = p.value">
+                {{ p.label }}
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="wo-grid">
+          <div class="form-group">
+            <label class="wo-label">Rayones</label>
+            <div class="wo-cond-row">
+              <button *ngFor="let c of conditions" class="cond-btn" [class.selected]="editStatescratches === c.value"
+                (click)="editStatescratches = c.value">{{ c.label }}</button>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="wo-label">Abolladuras</label>
+            <div class="wo-cond-row">
+              <button *ngFor="let c of conditions" class="cond-btn" [class.selected]="editStatedents === c.value"
+                (click)="editStatedents = c.value">{{ c.label }}</button>
+            </div>
+          </div>
+          <div class="form-group wo-full">
+            <label class="wo-label">Observaciones de accesorios</label>
+            <input type="text" class="form-style" [(ngModel)]="editAccessoriesobservations" name="editAccessoriesobservations" />
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn-secondary" (click)="closeEdit()" [disabled]="editLoading">Cancelar</button>
+      <button class="btn-primary" (click)="submitEdit()" [disabled]="editLoading">
+        {{ editLoading ? 'Guardando...' : '💾 Guardar cambios' }}
+      </button>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══ MODAL: CANCELAR ORDEN ═════════════════════════════════════════════════ -->
+<div class="modal-overlay" *ngIf="showCancel" (click)="closeCancel()">
+  <div class="modal-card modal-card--cancel" (click)="$event.stopPropagation()">
+
+    <div class="modal-header">
+      <div class="modal-cancel-icon">⚠️</div>
+      <h2 class="modal-title">Cancelar Orden</h2>
+      <p class="modal-subtitle">Esta acción no se puede deshacer</p>
+    </div>
+
+    <div class="modal-number" *ngIf="cancelOrder">
+      <span class="modal-number-label">Orden a cancelar</span>
+      <span class="modal-number-value">{{ cancelOrder.numberorder }}</span>
+    </div>
+
+    <div style="padding: 0 1.5rem 1.5rem;" *ngIf="cancelOrder">
+      <p class="cancel-info">
+        <strong>{{ cancelOrder.clientname }}</strong> — {{ cancelOrder.vehicleplate }}
+        ({{ cancelOrder.vehiclebrand }} {{ cancelOrder.vehiclemodel }})
+      </p>
+
+      <div class="form-group" style="margin-top: 1rem;">
+        <label class="wo-label">Motivo de cancelación *</label>
+        <textarea class="form-style wo-textarea" placeholder="Describe el motivo por el cual se cancela la orden..."
+          [(ngModel)]="cancelReason" name="cancelReason" rows="4"></textarea>
+      </div>
+    </div>
+
+    <div class="modal-actions">
+      <button class="btn-secondary" (click)="closeCancel()" [disabled]="cancelLoading">Volver</button>
+      <button class="btn-danger" (click)="submitCancel()" [disabled]="cancelLoading">
+        {{ cancelLoading ? 'Cancelando...' : '✕ Confirmar cancelación' }}
+      </button>
     </div>
 
   </div>

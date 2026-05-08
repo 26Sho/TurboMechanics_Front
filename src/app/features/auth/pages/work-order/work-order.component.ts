@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ToastService } from 'src/app/shared/services/toast.service';
 import { WorkOrderService } from 'src/app/core/services/work-order.service';
-import { LevelFuel, Priority, StateCondition, StateOrder, WorkOrderRequest, WorkOrderResponse } from 'src/app/core/models/work-order';
+import { LevelFuel, Priority, StateCondition, StateOrder, WorkOrderRequest, WorkOrderResponse, WorkOrderUpdateRequest } from 'src/app/core/models/work-order';
 import { AuthService } from 'src/app/core/services/auth.service';
 
 type Tab = 'nueva' | 'lista' | 'buscar';
@@ -56,6 +56,35 @@ export class WorkOrderComponent implements OnInit {
   // ── Detail modal ──────────────────────────────────────────────────────────
   showDetail = false;
   detailOrder: WorkOrderResponse | null = null;
+
+  // ── Edit modal ────────────────────────────────────────────────────────────
+  showEdit = false;
+  editOrder: WorkOrderResponse | null = null;
+  editLoading = false;
+
+  // Edit form fields
+  editClientname = '';
+  editClientidentification = '';
+  editClientphone = '';
+  editVehicleplate = '';
+  editVehiclebrand = '';
+  editVehiclemodel = '';
+  editVehicleyear: number | null = null;
+  editVehiclecolor = '';
+  editFailuresreported = '';
+  editDateestimateddelivery = '';
+  editAccessoriesobservations = '';
+  editLevelfuel: LevelFuel | null = null;
+  editStatescratches: StateCondition = 'SIN_NOVEDAD';
+  editStatedents: StateCondition = 'SIN_NOVEDAD';
+  editPriority: Priority = 'NORMAL';
+  editDateError = '';
+
+  // ── Cancel modal ──────────────────────────────────────────────────────────
+  showCancel = false;
+  cancelOrder: WorkOrderResponse | null = null;
+  cancelReason = '';
+  cancelLoading = false;
 
   // ── Enum options ──────────────────────────────────────────────────────────
   readonly fuelLevels: { value: LevelFuel; label: string }[] = [
@@ -114,6 +143,15 @@ export class WorkOrderComponent implements OnInit {
   ngOnInit(): void {
     const today = new Date();
     this.todayStr = today.toISOString().split('T')[0];
+  }
+
+  // ── Role helpers ──────────────────────────────────────────────────────────
+  isAdmin(): boolean {
+    return this.authService.getRolId() === 3;
+  }
+
+  canEdit(order: WorkOrderResponse): boolean {
+    return order.stateorder !== 'CANCELADO' && order.stateorder !== 'ENTREGADO';
   }
 
   // ── Tabs ──────────────────────────────────────────────────────────────────
@@ -275,6 +313,130 @@ export class WorkOrderComponent implements OnInit {
     this.detailOrder = null;
   }
 
+  // ── Edit modal ────────────────────────────────────────────────────────────
+  openEdit(order: WorkOrderResponse, event?: Event): void {
+    event?.stopPropagation();
+    this.editOrder = order;
+    this.editClientname = order.clientname;
+    this.editClientidentification = order.clientidentification;
+    this.editClientphone = order.clientphone;
+    this.editVehicleplate = order.vehicleplate;
+    this.editVehiclebrand = order.vehiclebrand;
+    this.editVehiclemodel = order.vehiclemodel;
+    this.editVehicleyear = order.vehicleyear;
+    this.editVehiclecolor = order.vehiclecolor || '';
+    this.editFailuresreported = order.failuresreported;
+    this.editDateestimateddelivery = order.dateestimateddelivery || '';
+    this.editAccessoriesobservations = order.accessoriesobservations || '';
+    this.editLevelfuel = order.levelfuel || null;
+    this.editStatescratches = order.statescratches || 'SIN_NOVEDAD';
+    this.editStatedents = order.statedents || 'SIN_NOVEDAD';
+    this.editPriority = order.priority;
+    this.editDateError = '';
+    this.showEdit = true;
+    this.showDetail = false;
+  }
+
+  closeEdit(): void {
+    this.showEdit = false;
+    this.editOrder = null;
+  }
+
+  validateEditDate(): boolean {
+    this.editDateError = '';
+    if (!this.editDateestimateddelivery) return true;
+    const selected = new Date(this.editDateestimateddelivery + 'T00:00:00');
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    if (selected < today) {
+      this.editDateError = 'La fecha de entrega no puede ser en el pasado';
+      return false;
+    }
+    return true;
+  }
+
+  submitEdit(): void {
+    if (!this.editOrder) return;
+    if (!this.editClientname.trim())           { this.toastService.warning('El nombre del cliente es obligatorio'); return; }
+    if (!this.editClientidentification.trim()) { this.toastService.warning('La identificación es obligatoria');     return; }
+    if (!this.editClientphone.trim())          { this.toastService.warning('El teléfono es obligatorio');           return; }
+    if (!this.editVehicleplate.trim())         { this.toastService.warning('La placa es obligatoria');              return; }
+    if (!this.editVehiclebrand.trim())         { this.toastService.warning('La marca es obligatoria');              return; }
+    if (!this.editVehiclemodel.trim())         { this.toastService.warning('El modelo es obligatorio');             return; }
+    if (!this.editVehicleyear)                 { this.toastService.warning('El año es obligatorio');                return; }
+    if (!this.editFailuresreported.trim())     { this.toastService.warning('Las fallas reportadas son obligatorias'); return; }
+    if (!this.validateEditDate())              return;
+
+    const payload: WorkOrderUpdateRequest = {
+      clientname:              this.editClientname.trim(),
+      clientidentification:    this.editClientidentification.trim(),
+      clientphone:             this.editClientphone.trim(),
+      vehicleplate:            this.editVehicleplate.trim().toUpperCase(),
+      vehiclebrand:            this.editVehiclebrand.trim(),
+      vehiclemodel:            this.editVehiclemodel.trim(),
+      vehicleyear:             this.editVehicleyear!,
+      vehiclecolor:            this.editVehiclecolor.trim() || undefined,
+      failuresreported:        this.editFailuresreported.trim(),
+      dateestimateddelivery:   this.editDateestimateddelivery || undefined,
+      levelfuel:               this.editLevelfuel ?? undefined,
+      statescratches:          this.editStatescratches,
+      statedents:              this.editStatedents,
+      accessoriesobservations: this.editAccessoriesobservations.trim() || undefined,
+      priority:                this.editPriority,
+    };
+
+    this.editLoading = true;
+    this.workOrderService.update(this.editOrder.id, payload).subscribe({
+      next: (res) => {
+        this.editLoading = false;
+        this.toastService.success('Orden actualizada correctamente');
+        // Update local lists
+        this._replaceInList(this.orders, res.order);
+        this._replaceInList(this.searchResults, res.order);
+        this.closeEdit();
+      },
+      error: (err) => {
+        this.editLoading = false;
+        this.toastService.error(err.error?.message || 'Error al actualizar la orden');
+      },
+    });
+  }
+
+  // ── Cancel modal ──────────────────────────────────────────────────────────
+  openCancel(order: WorkOrderResponse, event?: Event): void {
+    event?.stopPropagation();
+    this.cancelOrder = order;
+    this.cancelReason = '';
+    this.showCancel = true;
+    this.showDetail = false;
+  }
+
+  closeCancel(): void {
+    this.showCancel = false;
+    this.cancelOrder = null;
+    this.cancelReason = '';
+  }
+
+  submitCancel(): void {
+    if (!this.cancelOrder) return;
+    if (!this.cancelReason.trim()) { this.toastService.warning('El motivo de cancelación es obligatorio'); return; }
+
+    this.cancelLoading = true;
+    this.workOrderService.cancel(this.cancelOrder.id, this.cancelReason.trim()).subscribe({
+      next: (res) => {
+        this.cancelLoading = false;
+        this.toastService.success('Orden cancelada correctamente');
+        this._replaceInList(this.orders, res.order);
+        this._replaceInList(this.searchResults, res.order);
+        this.closeCancel();
+      },
+      error: (err) => {
+        this.cancelLoading = false;
+        this.toastService.error(err.error?.message || 'Error al cancelar la orden');
+      },
+    });
+  }
+
   // ── List ──────────────────────────────────────────────────────────────────
   loadOrders(): void {
     this.isLoading = true;
@@ -322,6 +484,11 @@ export class WorkOrderComponent implements OnInit {
   }
 
   // ── Helpers ───────────────────────────────────────────────────────────────
+  private _replaceInList(list: WorkOrderResponse[], updated: WorkOrderResponse): void {
+    const idx = list.findIndex(o => o.id === updated.id);
+    if (idx !== -1) list[idx] = updated;
+  }
+
   stateBadgeClass(state: StateOrder): string {
     const map: Record<StateOrder, string> = {
       RECIBIDO:       'badge-recibido',

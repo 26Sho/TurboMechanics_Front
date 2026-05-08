@@ -51,3 +51,23 @@ export interface WorkOrderResponse {
   createdBy?: string;
   datecreation: string;             // LocalDateTime
 }
+
+// ─── Update Request ────────────────────────────────────────────────────────────
+ 
+export interface WorkOrderUpdateRequest {
+  clientname: string;
+  clientidentification: string;
+  clientphone: string;
+  vehicleplate: string;
+  vehiclebrand: string;
+  vehiclemodel: string;
+  vehicleyear: number;
+  vehiclecolor?: string;
+  failuresreported: string;
+  dateestimateddelivery?: string;
+  levelfuel?: LevelFuel;
+  statescratches?: StateCondition;
+  statedents?: StateCondition;
+  accessoriesobservations?: string;
+  priority?: Priority;
+}
