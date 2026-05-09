@@ -143,6 +143,10 @@ export class WorkOrderComponent implements OnInit {
   ngOnInit(): void {
     const today = new Date();
     this.todayStr = today.toISOString().split('T')[0];
+    if (this.isAdmin()) {
+      this.activeTab = 'lista';
+      this.loadOrders();
+    }
   }
 
   // ── Role helpers ──────────────────────────────────────────────────────────

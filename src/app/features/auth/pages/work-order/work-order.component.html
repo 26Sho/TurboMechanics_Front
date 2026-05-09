@@ -10,13 +10,13 @@
 
     <!-- Tabs -->
     <div class="wo-tabs">
-      <button class="wo-tab" [class.active]="activeTab === 'nueva'" (click)="setTab('nueva')">Nueva orden</button>
+      <button class="wo-tab" *ngIf="!isAdmin()" [class.active]="activeTab === 'nueva'" (click)="setTab('nueva')">Nueva orden</button>
       <button class="wo-tab" [class.active]="activeTab === 'lista'" (click)="setTab('lista')">Lista</button>
       <button class="wo-tab" [class.active]="activeTab === 'buscar'" (click)="setTab('buscar')">Buscar</button>
     </div>
 
     <!-- ══ TAB: NUEVA ORDEN ══════════════════════════════════════════════════ -->
-    <ng-container *ngIf="activeTab === 'nueva'">
+    <ng-container *ngIf="activeTab === 'nueva' && !isAdmin()">
 
       <!-- Cliente -->
       <div class="wo-card">

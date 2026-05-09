@@ -40,6 +40,10 @@ const routes: Routes = [
       { path: 'clients',   component: ClientsComponent },
       { path: 'orders',    component: OrdersComponent },
       { path: 'vehicles',  component: VehiclesComponent },
+      // ← ÚNICO CAMBIO: estas 3 rutas son nuevas bajo /admin
+      { path: 'work-order',     component: WorkOrderComponent },
+      { path: 'vehicle-assign', component: VehicleComponent },
+      { path: 'vehicle-history',component: VehicleHistoryComponent },
     ]
   },
 
