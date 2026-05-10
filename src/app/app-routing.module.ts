@@ -14,36 +14,41 @@ import { DashboardComponent } from './features/admin/dashboard/dashboard.compone
 import { ClientsComponent } from './features/admin/clients/clients.component';
 import { OrdersComponent } from './features/admin/orders/orders.component';
 import { VehiclesComponent } from './features/admin/vehicles/vehicles.component';
+import { CatalogoServiciosComponent } from './features/admin/catalogo-servicios/catalogo-servicios.component';
+import { InventarioRepuestosComponent } from './features/admin/inventario-repuestos/inventario-repuestos.component';
+import { ReportesComponent } from './features/admin/reportes/reportes.component';
 
 const routes: Routes = [
   // Rutas públicas
-  { path: '',                  component: HomeComponent },
-  { path: 'home',              component: HomeComponent },
+  { path: '',                 component: HomeComponent },
+  { path: 'home',             component: HomeComponent },
 
-  // Rutas solo para NO autenticados
-  { path: 'login',             component: AuthComponent,            canActivate: [noAuthGuard] },
-  { path: 'recover-password',  component: RecoverPasswordComponent, canActivate: [noAuthGuard] },
+  // Solo para NO autenticados
+  { path: 'login',            component: AuthComponent,            canActivate: [noAuthGuard] },
+  { path: 'recover-password', component: RecoverPasswordComponent, canActivate: [noAuthGuard] },
 
-  // Rutas protegidas para usuarios autenticados
-  { path: 'work-order',        component: WorkOrderComponent,       canActivate: [authGuard] },
-  { path: 'vehicles',          component: VehicleComponent,         canActivate: [authGuard] },
-  { path: 'vehicle-history',   component: VehicleHistoryComponent,  canActivate: [authGuard] },
+  // Rutas del mecánico — sin cambios
+  { path: 'work-order',       component: WorkOrderComponent,       canActivate: [authGuard] },
+  { path: 'vehicles',         component: VehicleComponent,         canActivate: [authGuard] },
+  { path: 'vehicle-history',  component: VehicleHistoryComponent,  canActivate: [authGuard] },
 
-  // Rutas del panel admin (solo rol 3)
+  // Panel admin (solo rol 3)
   {
     path: 'admin',
     component: LayoutComponent,
     canActivate: [adminGuard],
     children: [
-      { path: '',          redirectTo: 'dashboard', pathMatch: 'full' },
-      { path: 'dashboard', component: DashboardComponent },
-      { path: 'clients',   component: ClientsComponent },
-      { path: 'orders',    component: OrdersComponent },
-      { path: 'vehicles',  component: VehiclesComponent },
-      // ← ÚNICO CAMBIO: estas 3 rutas son nuevas bajo /admin
+      { path: '',               redirectTo: 'dashboard',    pathMatch: 'full' },
+      { path: 'dashboard',      component: DashboardComponent },
+      { path: 'clients',        component: ClientsComponent },
+      { path: 'orders',         component: OrdersComponent },
+      { path: 'vehicles',       component: VehiclesComponent },
       { path: 'work-order',     component: WorkOrderComponent },
       { path: 'vehicle-assign', component: VehicleComponent },
       { path: 'vehicle-history',component: VehicleHistoryComponent },
+      { path: 'servicios',      component: CatalogoServiciosComponent },
+      { path: 'repuestos',      component: InventarioRepuestosComponent },
+      { path: 'reportes',       component: ReportesComponent },
     ]
   },
 

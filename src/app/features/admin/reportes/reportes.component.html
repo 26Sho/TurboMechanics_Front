@@ -1,0 +1,129 @@
+<!-- reportes.component.html -->
+<div class="inv-page">
+
+  <div class="inv-page__header">
+    <div>
+      <h1 class="inv-page__title"><i class="fas fa-chart-bar"></i> Reportes</h1>
+      <p class="inv-page__subtitle">Análisis y estadísticas del taller TurboMechanics</p>
+    </div>
+  </div>
+
+  <!-- Tabs -->
+  <div class="inv-tabs">
+    <button class="inv-tab" [class.active]="tabActivo === 'servicios'" (click)="setTab('servicios')">
+      <i class="fas fa-tools"></i> Catálogo de Servicios
+    </button>
+    <button class="inv-tab" [class.active]="tabActivo === 'masUsados'" (click)="setTab('masUsados')">
+      <i class="fas fa-cog"></i> Repuestos Más Usados
+    </button>
+    <button class="inv-tab" [class.active]="tabActivo === 'stockCritico'" (click)="setTab('stockCritico')">
+      <i class="fas fa-exclamation-triangle"></i> Stock Crítico
+    </button>
+  </div>
+
+  <div class="inv-tab-content">
+
+    <div class="inv-tab-toolbar">
+      <h2 class="inv-tab-title">{{ getTabLabel() }}</h2>
+      <div class="inv-tab-actions">
+        <button class="inv-btn inv-btn--excel" *ngIf="tabActivo === 'servicios'"    (click)="exportarServiciosExcel()"><i class="fas fa-file-excel"></i> Exportar Excel</button>
+        <button class="inv-btn inv-btn--excel" *ngIf="tabActivo === 'masUsados'"    (click)="exportarMasUsadosExcel()"><i class="fas fa-file-excel"></i> Exportar Excel</button>
+        <button class="inv-btn inv-btn--excel" *ngIf="tabActivo === 'stockCritico'" (click)="exportarStockExcel()"><i class="fas fa-file-excel"></i> Exportar Excel</button>
+      </div>
+    </div>
+
+    <div class="inv-loading" *ngIf="cargando">
+      <i class="fas fa-spinner fa-spin"></i> Cargando reporte...
+    </div>
+
+    <!-- Tab Servicios -->
+    <div *ngIf="tabActivo === 'servicios' && !cargando">
+      <div class="inv-table-wrap">
+        <table class="inv-table">
+          <thead>
+            <tr><th>#</th><th>Nombre</th><th>Descripción</th><th>Precio</th><th>Estado</th></tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let s of servicios; let i = index">
+              <td><span class="inv-rank" [ngClass]="i < 3 ? 'inv-rank--top' : ''">{{ i + 1 }}</span></td>
+              <td><strong>{{ s.name }}</strong></td>
+              <td class="inv-table__desc">{{ s.description }}</td>
+              <td class="inv-text--money">{{ formatPeso(s.price) }}</td>
+              <td>
+                <span class="inv-badge" [ngClass]="s.active ? 'inv-badge--active' : 'inv-badge--inactive'">
+                  {{ s.active ? 'Activo' : 'Inactivo' }}
+                </span>
+              </td>
+            </tr>
+            <tr *ngIf="servicios.length === 0">
+              <td colspan="5" class="inv-table__empty"><i class="fas fa-inbox"></i> No hay servicios registrados</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Tab Repuestos más usados -->
+    <div *ngIf="tabActivo === 'masUsados' && !cargando">
+      <div class="inv-table-wrap">
+        <table class="inv-table">
+          <thead>
+            <tr><th>#</th><th>Repuesto</th><th>Referencia</th><th>Total Salidas</th><th>Tendencia</th></tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let r of repuestosMasUsados; let i = index">
+              <td><span class="inv-rank" [ngClass]="i < 3 ? 'inv-rank--top' : ''">{{ i + 1 }}</span></td>
+              <td><strong>{{ r.name }}</strong></td>
+              <td><code>{{ r.reference }}</code></td>
+              <td><strong>{{ r.totalOutput }}</strong></td>
+              <td>
+                <div class="inv-bar-wrap">
+                  <div class="inv-bar inv-bar--repuesto"
+                       [style.width.%]="(r.totalOutput / getMaxUsados()) * 100"></div>
+                </div>
+              </td>
+            </tr>
+            <tr *ngIf="repuestosMasUsados.length === 0">
+              <td colspan="5" class="inv-table__empty"><i class="fas fa-inbox"></i> No hay datos disponibles</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Tab Stock crítico -->
+    <div *ngIf="tabActivo === 'stockCritico' && !cargando">
+      <div class="inv-alert-banner" *ngIf="stockCritico.length > 0">
+        <i class="fas fa-exclamation-triangle"></i>
+        <strong>{{ stockCritico.length }} repuesto(s)</strong> requieren atención inmediata
+      </div>
+      <div class="inv-alert-banner inv-alert-banner--ok" *ngIf="stockCritico.length === 0">
+        <i class="fas fa-check-circle"></i> Todos los repuestos tienen stock suficiente
+      </div>
+      <div class="inv-table-wrap" *ngIf="stockCritico.length > 0">
+        <table class="inv-table">
+          <thead>
+            <tr><th>Estado</th><th>Repuesto</th><th>Referencia</th><th>Stock actual</th><th>Stock mínimo</th><th>Déficit</th></tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let a of stockCritico">
+              <td>
+                <span class="inv-badge"
+                      [ngClass]="a.status === 'AGOTADO' ? 'inv-badge--danger' : 'inv-badge--warning'">
+                  <i class="fas" [ngClass]="a.status === 'AGOTADO' ? 'fa-times-circle' : 'fa-exclamation-circle'"></i>
+                  {{ a.status }}
+                </span>
+              </td>
+              <td><strong>{{ a.name }}</strong></td>
+              <td><code>{{ a.reference }}</code></td>
+              <td><strong [style.color]="a.status === 'AGOTADO' ? '#D62828' : '#FF8C00'">{{ a.currentStock }}</strong></td>
+              <td>{{ a.stockMin }}</td>
+              <td><span class="inv-deficit">-{{ a.stockMin - a.currentStock }} unidades</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</div>

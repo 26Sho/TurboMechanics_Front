@@ -1,0 +1,250 @@
+<!-- inventario-repuestos.component.html -->
+<div class="inv-page">
+
+  <div class="inv-page__header">
+    <div>
+      <h1 class="inv-page__title"><i class="fas fa-boxes"></i> Inventario de Repuestos</h1>
+      <p class="inv-page__subtitle">Control de stock y gestión de repuestos del taller</p>
+    </div>
+    <button class="inv-btn inv-btn--primary" (click)="abrirAgregar()">
+      <i class="fas fa-plus"></i> Nuevo Repuesto
+    </button>
+  </div>
+
+  <div class="inv-toolbar">
+    <div class="inv-search">
+      <i class="fas fa-search"></i>
+      <input type="text" placeholder="Buscar por nombre o referencia..."
+             [(ngModel)]="busqueda" (input)="aplicarFiltros()" />
+    </div>
+    <div class="inv-filtros">
+      <button *ngFor="let cat of categorias"
+              [class.active]="filtroCategoria === cat"
+              (click)="filtroCategoria = cat; aplicarFiltros()">
+        {{ cat === 'todas' ? 'Todas' : cat }}
+      </button>
+    </div>
+  </div>
+
+  <div class="inv-loading" *ngIf="cargando">
+    <i class="fas fa-spinner fa-spin"></i> Cargando repuestos...
+  </div>
+
+  <div class="inv-table-wrap" *ngIf="!cargando">
+    <table class="inv-table">
+      <thead>
+        <tr>
+          <th>#</th><th>Nombre</th><th>Referencia</th><th>Categoría</th>
+          <th>Precio</th><th>Stock</th><th>Estado</th><th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let r of repuestosFiltrados; let i = index">
+          <td>{{ i + 1 }}</td>
+          <td><strong>{{ r.name }}</strong></td>
+          <td><code>{{ r.reference }}</code></td>
+          <td>{{ r.category }}</td>
+          <td>{{ formatPeso(r.price) }}</td>
+          <td>
+            <span class="inv-stock">
+              <strong>{{ r.stock }}</strong>
+              <small>/ mín {{ r.stockMin }}</small>
+            </span>
+          </td>
+          <td>
+            <span class="inv-badge" [ngClass]="{
+              'inv-badge--active':  r.statusStock === 'NORMAL',
+              'inv-badge--warning': r.statusStock === 'BAJO',
+              'inv-badge--danger':  r.statusStock === 'AGOTADO'
+            }">
+              <i class="fas" [ngClass]="{
+                'fa-check-circle':       r.statusStock === 'NORMAL',
+                'fa-exclamation-circle': r.statusStock === 'BAJO',
+                'fa-times-circle':       r.statusStock === 'AGOTADO'
+              }"></i>
+              {{ r.statusStock }}
+            </span>
+          </td>
+          <td class="inv-table__actions">
+            <button class="inv-action-btn inv-action-btn--stock"   title="Ajustar stock"   (click)="abrirMovimiento(r)"><i class="fas fa-cubes"></i></button>
+            <button class="inv-action-btn inv-action-btn--history" title="Ver historial"   (click)="verHistorial(r)"><i class="fas fa-history"></i></button>
+            <button class="inv-action-btn inv-action-btn--edit"    title="Editar"          (click)="abrirEditar(r)"><i class="fas fa-edit"></i></button>
+            <button class="inv-action-btn inv-action-btn--delete"  title="Eliminar"        (click)="confirmarEliminar(r.id)"><i class="fas fa-trash"></i></button>
+          </td>
+        </tr>
+        <tr *ngIf="repuestosFiltrados.length === 0">
+          <td colspan="8" class="inv-table__empty"><i class="fas fa-inbox"></i> No hay repuestos que mostrar</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="inv-footer-info" *ngIf="!cargando">
+    Mostrando <strong>{{ repuestosFiltrados.length }}</strong> de <strong>{{ repuestos.length }}</strong> repuestos
+  </div>
+</div>
+
+<!-- Modal Repuesto — Reactive Form -->
+<div class="inv-modal" [class.open]="modalAbierto">
+  <div class="inv-modal__overlay" (click)="cerrarModal()"></div>
+  <div class="inv-modal__box">
+    <div class="inv-modal__header">
+      <h2><i class="fas fa-boxes"></i> {{ modoEdicion ? 'Editar Repuesto' : 'Nuevo Repuesto' }}</h2>
+      <button class="inv-modal__close" (click)="cerrarModal()"><i class="fas fa-times"></i></button>
+    </div>
+    <form [formGroup]="form" (ngSubmit)="guardar()">
+      <div class="inv-modal__body inv-modal__body--grid">
+
+        <div class="inv-form-group">
+          <label>Nombre *</label>
+          <input type="text" formControlName="name" placeholder="Ej: Filtro de aceite" />
+          <span class="inv-form-error" *ngIf="f['name'].invalid && f['name'].touched">Mínimo 3 caracteres</span>
+        </div>
+
+        <div class="inv-form-group">
+          <label>Referencia *</label>
+          <input type="text" formControlName="reference" placeholder="Ej: FO-001" />
+          <span class="inv-form-error" *ngIf="f['reference'].invalid && f['reference'].touched">Requerida</span>
+        </div>
+
+        <div class="inv-form-group">
+          <label>Categoría *</label>
+          <input type="text" formControlName="category" placeholder="Ej: Filtros" />
+          <span class="inv-form-error" *ngIf="f['category'].invalid && f['category'].touched">Requerida</span>
+        </div>
+
+        <div class="inv-form-group">
+          <label>Precio unitario (COP) *</label>
+          <input type="number" formControlName="price" min="0" />
+          <span class="inv-form-error" *ngIf="f['price'].invalid && f['price'].touched">Precio inválido</span>
+        </div>
+
+        <div class="inv-form-group">
+          <label>Stock inicial</label>
+          <input type="number" formControlName="stock" min="0" />
+        </div>
+
+        <div class="inv-form-group">
+          <label>Stock mínimo</label>
+          <input type="number" formControlName="stockMin" min="0" />
+        </div>
+
+      </div>
+      <div class="inv-modal__footer">
+        <button type="button" class="inv-btn inv-btn--ghost" (click)="cerrarModal()">Cancelar</button>
+        <button type="submit" class="inv-btn inv-btn--primary" [disabled]="guardando">
+          <i class="fas fa-spinner fa-spin" *ngIf="guardando"></i>
+          <i class="fas fa-save" *ngIf="!guardando"></i>
+          {{ modoEdicion ? 'Actualizar' : 'Guardar' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal Movimiento — Reactive Form -->
+<div class="inv-modal" [class.open]="modalMovimiento">
+  <div class="inv-modal__overlay" (click)="modalMovimiento = false"></div>
+  <div class="inv-modal__box inv-modal__box--sm">
+    <div class="inv-modal__header">
+      <h2><i class="fas fa-cubes"></i> Ajustar Stock</h2>
+      <button class="inv-modal__close" (click)="modalMovimiento = false"><i class="fas fa-times"></i></button>
+    </div>
+    <form [formGroup]="movForm" (ngSubmit)="guardarMovimiento()">
+      <div class="inv-modal__body">
+        <p class="inv-modal__repuesto-nombre">{{ movRepuestoNombre }}</p>
+
+        <div class="inv-form-group">
+          <label>Tipo de movimiento</label>
+          <div class="inv-radio-group">
+            <label class="inv-radio" [class.selected]="movForm.get('type')?.value === 'Input'">
+              <input type="radio" formControlName="type" value="Input" />
+              <i class="fas fa-arrow-up"></i> Entrada
+            </label>
+            <label class="inv-radio" [class.selected]="movForm.get('type')?.value === 'Output'">
+              <input type="radio" formControlName="type" value="Output" />
+              <i class="fas fa-arrow-down"></i> Salida
+            </label>
+          </div>
+        </div>
+
+        <div class="inv-form-group">
+          <label>Cantidad *</label>
+          <input type="number" formControlName="stock" min="1" />
+          <span class="inv-form-error" *ngIf="mf['stock'].invalid && mf['stock'].touched">Mínimo 1</span>
+        </div>
+
+        <div class="inv-form-group">
+          <label>Motivo *</label>
+          <input type="text" formControlName="motive"
+                 placeholder="Ej: Compra a proveedor / Uso en servicio" />
+          <span class="inv-form-error" *ngIf="mf['motive'].invalid && mf['motive'].touched">Requerido</span>
+        </div>
+
+      </div>
+      <div class="inv-modal__footer">
+        <button type="button" class="inv-btn inv-btn--ghost" (click)="modalMovimiento = false">Cancelar</button>
+        <button type="submit" class="inv-btn inv-btn--primary" [disabled]="guardandoMov">
+          <i class="fas fa-spinner fa-spin" *ngIf="guardandoMov"></i>
+          <i class="fas fa-check" *ngIf="!guardandoMov"></i>
+          Registrar
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal Historial -->
+<div class="inv-modal" [class.open]="modalHistorial">
+  <div class="inv-modal__overlay" (click)="modalHistorial = false"></div>
+  <div class="inv-modal__box inv-modal__box--lg">
+    <div class="inv-modal__header">
+      <h2><i class="fas fa-history"></i> Historial — {{ historialNombre }}</h2>
+      <button class="inv-modal__close" (click)="modalHistorial = false"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="inv-modal__body">
+      <div class="inv-loading" *ngIf="cargandoHistorial"><i class="fas fa-spinner fa-spin"></i> Cargando...</div>
+      <div class="inv-table-wrap" *ngIf="!cargandoHistorial">
+        <table class="inv-table">
+          <thead><tr><th>Fecha</th><th>Tipo</th><th>Cantidad</th><th>Motivo</th></tr></thead>
+          <tbody>
+            <tr *ngFor="let m of historial">
+              <td>{{ formatFecha(m.date) }}</td>
+              <td>
+                <span class="inv-badge" [ngClass]="m.type === 'Input' ? 'inv-badge--entrada' : 'inv-badge--salida'">
+                  <i class="fas" [ngClass]="m.type === 'Input' ? 'fa-arrow-up' : 'fa-arrow-down'"></i>
+                  {{ m.type === 'Input' ? 'Entrada' : 'Salida' }}
+                </span>
+              </td>
+              <td><strong>{{ m.stock }}</strong></td>
+              <td>{{ m.motive }}</td>
+            </tr>
+            <tr *ngIf="historial.length === 0">
+              <td colspan="4" class="inv-table__empty"><i class="fas fa-inbox"></i> Sin movimientos</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <div class="inv-modal__footer">
+      <button class="inv-btn inv-btn--ghost" (click)="modalHistorial = false">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal Eliminar -->
+<div class="inv-modal" [class.open]="modalEliminar">
+  <div class="inv-modal__overlay" (click)="modalEliminar = false"></div>
+  <div class="inv-modal__box inv-modal__box--sm">
+    <div class="inv-modal__header inv-modal__header--danger">
+      <h2><i class="fas fa-exclamation-triangle"></i> Confirmar eliminación</h2>
+    </div>
+    <div class="inv-modal__body">
+      <p>¿Deseas eliminar este repuesto? Esta acción no se puede deshacer.</p>
+    </div>
+    <div class="inv-modal__footer">
+      <button class="inv-btn inv-btn--ghost" (click)="modalEliminar = false">Cancelar</button>
+      <button class="inv-btn inv-btn--danger" (click)="eliminar()"><i class="fas fa-trash"></i> Eliminar</button>
+    </div>
+  </div>
+</div>
