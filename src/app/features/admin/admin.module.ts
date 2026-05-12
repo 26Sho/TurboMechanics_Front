@@ -8,9 +8,8 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { LayoutComponent } from './layout/layout.component';
 import { SidebarComponent } from './layout/sidebar/sidebar.component';
 import { TopbarComponent } from './layout/topbar/topbar.component';
-import { OrdersComponent } from './orders/orders.component';
 import { VehiclesComponent } from './vehicles/vehicles.component';
-
+import { OrdersComponent } from './orders/orders.component';
 @NgModule({
   declarations: [
     ClientsComponent,
