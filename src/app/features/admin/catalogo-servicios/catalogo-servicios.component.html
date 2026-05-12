@@ -1,0 +1,176 @@
+<!-- catalogo-servicios.component.html -->
+<div class="inv-page">
+
+  <div class="inv-page__header">
+    <div>
+      <h1 class="inv-page__title"><i class="fas fa-tools"></i> Catálogo de Servicios</h1>
+      <p class="inv-page__subtitle">Gestiona los servicios ofrecidos por TurboMechanics</p>
+    </div>
+    <button class="inv-btn inv-btn--primary" (click)="abrirAgregar()">
+      <i class="fas fa-plus"></i> Nuevo Servicio
+    </button>
+  </div>
+
+  <div class="inv-toolbar">
+    <div class="inv-search">
+      <i class="fas fa-search"></i>
+      <input type="text" placeholder="Buscar servicio..."
+             [(ngModel)]="busqueda" (input)="aplicarFiltros()" />
+    </div>
+    <div class="inv-filtros">
+      <button [class.active]="filtroActivo==='todos'"     (click)="setFiltro('todos')">Todos</button>
+      <button [class.active]="filtroActivo==='activos'"   (click)="setFiltro('activos')">Activos</button>
+      <button [class.active]="filtroActivo==='inactivos'" (click)="setFiltro('inactivos')">Inactivos</button>
+    </div>
+  </div>
+
+  <div class="inv-loading" *ngIf="cargando">
+    <i class="fas fa-spinner fa-spin"></i> Cargando servicios...
+  </div>
+
+  <div class="inv-table-wrap" *ngIf="!cargando">
+    <table class="inv-table">
+      <thead>
+        <tr>
+          <th>#</th><th>Nombre</th><th>Descripción</th>
+          <th>Precio</th><th>Estado</th><th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let s of serviciosFiltrados; let i = index">
+          <td>{{ i + 1 }}</td>
+          <td><strong>{{ s.name }}</strong></td>
+          <td class="inv-table__desc">{{ s.description }}</td>
+          <td><span class="inv-badge inv-badge--price">{{ formatPeso(s.price) }}</span></td>
+          <td>
+            <span class="inv-badge" [ngClass]="s.active ? 'inv-badge--active' : 'inv-badge--inactive'">
+              {{ s.active ? 'Activo' : 'Inactivo' }}
+            </span>
+          </td>
+          <td class="inv-table__actions">
+            <button class="inv-action-btn inv-action-btn--toggle"
+                    [title]="s.active ? 'Desactivar' : 'Activar'"
+                    (click)="toggleEstado(s.id)">
+              <i [class]="s.active ? 'fas fa-toggle-on' : 'fas fa-toggle-off'"></i>
+            </button>
+            <button class="inv-action-btn inv-action-btn--price"
+                    title="Actualizar precio" (click)="abrirPrecio(s)">
+              <i class="fas fa-dollar-sign"></i>
+            </button>
+            <button class="inv-action-btn inv-action-btn--delete"
+                    title="Eliminar" (click)="confirmarEliminar(s.id)">
+              <i class="fas fa-trash"></i>
+            </button>
+          </td>
+        </tr>
+        <tr *ngIf="serviciosFiltrados.length === 0">
+          <td colspan="6" class="inv-table__empty">
+            <i class="fas fa-inbox"></i> No hay servicios que mostrar
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="inv-footer-info" *ngIf="!cargando">
+    Mostrando <strong>{{ serviciosFiltrados.length }}</strong> de
+    <strong>{{ servicios.length }}</strong> servicios
+  </div>
+</div>
+
+<!-- Modal Nuevo Servicio — Reactive Form -->
+<div class="inv-modal" [class.open]="modalAbierto">
+  <div class="inv-modal__overlay" (click)="cerrarModal()"></div>
+  <div class="inv-modal__box">
+    <div class="inv-modal__header">
+      <h2><i class="fas fa-tools"></i> Nuevo Servicio</h2>
+      <button class="inv-modal__close" (click)="cerrarModal()"><i class="fas fa-times"></i></button>
+    </div>
+    <form [formGroup]="form" (ngSubmit)="guardar()">
+      <div class="inv-modal__body">
+
+        <div class="inv-form-group">
+          <label>Nombre del servicio *</label>
+          <input type="text" formControlName="name" placeholder="Ej: Cambio de aceite" />
+          <span class="inv-form-error" *ngIf="f['name'].invalid && f['name'].touched">
+            Mínimo 3 caracteres
+          </span>
+        </div>
+
+        <div class="inv-form-group">
+          <label>Descripción *</label>
+          <textarea formControlName="description" rows="3"
+                    placeholder="Describe el servicio..."></textarea>
+          <span class="inv-form-error" *ngIf="f['description'].invalid && f['description'].touched">
+            Mínimo 5 caracteres
+          </span>
+        </div>
+
+        <div class="inv-form-group">
+          <label>Precio (COP) *</label>
+          <input type="number" formControlName="price" min="0" />
+          <span class="inv-form-error" *ngIf="f['price'].invalid && f['price'].touched">
+            El precio debe ser mayor o igual a 0
+          </span>
+        </div>
+
+      </div>
+      <div class="inv-modal__footer">
+        <button type="button" class="inv-btn inv-btn--ghost" (click)="cerrarModal()">Cancelar</button>
+        <button type="submit" class="inv-btn inv-btn--primary" [disabled]="guardando">
+          <i class="fas fa-spinner fa-spin" *ngIf="guardando"></i>
+          <i class="fas fa-save" *ngIf="!guardando"></i>
+          Guardar
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal Actualizar Precio — Reactive Form -->
+<div class="inv-modal" [class.open]="modalPrecio">
+  <div class="inv-modal__overlay" (click)="modalPrecio = false"></div>
+  <div class="inv-modal__box inv-modal__box--sm">
+    <div class="inv-modal__header">
+      <h2><i class="fas fa-dollar-sign"></i> Actualizar Precio</h2>
+      <button class="inv-modal__close" (click)="modalPrecio = false"><i class="fas fa-times"></i></button>
+    </div>
+    <form [formGroup]="precioForm" (ngSubmit)="guardarPrecio()">
+      <div class="inv-modal__body">
+        <p class="inv-modal__repuesto-nombre">{{ precioServicioNombre }}</p>
+        <div class="inv-form-group">
+          <label>Nuevo precio (COP) *</label>
+          <input type="number" formControlName="price" min="0" />
+          <span class="inv-form-error" *ngIf="pf['price'].invalid && pf['price'].touched">
+            Precio inválido
+          </span>
+        </div>
+      </div>
+      <div class="inv-modal__footer">
+        <button type="button" class="inv-btn inv-btn--ghost" (click)="modalPrecio = false">Cancelar</button>
+        <button type="submit" class="inv-btn inv-btn--primary">
+          <i class="fas fa-save"></i> Actualizar
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal Eliminar -->
+<div class="inv-modal" [class.open]="modalEliminar">
+  <div class="inv-modal__overlay" (click)="modalEliminar = false"></div>
+  <div class="inv-modal__box inv-modal__box--sm">
+    <div class="inv-modal__header inv-modal__header--danger">
+      <h2><i class="fas fa-exclamation-triangle"></i> Confirmar eliminación</h2>
+    </div>
+    <div class="inv-modal__body">
+      <p>¿Estás seguro de eliminar este servicio? Esta acción no se puede deshacer.</p>
+    </div>
+    <div class="inv-modal__footer">
+      <button class="inv-btn inv-btn--ghost" (click)="modalEliminar = false">Cancelar</button>
+      <button class="inv-btn inv-btn--danger" (click)="eliminar()">
+        <i class="fas fa-trash"></i> Eliminar
+      </button>
+    </div>
+  </div>
+</div>
