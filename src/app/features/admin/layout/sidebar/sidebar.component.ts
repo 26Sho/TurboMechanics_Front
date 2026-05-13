@@ -81,4 +81,4 @@ export class SidebarComponent {
       icon: `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"><line x1="12" y1="4" x2="12" y2="20"/></svg>`
     }
   ];
-}
+} 

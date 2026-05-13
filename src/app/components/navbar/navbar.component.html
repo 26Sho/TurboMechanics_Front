@@ -37,28 +37,29 @@
         <i class="fas fa-user-circle"></i>
         <span class="navbar__username">{{ username }}</span>
 
-        <button *ngIf="isMecanicoOrAdmin" class="navbar__workorder-btn" (click)="goToWorkOrder()">
+        <button *ngIf="isSoloMecanico" class="navbar__workorder-btn" (click)="goToWorkOrder()">
           <i class="fas fa-clipboard-list"></i>
           <span>Órdenes</span>
         </button>
-        <button *ngIf="isMecanicoOrAdmin" class="navbar__workorder-btn" (click)="goToVehicles()">
+        <button *ngIf="isSoloMecanico" class="navbar__workorder-btn" (click)="goToVehicles()">
           <i class="fas fa-car"></i>
           <span>Vehículos</span>
         </button>
-        <button *ngIf="isMecanicoOrAdmin" class="navbar__workorder-btn" (click)="goToVehicleHistory()">
+        <button *ngIf="isSoloMecanico" class="navbar__workorder-btn" (click)="goToVehicleHistory()">
           <i class="fas fa-history"></i>
           <span>Historial</span>
         </button>
-        <!-- ← nuevo -->
-        <button *ngIf="isMecanicoOrAdmin" class="navbar__workorder-btn" (click)="goToDiagnosis()">
+        <button *ngIf="isSoloMecanico" class="navbar__workorder-btn" (click)="goToDiagnosis()">
           <i class="fas fa-wrench"></i>
           <span>Diagnóstico</span>
         </button>
 
+        <!-- Sin *ngIf — siempre visible para cualquier usuario logueado -->
         <button class="navbar__logout-btn" (click)="onLogout()">
           <i class="fas fa-sign-out-alt"></i>
           <span>Cerrar sesión</span>
         </button>
+
       </div>
     </div>
 
@@ -80,21 +81,17 @@
       </li>
       <li *ngIf="isLoggedIn" class="mobile-user">
         <span class="mobile-username"><i class="fas fa-user-circle"></i> {{ username }}</span>
-        <a *ngIf="isMecanicoOrAdmin" href="#" class="mobile-workorder"
-          (click)="goToWorkOrder(); $event.preventDefault()">
+        <a *ngIf="isSoloMecanico" href="#" class="mobile-workorder" (click)="goToWorkOrder(); $event.preventDefault()">
           <i class="fas fa-clipboard-list"></i> Órdenes de trabajo
         </a>
-        <a *ngIf="isMecanicoOrAdmin" href="#" class="mobile-workorder"
-          (click)="goToVehicles(); $event.preventDefault()">
+        <a *ngIf="isSoloMecanico" href="#" class="mobile-workorder" (click)="goToVehicles(); $event.preventDefault()">
           <i class="fas fa-car"></i> Vehículos
         </a>
-        <a *ngIf="isMecanicoOrAdmin" href="#" class="mobile-workorder"
+        <a *ngIf="isSoloMecanico" href="#" class="mobile-workorder"
           (click)="goToVehicleHistory(); $event.preventDefault()">
           <i class="fas fa-history"></i> Historial de servicios
         </a>
-        <!-- ← nuevo -->
-        <a *ngIf="isMecanicoOrAdmin" href="#" class="mobile-workorder"
-          (click)="goToDiagnosis(); $event.preventDefault()">
+        <a *ngIf="isSoloMecanico" href="#" class="mobile-workorder" (click)="goToDiagnosis(); $event.preventDefault()">
           <i class="fas fa-wrench"></i> Diagnóstico
         </a>
         <a href="#" class="mobile-logout" (click)="onLogout(); $event.preventDefault()">

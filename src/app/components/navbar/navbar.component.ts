@@ -18,6 +18,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   isLoggedIn       = false;
   username         = '';
   isMecanicoOrAdmin = false;
+  isSoloMecanico = false; //Nuevo
 
   private authSub!: Subscription;
 
@@ -27,11 +28,13 @@ export class NavbarComponent implements OnInit, OnDestroy {
     this.isLoggedIn       = this.authService.isLoggedIn();
     this.username         = this.authService.getUsername();
     this.isMecanicoOrAdmin = [2, 3].includes(this.authService.getRolId());
+    this.isSoloMecanico = this.authService.getRolId() === 2; //Nuevo
 
     this.authSub = this.authService.authChanged.subscribe(loggedIn => {
       this.isLoggedIn       = loggedIn;
       this.username         = loggedIn ? this.authService.getUsername() : '';
       this.isMecanicoOrAdmin = loggedIn ? [2, 3].includes(this.authService.getRolId()) : false;
+      this.isSoloMecanico = loggedIn ? this.authService.getRolId() === 2 : false; //Nuevo
     });
   }
 
