@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 
 // COMPONENTES
@@ -11,6 +11,9 @@ import { VehiclesComponent } from './vehicles/vehicles.component';
 import { OrdersComponent } from './orders/orders.component';
 import { SidebarComponent } from './layout/sidebar/sidebar.component';
 import { TopbarComponent } from './layout/topbar/topbar.component';
+import { CatalogoServiciosComponent } from './catalogo-servicios/catalogo-servicios.component';
+import { InventarioRepuestosComponent } from './inventario-repuestos/inventario-repuestos.component';
+import { ReportesComponent } from './reportes/reportes.component';
 
 @NgModule({
   declarations: [
@@ -20,11 +23,15 @@ import { TopbarComponent } from './layout/topbar/topbar.component';
     VehiclesComponent,
     OrdersComponent,
     SidebarComponent,
-    TopbarComponent
+    TopbarComponent,
+    CatalogoServiciosComponent,
+    InventarioRepuestosComponent,
+    ReportesComponent
   ],
   imports: [
     CommonModule,
     FormsModule,
+    ReactiveFormsModule,
     RouterModule
   ]
 })

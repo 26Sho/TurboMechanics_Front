@@ -20,6 +20,9 @@ import { DashboardComponent } from './features/admin/dashboard/dashboard.compone
 import { ClientsComponent } from './features/admin/clients/clients.component';
 import { VehiclesComponent } from './features/admin/vehicles/vehicles.component';
 import { OrdersComponent } from './features/admin/orders/orders.component';
+import { CatalogoServiciosComponent } from './features/admin/catalogo-servicios/catalogo-servicios.component';
+import { InventarioRepuestosComponent } from './features/admin/inventario-repuestos/inventario-repuestos.component';
+import { ReportesComponent } from './features/admin/reportes/reportes.component';
 
 const routes: Routes = [
   // 🔹 Redirección inicial
@@ -80,7 +83,12 @@ const routes: Routes = [
       { path: 'work-order', component: WorkOrderComponent },
       { path: 'vehicle-assign', component: VehicleComponent },
       { path: 'vehicle-history', component: VehicleHistoryComponent },
-      { path: 'diagnosis', component: TechnicalDiagnosisComponent }
+      { path: 'diagnosis', component: TechnicalDiagnosisComponent },
+
+      // Rutas de catálogo, inventario y reportes
+      { path: 'servicios', component: CatalogoServiciosComponent },
+      { path: 'repuestos', component: InventarioRepuestosComponent },
+      { path: 'reportes', component: ReportesComponent }
     ]
   },
 
