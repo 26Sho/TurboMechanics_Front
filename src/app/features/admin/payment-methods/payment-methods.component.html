@@ -1,0 +1,127 @@
+<div class="pm-wrapper">
+  <div class="pm-page">
+
+    <!-- Encabezado -->
+    <div class="pm-header">
+      <div class="header-left">
+        <div class="header-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
+            <line x1="1" y1="10" x2="23" y2="10"/>
+          </svg>
+        </div>
+        <div>
+          <h1 class="header-title">Métodos de Pago</h1>
+          <span class="header-sub">Configura y gestiona los métodos de pago disponibles</span>
+        </div>
+      </div>
+      <button class="btn btn-primary" (click)="openCreate()">
+        + Nuevo método
+      </button>
+    </div>
+
+    <!-- Lista -->
+    <div class="pm-card">
+      <div class="loading-row" *ngIf="loading">
+        <span class="spinner-sm"></span> Cargando...
+      </div>
+
+      <div class="empty-state" *ngIf="!loading && payMethods.length === 0">
+        No hay métodos de pago registrados.
+      </div>
+
+      <div class="pm-table-wrap" *ngIf="!loading && payMethods.length > 0">
+        <table class="pm-table">
+          <thead>
+            <tr>
+              <th>Nombre</th>
+              <th>Descripción</th>
+              <th>Config</th>
+              <th>Estado</th>
+              <th>Acciones</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let pm of payMethods">
+              <td class="pm-name">{{ pm.name }}</td>
+              <td class="pm-desc">{{ pm.description }}</td>
+              <td class="pm-config">{{ pm.configJson || '—' }}</td>
+              <td>
+                <span class="badge" [class.badge--active]="pm.active" [class.badge--inactive]="!pm.active">
+                  {{ statusLabel(pm.active) }}
+                </span>
+              </td>
+              <td class="pm-actions">
+                <button class="btn-action btn-edit" (click)="openEdit(pm)" title="Editar">✏️</button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Modal formulario -->
+<div class="modal-overlay" *ngIf="showForm" (click)="closeForm()">
+  <div class="modal-card" (click)="$event.stopPropagation()">
+
+    <div class="modal-header">
+      <div class="modal-icon">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <rect x="1" y="4" width="22" height="16" rx="2" ry="2"/>
+          <line x1="1" y1="10" x2="23" y2="10"/>
+        </svg>
+      </div>
+      <h2 class="modal-title">{{ editingId ? 'Editar' : 'Nuevo' }} Método de Pago</h2>
+      <p class="modal-sub">{{ editingId ? 'Modifica los datos del método de pago' : 'Completa los datos del nuevo método de pago' }}</p>
+    </div>
+
+    <form [formGroup]="form" (ngSubmit)="submit()" novalidate class="modal-body">
+
+      <div class="form-group">
+        <label class="form-label required">Nombre</label>
+        <input type="text" class="form-input" formControlName="name"
+               placeholder="Ej: PSE, Tarjeta de crédito, Efectivo..."
+               [class.input-error]="isInvalid('name')" />
+        <span class="field-error" *ngIf="isInvalid('name')">El nombre es obligatorio</span>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label required">Descripción</label>
+        <textarea class="form-input form-textarea" formControlName="description"
+                  placeholder="Describe cómo funciona este método de pago..."
+                  [class.input-error]="isInvalid('description')" rows="3"></textarea>
+        <span class="field-error" *ngIf="isInvalid('description')">La descripción es obligatoria</span>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Configuración (JSON)</label>
+        <input type="text" class="form-input" formControlName="configJson"
+               placeholder='Ej: {"key": "valor"}' />
+        <span class="field-hint">Parámetros adicionales en formato JSON (opcional)</span>
+      </div>
+
+      <div class="form-group form-group--inline">
+        <label class="form-label">Estado</label>
+        <div class="toggle-row">
+          <label class="toggle">
+            <input type="checkbox" formControlName="active" />
+            <span class="toggle-slider"></span>
+          </label>
+          <span class="toggle-label">{{ form.get('active')?.value ? 'Activo' : 'Inactivo' }}</span>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn btn-ghost" (click)="closeForm()" [disabled]="saving">Cancelar</button>
+        <button type="submit" class="btn btn-primary" [disabled]="saving">
+          <span *ngIf="!saving">{{ editingId ? 'Actualizar' : 'Crear' }}</span>
+          <span *ngIf="saving" class="spinner-sm"></span>
+        </button>
+      </div>
+
+    </form>
+  </div>
+</div>
