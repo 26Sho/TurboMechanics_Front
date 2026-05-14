@@ -33,7 +33,7 @@ import { MovementsComponent } from './movements/movements.component';
     CatalogoServiciosComponent,
     InventarioRepuestosComponent,
     ReportesComponent,
-    MecanicosComponent
+    MecanicosComponent,
     PaymentMethodsComponent,
     MovementsComponent
   ],
