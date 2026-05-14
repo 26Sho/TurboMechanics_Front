@@ -53,6 +53,10 @@
           <i class="fas fa-wrench"></i>
           <span>Diagnóstico</span>
         </button>
+        <button *ngIf="isSoloMecanico" class="navbar__workorder-btn" (click)="goToMovements()">
+          <i class="fas fa-dollar-sign"></i>
+          <span>Movimientos</span>
+        </button>
 
         <!-- Sin *ngIf — siempre visible para cualquier usuario logueado -->
         <button class="navbar__logout-btn" (click)="onLogout()">
@@ -93,6 +97,9 @@
         </a>
         <a *ngIf="isSoloMecanico" href="#" class="mobile-workorder" (click)="goToDiagnosis(); $event.preventDefault()">
           <i class="fas fa-wrench"></i> Diagnóstico
+        </a>
+        <a *ngIf="isSoloMecanico" href="#" class="mobile-workorder" (click)="goToMovements(); $event.preventDefault()">
+          <i class="fas fa-dollar-sign"></i> Movimientos
         </a>
         <a href="#" class="mobile-logout" (click)="onLogout(); $event.preventDefault()">
           <i class="fas fa-sign-out-alt"></i> Cerrar sesión

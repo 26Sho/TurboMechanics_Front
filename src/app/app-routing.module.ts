@@ -23,6 +23,8 @@ import { OrdersComponent } from './features/admin/orders/orders.component';
 import { CatalogoServiciosComponent } from './features/admin/catalogo-servicios/catalogo-servicios.component';
 import { InventarioRepuestosComponent } from './features/admin/inventario-repuestos/inventario-repuestos.component';
 import { ReportesComponent } from './features/admin/reportes/reportes.component';
+import { PaymentMethodsComponent } from './features/admin/payment-methods/payment-methods.component';
+import { MovementsComponent } from './features/admin/movements/movements.component';
 
 const routes: Routes = [
   // 🔹 Redirección inicial
@@ -64,6 +66,11 @@ const routes: Routes = [
     component: TechnicalDiagnosisComponent,
     canActivate: [mechanicGuard]
   },
+  {
+    path: 'movements',
+    component: MovementsComponent,
+    canActivate: [mechanicGuard]
+  },
 
   // 🔹 Panel ADMIN
   {
@@ -88,7 +95,11 @@ const routes: Routes = [
       // Rutas de catálogo, inventario y reportes
       { path: 'servicios', component: CatalogoServiciosComponent },
       { path: 'repuestos', component: InventarioRepuestosComponent },
-      { path: 'reportes', component: ReportesComponent }
+      { path: 'reportes', component: ReportesComponent },
+      { path: 'payment-methods', component: PaymentMethodsComponent },  // ← nuevo
+      { path: 'movements', component: MovementsComponent },// ← nuevo
+
+
     ]
   },
 
@@ -100,4 +111,4 @@ const routes: Routes = [
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule]
 })
-export class AppRoutingModule {}
+export class AppRoutingModule { }

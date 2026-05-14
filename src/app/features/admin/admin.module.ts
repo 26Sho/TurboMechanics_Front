@@ -14,6 +14,8 @@ import { TopbarComponent } from './layout/topbar/topbar.component';
 import { CatalogoServiciosComponent } from './catalogo-servicios/catalogo-servicios.component';
 import { InventarioRepuestosComponent } from './inventario-repuestos/inventario-repuestos.component';
 import { ReportesComponent } from './reportes/reportes.component';
+import { PaymentMethodsComponent } from './payment-methods/payment-methods.component';
+import { MovementsComponent } from './movements/movements.component';
 
 @NgModule({
   declarations: [
@@ -26,7 +28,9 @@ import { ReportesComponent } from './reportes/reportes.component';
     TopbarComponent,
     CatalogoServiciosComponent,
     InventarioRepuestosComponent,
-    ReportesComponent
+    ReportesComponent,
+    PaymentMethodsComponent,
+    MovementsComponent
   ],
   imports: [
     CommonModule,
