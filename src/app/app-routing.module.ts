@@ -23,6 +23,9 @@ import { OrdersComponent } from './features/admin/orders/orders.component';
 import { CatalogoServiciosComponent } from './features/admin/catalogo-servicios/catalogo-servicios.component';
 import { InventarioRepuestosComponent } from './features/admin/inventario-repuestos/inventario-repuestos.component';
 import { ReportesComponent } from './features/admin/reportes/reportes.component';
+import { MecanicosComponent } from './features/admin/mecanicos/mecanicos.component';
+
+
 
 const routes: Routes = [
   // 🔹 Redirección inicial
@@ -88,7 +91,11 @@ const routes: Routes = [
       // Rutas de catálogo, inventario y reportes
       { path: 'servicios', component: CatalogoServiciosComponent },
       { path: 'repuestos', component: InventarioRepuestosComponent },
-      { path: 'reportes', component: ReportesComponent }
+      { path: 'reportes', component: ReportesComponent },
+
+      // Rutas de mecánicos
+      { path: 'mecanicos', component: MecanicosComponent }
+
     ]
   },
 

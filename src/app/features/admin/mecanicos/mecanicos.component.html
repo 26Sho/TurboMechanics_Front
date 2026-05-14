@@ -1,0 +1,318 @@
+<!-- mecanicos.component.html -->
+<div class="inv-page">
+
+  <!-- ─── Header ─────────────────────────────────────────── -->
+  <div class="inv-page__header">
+    <div>
+      <h1 class="inv-page__title"><i class="fas fa-hard-hat"></i> Mecánicos</h1>
+      <p class="inv-page__subtitle">Gestiona el personal técnico del taller TurboMechanics</p>
+    </div>
+    <button class="inv-btn inv-btn--primary" (click)="abrirRegistrar()">
+      <i class="fas fa-user-plus"></i> Nuevo Mecánico
+    </button>
+  </div>
+
+  <!-- ─── Toolbar ─────────────────────────────────────────── -->
+  <div class="inv-toolbar">
+    <div class="inv-search">
+      <i class="fas fa-search"></i>
+      <input type="text" placeholder="Buscar por nombre, cargo o documento..."
+             [(ngModel)]="busqueda" (input)="aplicarFiltros()" />
+    </div>
+    <div class="inv-filtros">
+      <button [class.active]="filtroEstado === 'todos'"      (click)="setFiltro('todos')">Todos</button>
+      <button [class.active]="filtroEstado === 'ACTIVO'"     (click)="setFiltro('ACTIVO')">
+        <i class="fas fa-circle" style="font-size:0.5rem;color:#2ecc71"></i> Activos
+      </button>
+      <button [class.active]="filtroEstado === 'INACTIVO'"   (click)="setFiltro('INACTIVO')">Inactivos</button>
+      <button [class.active]="filtroEstado === 'VACACIONES'" (click)="setFiltro('VACACIONES')">Vacaciones</button>
+      <button [class.active]="filtroEstado === 'LICENCIA'"   (click)="setFiltro('LICENCIA')">Licencia</button>
+      <button [class.active]="filtroEstado === 'SUSPENDIDO'" (click)="setFiltro('SUSPENDIDO')">Suspendidos</button>
+    </div>
+  </div>
+
+  <!-- ─── Loading ─────────────────────────────────────────── -->
+  <div class="inv-loading" *ngIf="cargando">
+    <i class="fas fa-spinner fa-spin"></i> Cargando mecánicos...
+  </div>
+
+  <!-- ─── Tabla ────────────────────────────────────────────── -->
+  <div class="inv-table-wrap" *ngIf="!cargando">
+    <table class="inv-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Nombre</th>
+          <th>Documento</th>
+          <th>Cargo</th>
+          <th>Ingreso</th>
+          <th>Teléfono</th>
+          <th>Salario</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let m of mecanicosFiltered; let i = index">
+          <td>{{ i + 1 }}</td>
+          <td>
+            <div class="mec-nombre">
+              <span class="mec-avatar">{{ m.name.charAt(0).toUpperCase() }}</span>
+              <div>
+                <strong>{{ m.name }}</strong>
+                <small *ngIf="m.email" class="mec-email">{{ m.email }}</small>
+              </div>
+            </div>
+          </td>
+          <td><code>{{ m.document }}</code></td>
+          <td class="inv-table__desc">{{ m.position }}</td>
+          <td>{{ formatFecha(m.hireDate) }}</td>
+          <td>{{ m.phone || '—' }}</td>
+          <td>
+            <span class="inv-badge inv-badge--price">{{ formatPeso(m.salary) }}</span>
+          </td>
+          <td>
+            <span class="inv-badge" [ngClass]="estadoBadgeClass(m.laborStatus)">
+              {{ estadoLabel(m.laborStatus) }}
+            </span>
+          </td>
+          <td class="inv-table__actions">
+            <!-- Historial -->
+            <button class="inv-action-btn inv-action-btn--info"
+                    title="Ver historial de trabajos" (click)="verHistorial(m)">
+              <i class="fas fa-history"></i>
+            </button>
+            <!-- Cambiar estado -->
+            <button class="inv-action-btn inv-action-btn--toggle"
+                    title="Cambiar estado laboral" (click)="abrirEstado(m)">
+              <i class="fas fa-exchange-alt"></i>
+            </button>
+            <!-- Editar -->
+            <button class="inv-action-btn inv-action-btn--price"
+                    title="Editar mecánico" (click)="abrirEditar(m)">
+              <i class="fas fa-pen"></i>
+            </button>
+            <!-- Eliminar -->
+            <button class="inv-action-btn inv-action-btn--delete"
+                    title="Eliminar mecánico" (click)="confirmarEliminar(m.document)">
+              <i class="fas fa-trash"></i>
+            </button>
+          </td>
+        </tr>
+        <tr *ngIf="mecanicosFiltered.length === 0">
+          <td colspan="9" class="inv-table__empty">
+            <i class="fas fa-users-slash"></i> No hay mecánicos que mostrar
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="inv-footer-info" *ngIf="!cargando">
+    Mostrando <strong>{{ mecanicosFiltered.length }}</strong> de
+    <strong>{{ mecanicos.length }}</strong> mecánicos
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     Modal — Registrar / Editar mecánico
+═══════════════════════════════════════════════════════════ -->
+<div class="inv-modal" [class.open]="modalAbierto">
+  <div class="inv-modal__overlay" (click)="cerrarModal()"></div>
+  <div class="inv-modal__box inv-modal__box--lg">
+    <div class="inv-modal__header">
+      <h2>
+        <i [class]="modoEdicion ? 'fas fa-pen' : 'fas fa-user-plus'"></i>
+        {{ modoEdicion ? 'Editar Mecánico' : 'Nuevo Mecánico' }}
+      </h2>
+      <button class="inv-modal__close" (click)="cerrarModal()"><i class="fas fa-times"></i></button>
+    </div>
+
+    <form [formGroup]="form" (ngSubmit)="guardar()">
+      <div class="inv-modal__body">
+
+        <!-- Fila 1 -->
+        <div class="mec-form-row">
+          <div class="inv-form-group">
+            <label>Nombre completo *</label>
+            <input type="text" formControlName="name" placeholder="Ej: Carlos Pérez" />
+            <span class="inv-form-error" *ngIf="f['name'].invalid && f['name'].touched">
+              Mínimo 3 caracteres
+            </span>
+          </div>
+          <div class="inv-form-group">
+            <label>Documento *</label>
+            <input type="number" formControlName="document" placeholder="Ej: 1234567890"
+                   [readOnly]="modoEdicion" />
+            <span class="inv-form-error" *ngIf="f['document'].invalid && f['document'].touched">
+              Documento inválido
+            </span>
+          </div>
+        </div>
+
+        <!-- Fila 2 -->
+        <div class="mec-form-row">
+          <div class="inv-form-group">
+            <label>Cargo / Especialidad *</label>
+            <input type="text" formControlName="position" placeholder="Ej: Mecánico de frenos" />
+            <span class="inv-form-error" *ngIf="f['position'].invalid && f['position'].touched">
+              Campo obligatorio
+            </span>
+          </div>
+          <div class="inv-form-group">
+            <label>Fecha de ingreso *</label>
+            <input type="date" formControlName="hireDate" />
+            <span class="inv-form-error" *ngIf="f['hireDate'].invalid && f['hireDate'].touched">
+              Fecha obligatoria
+            </span>
+          </div>
+        </div>
+
+        <!-- Fila 3 -->
+        <div class="mec-form-row">
+          <div class="inv-form-group">
+            <label>Teléfono</label>
+            <input type="text" formControlName="phone" placeholder="Ej: 3001234567" />
+            <span class="inv-form-error" *ngIf="f['phone'].invalid && f['phone'].touched">
+              Teléfono inválido (7–15 dígitos)
+            </span>
+          </div>
+          <div class="inv-form-group">
+            <label>Correo electrónico</label>
+            <input type="email" formControlName="email" placeholder="Ej: carlos@taller.com" />
+            <span class="inv-form-error" *ngIf="f['email'].invalid && f['email'].touched">
+              Correo inválido
+            </span>
+          </div>
+        </div>
+
+        <!-- Fila 4 -->
+        <div class="mec-form-row">
+          <div class="inv-form-group">
+            <label>Salario (COP)</label>
+            <input type="number" formControlName="salary" min="0" placeholder="Ej: 2000000" />
+            <span class="inv-form-error" *ngIf="f['salary'].invalid && f['salary'].touched">
+              El salario debe ser mayor a 0
+            </span>
+          </div>
+          <div class="inv-form-group">
+            <label>Estado laboral</label>
+            <select formControlName="laborStatus">
+              <option *ngFor="let e of estadosLaborales" [value]="e">{{ estadoLabel(e) }}</option>
+            </select>
+          </div>
+        </div>
+
+      </div>
+      <div class="inv-modal__footer">
+        <button type="button" class="inv-btn inv-btn--ghost" (click)="cerrarModal()">Cancelar</button>
+        <button type="submit" class="inv-btn inv-btn--primary" [disabled]="guardando">
+          <i class="fas fa-spinner fa-spin" *ngIf="guardando"></i>
+          <i class="fas fa-save" *ngIf="!guardando"></i>
+          {{ modoEdicion ? 'Actualizar' : 'Guardar' }}
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     Modal — Cambiar estado laboral
+═══════════════════════════════════════════════════════════ -->
+<div class="inv-modal" [class.open]="modalEstado">
+  <div class="inv-modal__overlay" (click)="modalEstado = false"></div>
+  <div class="inv-modal__box inv-modal__box--sm">
+    <div class="inv-modal__header">
+      <h2><i class="fas fa-exchange-alt"></i> Estado Laboral</h2>
+      <button class="inv-modal__close" (click)="modalEstado = false"><i class="fas fa-times"></i></button>
+    </div>
+    <form [formGroup]="estadoForm" (ngSubmit)="guardarEstado()">
+      <div class="inv-modal__body">
+        <p class="inv-modal__repuesto-nombre">{{ mecanicoEstadoNombre }}</p>
+        <div class="inv-form-group">
+          <label>Nuevo estado *</label>
+          <select formControlName="laborStatus">
+            <option *ngFor="let e of estadosLaborales" [value]="e">{{ estadoLabel(e) }}</option>
+          </select>
+        </div>
+      </div>
+      <div class="inv-modal__footer">
+        <button type="button" class="inv-btn inv-btn--ghost" (click)="modalEstado = false">Cancelar</button>
+        <button type="submit" class="inv-btn inv-btn--primary">
+          <i class="fas fa-check"></i> Confirmar
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     Modal — Historial de trabajos
+═══════════════════════════════════════════════════════════ -->
+<div class="inv-modal" [class.open]="modalHistorial">
+  <div class="inv-modal__overlay" (click)="modalHistorial = false"></div>
+  <div class="inv-modal__box inv-modal__box--lg">
+    <div class="inv-modal__header">
+      <h2><i class="fas fa-history"></i> Historial — {{ mecanicoHistorialNombre }}</h2>
+      <button class="inv-modal__close" (click)="modalHistorial = false"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="inv-modal__body">
+      <div class="inv-table-wrap" *ngIf="historial.length > 0">
+        <table class="inv-table">
+          <thead>
+            <tr>
+              <th>#</th><th>Orden</th><th>Vehículo</th><th>Servicio</th><th>Fecha</th><th>Estado</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let h of historial; let i = index">
+              <td>{{ i + 1 }}</td>
+              <td><code>{{ h.orderId }}</code></td>
+              <td>{{ h.vehicle }}</td>
+              <td>{{ h.service }}</td>
+              <td>{{ formatFecha(h.date) }}</td>
+              <td><span class="inv-badge" [ngClass]="h.badgeClass">{{ h.status }}</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div *ngIf="historial.length === 0" class="inv-table__empty">
+        <i class="fas fa-inbox"></i> No hay trabajos registrados aún para este mecánico.
+        <br><small style="color:#6E6E6E;margin-top:8px;display:block">
+          El historial estará disponible cuando el módulo de órdenes de trabajo esté integrado.
+        </small>
+      </div>
+    </div>
+    <div class="inv-modal__footer">
+      <button class="inv-btn inv-btn--ghost" (click)="modalHistorial = false">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     Modal — Confirmar eliminación
+═══════════════════════════════════════════════════════════ -->
+<div class="inv-modal" [class.open]="modalEliminar">
+  <div class="inv-modal__overlay" (click)="modalEliminar = false"></div>
+  <div class="inv-modal__box inv-modal__box--sm">
+    <div class="inv-modal__header inv-modal__header--danger">
+      <h2><i class="fas fa-exclamation-triangle"></i> Confirmar eliminación</h2>
+    </div>
+    <div class="inv-modal__body">
+      <p>¿Estás seguro de eliminar este mecánico? Esta acción no se puede deshacer.</p>
+      <p style="color:#6E6E6E;font-size:0.85rem;margin-top:8px;">
+        No se podrá eliminar si tiene órdenes de trabajo activas.
+      </p>
+    </div>
+    <div class="inv-modal__footer">
+      <button class="inv-btn inv-btn--ghost" (click)="modalEliminar = false">Cancelar</button>
+      <button class="inv-btn inv-btn--danger" (click)="eliminar()">
+        <i class="fas fa-trash"></i> Eliminar
+      </button>
+    </div>
+  </div>
+</div>

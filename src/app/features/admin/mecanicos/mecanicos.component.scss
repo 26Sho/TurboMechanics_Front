@@ -1,0 +1,133 @@
+@use '../shared/inventario-shared' as *;
+
+// ─── Avatar del mecánico ─────────────────────────────────────
+.mec-nombre {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.mec-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, $red, $orange);
+  color: $white;
+  font-family: $font-heading;
+  font-weight: 700;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.mec-email {
+  display: block;
+  color: $gray-mid;
+  font-size: 0.78rem;
+  margin-top: 2px;
+}
+
+// ─── Formulario en dos columnas ──────────────────────────────
+.mec-form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+
+  @media (max-width: 600px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+// ─── Botón acción — info (historial) ─────────────────────────
+.inv-action-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: all 0.2s ease;
+
+  &--info {
+    background: rgba($blue, 0.12);
+    color: $blue;
+    &:hover { background: rgba($blue, 0.25); transform: translateY(-1px); }
+  }
+
+  &--toggle {
+    background: rgba($orange, 0.12);
+    color: $orange;
+    &:hover { background: rgba($orange, 0.25); transform: translateY(-1px); }
+  }
+
+  &--price {
+    background: rgba($yellow, 0.12);
+    color: $yellow;
+    &:hover { background: rgba($yellow, 0.25); transform: translateY(-1px); }
+  }
+
+  &--delete {
+    background: rgba($red, 0.12);
+    color: $red;
+    &:hover { background: rgba($red, 0.25); transform: translateY(-1px); }
+  }
+}
+
+// ─── Select en formulario ────────────────────────────────────
+.inv-form-group {
+  select {
+    width: 100%;
+    background: rgba(#0D0D0D, 0.5);
+    border: 1px solid rgba(#6E6E6E, 0.25);
+    border-radius: 6px;
+    padding: 10px 14px;
+    color: #FFFFFF;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.9rem;
+    outline: none;
+    cursor: pointer;
+    transition: border-color 0.2s;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236E6E6E' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+
+    &:focus { border-color: #F45D01; }
+
+    option {
+      background: #2B2B2B;
+      color: #FFFFFF;
+    }
+  }
+
+  input[readonly] {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+// ─── Modal más grande ─────────────────────────────────────────
+.inv-modal__box--lg {
+  max-width: 680px;
+}
+
+// ─── Loading ─────────────────────────────────────────────────
+.inv-loading {
+  text-align: center;
+  padding: 60px;
+  color: #6E6E6E;
+  font-size: 1rem;
+  i { margin-right: 8px; color: #F45D01; }
+}
+
+// ─── Footer info ─────────────────────────────────────────────
+.inv-footer-info {
+  font-size: 0.85rem;
+  color: #6E6E6E;
+  margin-top: 8px;
+}

@@ -29,14 +29,18 @@
     </ul>
 
     <div class="navbar__auth">
+      <!-- No logueado -->
       <a *ngIf="!isLoggedIn" href="#" class="navbar__login-btn" (click)="onLoginClick($event)">
         <i class="fas fa-user-circle"></i>
         <span>Iniciar sesión</span>
       </a>
+
+      <!-- Logueado -->
       <div *ngIf="isLoggedIn" class="navbar__user">
         <i class="fas fa-user-circle"></i>
         <span class="navbar__username">{{ username }}</span>
 
+        <!-- Botones solo para mecánico -->
         <button *ngIf="isSoloMecanico" class="navbar__workorder-btn" (click)="goToWorkOrder()">
           <i class="fas fa-clipboard-list"></i>
           <span>Órdenes</span>
@@ -54,12 +58,17 @@
           <span>Diagnóstico</span>
         </button>
 
-        <!-- Sin *ngIf — siempre visible para cualquier usuario logueado -->
+        <!-- Botón Admin — solo visible para administradores -->
+        <button *ngIf="isAdmin" class="navbar__admin-btn" (click)="goToAdmin()">
+          <i class="fas fa-shield-alt"></i>
+          <span>Admin</span>
+        </button>
+
+        <!-- Cerrar sesión — siempre visible -->
         <button class="navbar__logout-btn" (click)="onLogout()">
           <i class="fas fa-sign-out-alt"></i>
           <span>Cerrar sesión</span>
         </button>
-
       </div>
     </div>
 
@@ -68,7 +77,7 @@
     </button>
   </div>
 
-  <!-- Mobile Menu -->
+  <!-- ─── Mobile Menu ─────────────────────────────────────── -->
   <div class="navbar__mobile" [class.open]="isMobileOpen">
     <ul>
       <li><a (click)="scrollTo('inicio'); $event.preventDefault()" href="#inicio">Inicio</a></li>
@@ -76,24 +85,37 @@
       <li><a (click)="scrollTo('servicios'); $event.preventDefault()" href="#servicios">Servicios</a></li>
       <li><a (click)="scrollTo('ubicacion'); $event.preventDefault()" href="#ubicacion">Ubicación</a></li>
       <li><a (click)="scrollTo('contacto'); $event.preventDefault()" href="#contacto">Contacto</a></li>
+
       <li *ngIf="!isLoggedIn">
         <a href="#" class="mobile-login" (click)="onLoginClick($event)">Iniciar sesión</a>
       </li>
+
       <li *ngIf="isLoggedIn" class="mobile-user">
         <span class="mobile-username"><i class="fas fa-user-circle"></i> {{ username }}</span>
-        <a *ngIf="isSoloMecanico" href="#" class="mobile-workorder" (click)="goToWorkOrder(); $event.preventDefault()">
+
+        <a *ngIf="isSoloMecanico" href="#" class="mobile-workorder"
+          (click)="goToWorkOrder(); $event.preventDefault()">
           <i class="fas fa-clipboard-list"></i> Órdenes de trabajo
         </a>
-        <a *ngIf="isSoloMecanico" href="#" class="mobile-workorder" (click)="goToVehicles(); $event.preventDefault()">
+        <a *ngIf="isSoloMecanico" href="#" class="mobile-workorder"
+          (click)="goToVehicles(); $event.preventDefault()">
           <i class="fas fa-car"></i> Vehículos
         </a>
         <a *ngIf="isSoloMecanico" href="#" class="mobile-workorder"
           (click)="goToVehicleHistory(); $event.preventDefault()">
           <i class="fas fa-history"></i> Historial de servicios
         </a>
-        <a *ngIf="isSoloMecanico" href="#" class="mobile-workorder" (click)="goToDiagnosis(); $event.preventDefault()">
+        <a *ngIf="isSoloMecanico" href="#" class="mobile-workorder"
+          (click)="goToDiagnosis(); $event.preventDefault()">
           <i class="fas fa-wrench"></i> Diagnóstico
         </a>
+
+        <!-- Admin en mobile -->
+        <a *ngIf="isAdmin" href="#" class="mobile-admin"
+          (click)="goToAdmin(); $event.preventDefault()">
+          <i class="fas fa-shield-alt"></i> Panel Admin
+        </a>
+
         <a href="#" class="mobile-logout" (click)="onLogout(); $event.preventDefault()">
           <i class="fas fa-sign-out-alt"></i> Cerrar sesión
         </a>
