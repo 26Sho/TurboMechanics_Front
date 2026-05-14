@@ -3,15 +3,14 @@
     "development"
   ],
   "hints": {
-    "disown-opener": "off",
     "compat-api/css": [
       "default",
       {
         "ignore": [
-          "backdrop-filter",
           "user-select"
         ]
       }
-    ]
+    ],
+    "disown-opener": "off"
   }
 }
