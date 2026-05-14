@@ -5,6 +5,7 @@ $gray-light: #CFCFCF;
 $orange: #F45D01;
 $orange-light: #FF8C00;
 $white: #FFFFFF;
+$red: #D62828;
 $font-heading: 'Rajdhani', sans-serif;
 $font-display: 'Bebas Neue', sans-serif;
 
@@ -39,10 +40,7 @@ $font-display: 'Bebas Neue', sans-serif;
     display: flex;
     align-items: center;
     transition: opacity 0.2s;
-
-    &:hover {
-      opacity: 0.9;
-    }
+    &:hover { opacity: 0.9; }
   }
 
   &__logo-img {
@@ -59,10 +57,7 @@ $font-display: 'Bebas Neue', sans-serif;
     list-style: none;
     padding: 0;
     margin: 0;
-
-    @media (max-width: 1024px) {
-      display: none;
-    }
+    @media (max-width: 1024px) { display: none; }
   }
 
   &__link {
@@ -94,17 +89,12 @@ $font-display: 'Bebas Neue', sans-serif;
     &:hover,
     &.active {
       color: $white;
-
-      &::after {
-        transform: translateX(-50%) scaleX(1);
-      }
+      &::after { transform: translateX(-50%) scaleX(1); }
     }
   }
 
   &__auth {
-    @media (max-width: 1024px) {
-      display: none;
-    }
+    @media (max-width: 1024px) { display: none; }
   }
 
   &__login-btn {
@@ -123,9 +113,7 @@ $font-display: 'Bebas Neue', sans-serif;
     transition: all 0.3s ease;
     cursor: pointer;
 
-    i {
-      font-size: 1.1rem;
-    }
+    i { font-size: 1.1rem; }
 
     &:hover {
       background: rgba($orange, 0.12);
@@ -159,7 +147,7 @@ $font-display: 'Bebas Neue', sans-serif;
     white-space: nowrap;
   }
 
-  // ── Botón Órdenes de trabajo ─────────────────────────────────────────────
+  // ── Botón Órdenes de trabajo ──────────────────────────────
   &__workorder-btn {
     display: flex;
     align-items: center;
@@ -177,21 +165,61 @@ $font-display: 'Bebas Neue', sans-serif;
     cursor: pointer;
     transition: all 0.3s ease;
 
-    i {
-      font-size: 1rem;
-      color: $orange;
-    }
+    i { font-size: 1rem; color: $orange; }
 
     &:hover {
       background: rgba($orange, 0.12);
       border-color: $orange;
       box-shadow: 0 0 16px rgba($orange, 0.25);
       color: $orange-light;
-
       i { color: $orange-light; }
     }
   }
 
+  // ── Botón Admin ───────────────────────────────────────────
+  &__admin-btn {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    padding: 8px 18px;
+    border: none;
+    border-radius: 4px;
+    background: linear-gradient(90deg, $red, $orange);
+    font-family: $font-heading;
+    font-size: 0.85rem;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: $white;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+
+    i { font-size: 0.95rem; }
+
+    &::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, $orange, $orange-light);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    &:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 20px rgba($orange, 0.4);
+      &::before { opacity: 1; }
+      i, span { position: relative; z-index: 1; }
+    }
+
+    &:active {
+      transform: translateY(0);
+    }
+  }
+
+  // ── Botón Cerrar sesión ───────────────────────────────────
   &__logout-btn {
     display: flex;
     align-items: center;
@@ -216,6 +244,7 @@ $font-display: 'Bebas Neue', sans-serif;
     }
   }
 
+  // ── Hamburger ─────────────────────────────────────────────
   &__hamburger {
     display: none;
     flex-direction: column;
@@ -225,9 +254,7 @@ $font-display: 'Bebas Neue', sans-serif;
     cursor: pointer;
     padding: 4px;
 
-    @media (max-width: 1024px) {
-      display: flex;
-    }
+    @media (max-width: 1024px) { display: flex; }
 
     span {
       display: block;
@@ -239,35 +266,22 @@ $font-display: 'Bebas Neue', sans-serif;
     }
 
     &.open {
-      span:nth-child(1) {
-        transform: translateY(7px) rotate(45deg);
-      }
-
-      span:nth-child(2) {
-        opacity: 0;
-      }
-
-      span:nth-child(3) {
-        transform: translateY(-7px) rotate(-45deg);
-      }
+      span:nth-child(1) { transform: translateY(7px) rotate(45deg); }
+      span:nth-child(2) { opacity: 0; }
+      span:nth-child(3) { transform: translateY(-7px) rotate(-45deg); }
     }
   }
 
+  // ── Mobile Menu ───────────────────────────────────────────
   &__mobile {
     display: none;
     background: rgba($gray-dark, 0.97);
     border-top: 1px solid rgba($orange, 0.2);
     padding: 16px 0;
 
-    &.open {
-      display: block;
-    }
+    &.open { display: block; }
 
-    ul {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-    }
+    ul { list-style: none; padding: 0; margin: 0; }
 
     li a {
       display: block;
@@ -308,21 +322,27 @@ $font-display: 'Bebas Neue', sans-serif;
       font-weight: 600;
       font-size: 0.9rem;
 
-      i {
-        color: $orange;
-        margin-right: 6px;
-      }
+      i { color: $orange; margin-right: 6px; }
     }
 
-    // ── Mobile: botón órdenes ──────────────────────────────────────────────
     .mobile-workorder {
       color: $orange !important;
-
       i { margin-right: 6px; }
-
       &:hover {
         color: $orange-light !important;
         background: rgba($orange, 0.06);
+      }
+    }
+
+    // ── Mobile Admin ──────────────────────────────────────
+    .mobile-admin {
+      color: $white !important;
+      background: linear-gradient(90deg, rgba($red, 0.15), rgba($orange, 0.15)) !important;
+      border-left: 3px solid $orange;
+      i { margin-right: 6px; color: $orange; }
+      &:hover {
+        background: linear-gradient(90deg, rgba($red, 0.25), rgba($orange, 0.25)) !important;
+        color: $orange-light !important;
       }
     }
 

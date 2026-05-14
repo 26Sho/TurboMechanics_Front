@@ -23,6 +23,9 @@ import { OrdersComponent } from './features/admin/orders/orders.component';
 import { CatalogoServiciosComponent } from './features/admin/catalogo-servicios/catalogo-servicios.component';
 import { InventarioRepuestosComponent } from './features/admin/inventario-repuestos/inventario-repuestos.component';
 import { ReportesComponent } from './features/admin/reportes/reportes.component';
+import { MecanicosComponent } from './features/admin/mecanicos/mecanicos.component';
+
+
 import { PaymentMethodsComponent } from './features/admin/payment-methods/payment-methods.component';
 import { MovementsComponent } from './features/admin/movements/movements.component';
 
@@ -96,6 +99,9 @@ const routes: Routes = [
       { path: 'servicios', component: CatalogoServiciosComponent },
       { path: 'repuestos', component: InventarioRepuestosComponent },
       { path: 'reportes', component: ReportesComponent },
+
+      // Rutas de mecánicos
+      { path: 'mecanicos', component: MecanicosComponent }
       { path: 'payment-methods', component: PaymentMethodsComponent },  // ← nuevo
       { path: 'movements', component: MovementsComponent },// ← nuevo
 

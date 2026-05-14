@@ -14,6 +14,10 @@ import { TopbarComponent } from './layout/topbar/topbar.component';
 import { CatalogoServiciosComponent } from './catalogo-servicios/catalogo-servicios.component';
 import { InventarioRepuestosComponent } from './inventario-repuestos/inventario-repuestos.component';
 import { ReportesComponent } from './reportes/reportes.component';
+import { MecanicosComponent } from './mecanicos/mecanicos.component';
+
+
+
 import { PaymentMethodsComponent } from './payment-methods/payment-methods.component';
 import { MovementsComponent } from './movements/movements.component';
 
@@ -29,6 +33,7 @@ import { MovementsComponent } from './movements/movements.component';
     CatalogoServiciosComponent,
     InventarioRepuestosComponent,
     ReportesComponent,
+    MecanicosComponent
     PaymentMethodsComponent,
     MovementsComponent
   ],

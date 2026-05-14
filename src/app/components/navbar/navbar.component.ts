@@ -10,27 +10,33 @@ import { AuthService } from 'src/app/core/services/auth.service';
   styleUrls: ['./navbar.component.scss']
 })
 export class NavbarComponent implements OnInit, OnDestroy {
+
   @Output() loginClick = new EventEmitter<void>();
 
-  isScrolled = false;
-  isMobileOpen = false;
-  activeSection = 'inicio';
-  isLoggedIn = false;
-  username = '';
+  isScrolled        = false;
+  isMobileOpen      = false;
+  activeSection     = 'inicio';
+  isLoggedIn        = false;
+  username          = '';
   isMecanicoOrAdmin = false;
-  isSoloMecanico = false; //Nuevo
+  isSoloMecanico    = false;
+  isAdmin           = false;  // ← agregado
 
   private authSub!: Subscription;
 
   constructor(private router: Router, private authService: AuthService) { }
 
   ngOnInit(): void {
+    // Lee el estado actual directamente sin esperar evento
+    this.actualizarEstado(this.authService.isLoggedIn());
     this.isLoggedIn = this.authService.isLoggedIn();
     this.username = this.authService.getUsername();
     this.isMecanicoOrAdmin = [2, 3].includes(this.authService.getRolId());
     this.isSoloMecanico = this.authService.getRolId() === 2; //Nuevo
 
+    // Escucha cambios futuros (login / logout)
     this.authSub = this.authService.authChanged.subscribe(loggedIn => {
+      this.actualizarEstado(loggedIn);
       this.isLoggedIn = loggedIn;
       this.username = loggedIn ? this.authService.getUsername() : '';
       this.isMecanicoOrAdmin = loggedIn ? [2, 3].includes(this.authService.getRolId()) : false;
@@ -41,6 +47,18 @@ export class NavbarComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.authSub?.unsubscribe();
   }
+
+  // Centraliza la lectura del estado para no duplicar lógica
+  private actualizarEstado(loggedIn: boolean): void {
+    this.isLoggedIn        = loggedIn;
+    this.username          = loggedIn ? this.authService.getUsername() : '';
+    const rolId            = loggedIn ? this.authService.getRolId() : 0;
+    this.isMecanicoOrAdmin = [2, 3].includes(rolId);
+    this.isSoloMecanico    = rolId === 2;
+    this.isAdmin           = rolId === 3;  // ← se evalúa siempre al cargar
+  }
+
+  // ─── Navegación ──────────────────────────────────────────────
 
   onLogout(): void {
     this.authService.logout();
@@ -63,11 +81,17 @@ export class NavbarComponent implements OnInit, OnDestroy {
     this.router.navigate(['/vehicle-history']);
   }
 
+  goToAdmin(): void {  // ← agregado
+    this.closeMobile();
+    this.router.navigate(['/admin/dashboard']);
+  }
+
   goToDiagnosis(): void {
     this.closeMobile();
     this.router.navigate(['/diagnosis']);
   }
 
+  // ─── Scroll ──────────────────────────────────────────────────
   goToMovements(): void {
     this.closeMobile();
     this.router.navigate(['/movements']);
@@ -89,6 +113,8 @@ export class NavbarComponent implements OnInit, OnDestroy {
       }
     }
   }
+
+  // ─── Mobile ──────────────────────────────────────────────────
 
   toggleMobile(): void { this.isMobileOpen = !this.isMobileOpen; }
   closeMobile(): void { this.isMobileOpen = false; }
