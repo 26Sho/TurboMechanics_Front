@@ -26,6 +26,8 @@ import { ReportesComponent } from './features/admin/reportes/reportes.component'
 import { MecanicosComponent } from './features/admin/mecanicos/mecanicos.component';
 
 
+import { PaymentMethodsComponent } from './features/admin/payment-methods/payment-methods.component';
+import { MovementsComponent } from './features/admin/movements/movements.component';
 
 const routes: Routes = [
   // 🔹 Redirección inicial
@@ -67,6 +69,11 @@ const routes: Routes = [
     component: TechnicalDiagnosisComponent,
     canActivate: [mechanicGuard]
   },
+  {
+    path: 'movements',
+    component: MovementsComponent,
+    canActivate: [mechanicGuard]
+  },
 
   // 🔹 Panel ADMIN
   {
@@ -95,6 +102,9 @@ const routes: Routes = [
 
       // Rutas de mecánicos
       { path: 'mecanicos', component: MecanicosComponent }
+      { path: 'payment-methods', component: PaymentMethodsComponent },  // ← nuevo
+      { path: 'movements', component: MovementsComponent },// ← nuevo
+
 
     ]
   },
@@ -107,4 +117,4 @@ const routes: Routes = [
   imports: [RouterModule.forRoot(routes)],
   exports: [RouterModule]
 })
-export class AppRoutingModule {}
+export class AppRoutingModule { }

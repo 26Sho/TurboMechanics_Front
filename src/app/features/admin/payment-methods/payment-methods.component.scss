@@ -1,0 +1,367 @@
+$orange:      #F45D01;
+$orange-light:#FF8C00;
+$black:       #0D0D0D;
+$gray-dark:   #2B2B2B;
+$gray-mid:    #6E6E6E;
+$gray-light:  #CFCFCF;
+$white:       #FFFFFF;
+$red:         #DC2626;
+$green:       #22C55E;
+$border:      rgba(244, 93, 1, 0.25);
+
+// ── Wrapper ───────────────────────────────────────────────────────────────────
+.pm-wrapper {
+  min-height: 100vh;
+  background: $black;
+  padding: 32px 24px 64px;
+}
+
+.pm-page {
+  max-width: 960px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+// ── Header ────────────────────────────────────────────────────────────────────
+.pm-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid $border;
+  flex-wrap: wrap;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.header-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 12px;
+  background: rgba($orange, 0.12);
+  border: 1px solid $border;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: $orange;
+  flex-shrink: 0;
+}
+
+.header-title {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 1.7rem;
+  font-weight: 700;
+  color: $white;
+  margin: 0;
+  letter-spacing: 0.5px;
+}
+
+.header-sub {
+  font-size: 0.85rem;
+  color: $gray-mid;
+  display: block;
+  margin-top: 2px;
+}
+
+// ── Card ──────────────────────────────────────────────────────────────────────
+.pm-card {
+  background: $gray-dark;
+  border: 1px solid $border;
+  border-radius: 12px;
+  padding: 20px;
+}
+
+// ── Table ─────────────────────────────────────────────────────────────────────
+.pm-table-wrap { overflow-x: auto; }
+
+.pm-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+
+  th {
+    text-align: left;
+    padding: 10px 14px;
+    color: $gray-mid;
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    border-bottom: 1px solid rgba($white, 0.06);
+    white-space: nowrap;
+  }
+
+  td {
+    padding: 12px 14px;
+    border-bottom: 1px solid rgba($white, 0.04);
+    color: $gray-light;
+    vertical-align: middle;
+  }
+
+  tr:last-child td { border-bottom: none; }
+}
+
+.pm-name   { font-weight: 600; color: $white; }
+.pm-desc   { color: $gray-mid; font-size: 12px; }
+.pm-config { font-family: monospace; font-size: 11px; color: $gray-mid; }
+
+// ── Badges ────────────────────────────────────────────────────────────────────
+.badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+
+  &--active   { background: rgba($green, 0.15); color: $green; }
+  &--inactive { background: rgba($gray-mid, 0.15); color: $gray-mid; }
+}
+
+// ── Actions ───────────────────────────────────────────────────────────────────
+.pm-actions { text-align: center; }
+
+.btn-action {
+  border: none;
+  border-radius: 6px;
+  padding: 5px 9px;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: opacity 0.15s, transform 0.1s;
+  background: rgba(99, 102, 241, 0.12);
+  color: #6366f1;
+
+  &:hover { opacity: 0.8; transform: scale(1.08); }
+}
+
+// ── Empty / Loading ───────────────────────────────────────────────────────────
+.loading-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: $gray-mid;
+  padding: 24px;
+}
+
+.empty-state {
+  text-align: center;
+  padding: 40px;
+  color: $gray-mid;
+  font-size: 0.9rem;
+}
+
+// ── Botones ───────────────────────────────────────────────────────────────────
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 22px;
+  border-radius: 8px;
+  border: none;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-transform: uppercase;
+
+  &:disabled { opacity: 0.45; cursor: not-allowed; }
+}
+
+.btn-primary {
+  background: linear-gradient(90deg, $red, $orange);
+  color: $white;
+  &:hover:not(:disabled) { opacity: 0.9; transform: translateY(-1px); }
+}
+
+.btn-ghost {
+  background: transparent;
+  color: $orange;
+  border: 1px solid $border;
+  &:hover:not(:disabled) { background: rgba($orange, 0.08); }
+}
+
+// ── Modal ─────────────────────────────────────────────────────────────────────
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 1rem;
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.modal-card {
+  background: #1a1a1a;
+  border: 1px solid $border;
+  border-radius: 14px;
+  width: 100%;
+  max-width: 520px;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: slideUp 0.25s ease;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+
+.modal-header {
+  text-align: center;
+  padding: 28px 28px 16px;
+  border-bottom: 1px solid rgba($white, 0.06);
+}
+
+.modal-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: rgba($orange, 0.12);
+  border: 2px solid $orange;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: $orange;
+  margin: 0 auto 12px;
+}
+
+.modal-title {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: $white;
+  margin: 0 0 4px;
+}
+
+.modal-sub { font-size: 0.82rem; color: $gray-mid; margin: 0; }
+
+.modal-body { padding: 20px 28px 0; }
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 20px 28px 24px;
+  border-top: 1px solid rgba($white, 0.06);
+  margin-top: 20px;
+}
+
+// ── Form ──────────────────────────────────────────────────────────────────────
+.form-group {
+  margin-bottom: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  &--inline {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+.form-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: $gray-mid;
+
+  &.required::after { content: ' *'; color: $orange; }
+}
+
+.form-input {
+  background: $gray-dark;
+  border: 1px solid rgba($white, 0.08);
+  border-radius: 6px;
+  color: $white;
+  font-size: 14px;
+  padding: 10px 12px;
+  font-family: inherit;
+  transition: border-color 0.2s;
+  outline: none;
+
+  &:focus    { border-color: $orange; }
+  &::placeholder { color: $gray-mid; }
+
+  &.input-error { border-color: $red; }
+}
+
+.form-textarea { resize: vertical; min-height: 80px; }
+
+.field-error { font-size: 11px; color: #F87171; }
+.field-hint  { font-size: 11px; color: $gray-mid; }
+
+// ── Toggle ────────────────────────────────────────────────────────────────────
+.toggle-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.toggle {
+  position: relative;
+  display: inline-block;
+  width: 44px;
+  height: 24px;
+
+  input { opacity: 0; width: 0; height: 0; }
+
+  .toggle-slider {
+    position: absolute;
+    inset: 0;
+    background: $gray-mid;
+    border-radius: 24px;
+    cursor: pointer;
+    transition: background 0.2s;
+
+    &::before {
+      content: '';
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      left: 3px;
+      top: 3px;
+      background: $white;
+      border-radius: 50%;
+      transition: transform 0.2s;
+    }
+  }
+
+  input:checked + .toggle-slider {
+    background: $orange;
+    &::before { transform: translateX(20px); }
+  }
+}
+
+.toggle-label { font-size: 13px; color: $gray-light; }
+
+// ── Spinner ───────────────────────────────────────────────────────────────────
+.spinner-sm {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba($white, 0.3);
+  border-top-color: $white;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  display: inline-block;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }

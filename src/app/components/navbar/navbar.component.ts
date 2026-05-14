@@ -24,15 +24,23 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
   private authSub!: Subscription;
 
-  constructor(private router: Router, private authService: AuthService) {}
+  constructor(private router: Router, private authService: AuthService) { }
 
   ngOnInit(): void {
     // Lee el estado actual directamente sin esperar evento
     this.actualizarEstado(this.authService.isLoggedIn());
+    this.isLoggedIn = this.authService.isLoggedIn();
+    this.username = this.authService.getUsername();
+    this.isMecanicoOrAdmin = [2, 3].includes(this.authService.getRolId());
+    this.isSoloMecanico = this.authService.getRolId() === 2; //Nuevo
 
     // Escucha cambios futuros (login / logout)
     this.authSub = this.authService.authChanged.subscribe(loggedIn => {
       this.actualizarEstado(loggedIn);
+      this.isLoggedIn = loggedIn;
+      this.username = loggedIn ? this.authService.getUsername() : '';
+      this.isMecanicoOrAdmin = loggedIn ? [2, 3].includes(this.authService.getRolId()) : false;
+      this.isSoloMecanico = loggedIn ? this.authService.getRolId() === 2 : false; //Nuevo
     });
   }
 
@@ -84,6 +92,10 @@ export class NavbarComponent implements OnInit, OnDestroy {
   }
 
   // ─── Scroll ──────────────────────────────────────────────────
+  goToMovements(): void {
+    this.closeMobile();
+    this.router.navigate(['/movements']);
+  }
 
   @HostListener('window:scroll')
   onScroll(): void {
@@ -105,7 +117,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   // ─── Mobile ──────────────────────────────────────────────────
 
   toggleMobile(): void { this.isMobileOpen = !this.isMobileOpen; }
-  closeMobile():  void { this.isMobileOpen = false; }
+  closeMobile(): void { this.isMobileOpen = false; }
 
   onLoginClick(event: Event): void {
     event.preventDefault();

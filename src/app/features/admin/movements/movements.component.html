@@ -1,0 +1,154 @@
+<div class="mov-wrapper">
+    <div class="mov-page">
+
+        <!-- Header -->
+        <div class="mov-header">
+            <div class="header-left">
+                <div class="header-icon">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <line x1="12" y1="1" x2="12" y2="23" />
+                        <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="header-title">Movimientos de Pago</h1>
+                    <span class="header-sub">Registra entradas y salidas de dinero del taller</span>
+                </div>
+            </div>
+            <button class="btn btn-primary" (click)="openForm()">+ Registrar movimiento</button>
+        </div>
+
+        <!-- Lista de movimientos -->
+        <div class="mov-card">
+
+            <div class="empty-state" *ngIf="movements.length === 0">
+                No hay movimientos registrados en esta sesión.
+            </div>
+
+            <div class="mov-table-wrap" *ngIf="movements.length > 0">
+                <table class="mov-table">
+                    <thead>
+                        <tr>
+                            <th>Tipo</th>
+                            <th>Concepto</th>
+                            <th>Descripción</th>
+                            <th>Monto</th>
+                            <th>Método de pago</th>
+                            <th>Fecha</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr *ngFor="let m of movements">
+                            <td>
+                                <span class="badge" [class.badge--input]="m.type === 'Input'"
+                                    [class.badge--output]="m.type === 'Output'">
+                                    {{ typeLabel(m.type) }}
+                                </span>
+                            </td>
+                            <td>{{ conceptLabel(m.concept) }}</td>
+                            <td class="mov-desc">{{ m.description || '—' }}</td>
+                            <td class="mov-amount" [class.amount--input]="m.type === 'Input'"
+                                [class.amount--output]="m.type === 'Output'">
+                                {{ m.type === 'Input' ? '+' : '-' }}${{ m.amount | number:'1.2-2' }}
+                            </td>
+                            <td>{{ m.payMethod?.name || '—' }}</td>
+                            <td class="mov-date">{{ m.date | date:'dd/MM/yyyy HH:mm' }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<!-- Modal -->
+<div class="modal-overlay" *ngIf="showForm" (click)="closeForm()">
+    <div class="modal-card" (click)="$event.stopPropagation()">
+
+        <div class="modal-header">
+            <div class="modal-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <line x1="12" y1="1" x2="12" y2="23" />
+                    <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+                </svg>
+            </div>
+            <h2 class="modal-title">Registrar Movimiento</h2>
+            <p class="modal-sub">Registra una entrada o salida de dinero</p>
+        </div>
+
+        <form [formGroup]="form" (ngSubmit)="submit()" novalidate class="modal-body">
+
+            <!-- Tipo y Concepto -->
+            <div class="form-row">
+                <div class="form-group">
+                    <label class="form-label required">Tipo</label>
+                    <select class="form-input" formControlName="type" [class.input-error]="isInvalid('type')">
+                        <option value="">Selecciona...</option>
+                        <option *ngFor="let t of types" [value]="t.value">{{ t.label }}</option>
+                    </select>
+                    <span class="field-error" *ngIf="isInvalid('type')">El tipo es obligatorio</span>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label required">Concepto</label>
+                    <select class="form-input" formControlName="concept" [class.input-error]="isInvalid('concept')">
+                        <option value="">Selecciona...</option>
+                        <option *ngFor="let c of concepts" [value]="c.value">{{ c.label }}</option>
+                    </select>
+                    <span class="field-error" *ngIf="isInvalid('concept')">El concepto es obligatorio</span>
+                </div>
+            </div>
+
+            <!-- Monto -->
+            <div class="form-group">
+                <label class="form-label required">Monto</label>
+                <input type="number" class="form-input" formControlName="amount" placeholder="0.00" min="1"
+                    [class.input-error]="isInvalid('amount')" />
+                <span class="field-error" *ngIf="isInvalid('amount')">El monto debe ser mayor a 0</span>
+            </div>
+
+            <!-- Descripción -->
+            <div class="form-group">
+                <label class="form-label">Descripción</label>
+                <textarea class="form-input form-textarea" formControlName="description"
+                    placeholder="Describe el motivo del movimiento..." rows="3"></textarea>
+            </div>
+
+            <!-- Método de pago -->
+            <div class="form-group">
+                <label class="form-label">Método de pago</label>
+                <select class="form-input" formControlName="payMethod">
+                    <option [ngValue]="null">Sin método específico</option>
+                    <option *ngFor="let pm of payMethods" [ngValue]="pm.id">{{ pm.name }}</option>
+
+                </select>
+            </div>
+
+            <!-- ID Factura (opcional) -->
+            <div class="form-group">
+                <label class="form-label">ID de Factura (opcional)</label>
+                <input type="number" class="form-input" formControlName="billId" placeholder="Ej: 1" min="1" />
+                <span class="field-hint">Solo si el movimiento está asociado a una factura</span>
+            </div>
+
+            <!-- Registrado por -->
+            <div class="form-group">
+                <label class="form-label required">Registrado por (ID usuario)</label>
+                <input type="number" class="form-input" formControlName="registerByIdentification"
+                    placeholder="ID del usuario" [class.input-error]="isInvalid('registerByIdentification')" />
+                <span class="field-error" *ngIf="isInvalid('registerByIdentification')">El ID del usuario es
+                    obligatorio</span>
+            </div>
+
+            <div class="modal-actions">
+                <button type="button" class="btn btn-ghost" (click)="closeForm()" [disabled]="saving">Cancelar</button>
+                <button type="submit" class="btn btn-primary" [disabled]="saving">
+                    <span *ngIf="!saving">Registrar</span>
+                    <span *ngIf="saving" class="spinner-sm"></span>
+                </button>
+            </div>
+
+        </form>
+    </div>
+</div>

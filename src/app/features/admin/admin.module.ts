@@ -18,6 +18,8 @@ import { MecanicosComponent } from './mecanicos/mecanicos.component';
 
 
 
+import { PaymentMethodsComponent } from './payment-methods/payment-methods.component';
+import { MovementsComponent } from './movements/movements.component';
 
 @NgModule({
   declarations: [
@@ -32,6 +34,8 @@ import { MecanicosComponent } from './mecanicos/mecanicos.component';
     InventarioRepuestosComponent,
     ReportesComponent,
     MecanicosComponent
+    PaymentMethodsComponent,
+    MovementsComponent
   ],
   imports: [
     CommonModule,
