@@ -8,7 +8,6 @@ import { DashboardComponent } from './dashboard/dashboard.component';
 import { LayoutComponent } from './layout/layout.component';
 import { SidebarComponent } from './layout/sidebar/sidebar.component';
 import { TopbarComponent } from './layout/topbar/topbar.component';
-import { OrdersComponent } from './orders/orders.component';
 import { VehiclesComponent } from './vehicles/vehicles.component';
 
 @NgModule({
@@ -18,8 +17,7 @@ import { VehiclesComponent } from './vehicles/vehicles.component';
     LayoutComponent,
     SidebarComponent,
     TopbarComponent,
-    OrdersComponent,
-    VehiclesComponent,
+    VehiclesComponent
   ],
   imports: [CommonModule, FormsModule, RouterModule],
   exports: [SidebarComponent, TopbarComponent, LayoutComponent]

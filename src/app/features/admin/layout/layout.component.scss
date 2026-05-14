@@ -24,3 +24,81 @@ $topbar-height: 60px;
   from { opacity: 0; transform: translateY(10px); }
   to   { opacity: 1; transform: translateY(0); }
 }
+
+@media (max-width: 992px) {
+  .main-content {
+    padding: 20px;
+  }
+}
+
+@media (max-width: 768px) {
+  .main-content {
+    margin-left: 0 !important;
+    padding: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .main-content {
+    padding: 12px;
+  }
+}
+
+@media (max-width: 992px) {
+
+  .topbar {
+    padding: 0 16px;
+  }
+
+  .search-box {
+    max-width: 280px;
+  }
+}
+
+@media (max-width: 768px) {
+
+  .topbar {
+    left: 0 !important;
+    padding: 0 14px;
+  }
+
+  .search-box {
+    max-width: 200px;
+  }
+
+  .status-pill {
+    display: none;
+  }
+}
+
+@media (max-width: 576px) {
+
+  .topbar {
+    gap: 10px;
+  }
+
+  .search-box {
+    display: none;
+  }
+
+  .topbar__right {
+    gap: 8px;
+  }
+
+  .topbar-action {
+    width: 34px;
+    height: 34px;
+  }
+}
+
+@media (max-width: 420px) {
+
+  .topbar {
+    padding: 0 10px;
+  }
+
+  .topbar-action {
+    width: 32px;
+    height: 32px;
+  }
+}

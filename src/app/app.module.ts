@@ -18,6 +18,7 @@ import { HomeComponent } from './components/home/home.component';
 import { ToastComponent } from './shared/components/toast/toast.component';
 import { AdminModule } from './features/admin/admin.module';
 import { authInterceptor } from './core/interceptors/auth.interceptor';
+import { SatisfactionSurveyComponent } from './components/satisfaction-survey/satisfaction-survey.component';
 
 @NgModule({
   declarations: [
@@ -30,7 +31,8 @@ import { authInterceptor } from './core/interceptors/auth.interceptor';
     ContactComponent,
     FooterComponent,
     HomeComponent,
-    ToastComponent
+    ToastComponent,
+    SatisfactionSurveyComponent
   ],
   imports: [
     BrowserModule,
@@ -38,7 +40,8 @@ import { authInterceptor } from './core/interceptors/auth.interceptor';
     AppRoutingModule,
     AuthModule,
     CoreModule,
-    AdminModule
+    AdminModule,
+    FormsModule
   ],
   providers: [
     provideHttpClient(withInterceptors([authInterceptor]))

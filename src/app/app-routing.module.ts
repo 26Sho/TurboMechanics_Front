@@ -12,7 +12,6 @@ import { VehicleHistoryComponent } from './features/auth/pages/vehicle-history/v
 import { LayoutComponent } from './features/admin/layout/layout.component';
 import { DashboardComponent } from './features/admin/dashboard/dashboard.component';
 import { ClientsComponent } from './features/admin/clients/clients.component';
-import { OrdersComponent } from './features/admin/orders/orders.component';
 import { VehiclesComponent } from './features/admin/vehicles/vehicles.component';
 
 const routes: Routes = [
@@ -38,7 +37,6 @@ const routes: Routes = [
       { path: '',          redirectTo: 'dashboard', pathMatch: 'full' },
       { path: 'dashboard', component: DashboardComponent },
       { path: 'clients',   component: ClientsComponent },
-      { path: 'orders',    component: OrdersComponent },
       { path: 'vehicles',  component: VehiclesComponent },
     ]
   },

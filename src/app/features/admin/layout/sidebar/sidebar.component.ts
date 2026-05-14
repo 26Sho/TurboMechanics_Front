@@ -11,7 +11,6 @@ export class SidebarComponent {
 
   navItems = [
   { label: 'Dashboard', route: '/admin/dashboard', badge: 0, icon: `...` },
-  { label: 'Órdenes',   route: '/admin/orders',    badge: 7, icon: `...` },
   { label: 'Clientes',  route: '/admin/clients',   badge: 0, icon: `...` },
   { label: 'Vehículos', route: '/admin/vehicles',  badge: 0, icon: `...` },
   { label: 'Servicios', route: '/admin/servicios',  badge: 0, icon: `...` },
