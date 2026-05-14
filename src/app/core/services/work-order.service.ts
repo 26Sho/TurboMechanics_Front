@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { StateOrder, WorkOrderRequest, WorkOrderResponse } from '../models/work-order';
+import { StateOrder, WorkOrderRequest, WorkOrderResponse, WorkOrderUpdateRequest } from '../models/work-order';
 
 @Injectable({ providedIn: 'root' })
 export class WorkOrderService {
@@ -43,5 +43,11 @@ export class WorkOrderService {
 
   listByState(state: StateOrder): Observable<WorkOrderResponse[]> {
     return this.http.get<WorkOrderResponse[]>(`${this.apiUrl}/state/${state}`, { headers: this.getHeaders() });
+  }
+  update(id: number, data: WorkOrderUpdateRequest): Observable<{ message: string; order: WorkOrderResponse }> {
+    return this.http.put<{ message: string; order: WorkOrderResponse }>(`${this.apiUrl}/${id}`, data, { headers: this.getHeaders() });
+  }
+  cancel(id: number, cancellationreason: string): Observable<{ message: string; order: WorkOrderResponse }> {
+    return this.http.patch<{ message: string; order: WorkOrderResponse }>(`${this.apiUrl}/${id}/cancel`,{ cancellationreason },{ headers: this.getHeaders() });
   }
 }

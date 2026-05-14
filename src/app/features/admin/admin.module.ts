@@ -1,25 +1,38 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
-import { FormsModule } from '@angular/forms';
 
-import { ClientsComponent } from './clients/clients.component';
-import { DashboardComponent } from './dashboard/dashboard.component';
+// COMPONENTES
 import { LayoutComponent } from './layout/layout.component';
+import { DashboardComponent } from './dashboard/dashboard.component';
+import { ClientsComponent } from './clients/clients.component';
+import { VehiclesComponent } from './vehicles/vehicles.component';
+import { OrdersComponent } from './orders/orders.component';
 import { SidebarComponent } from './layout/sidebar/sidebar.component';
 import { TopbarComponent } from './layout/topbar/topbar.component';
-import { VehiclesComponent } from './vehicles/vehicles.component';
+import { CatalogoServiciosComponent } from './catalogo-servicios/catalogo-servicios.component';
+import { InventarioRepuestosComponent } from './inventario-repuestos/inventario-repuestos.component';
+import { ReportesComponent } from './reportes/reportes.component';
 
 @NgModule({
   declarations: [
-    ClientsComponent,
-    DashboardComponent,
     LayoutComponent,
+    DashboardComponent,
+    ClientsComponent,
+    VehiclesComponent,
+    OrdersComponent,
     SidebarComponent,
     TopbarComponent,
-    VehiclesComponent
+    CatalogoServiciosComponent,
+    InventarioRepuestosComponent,
+    ReportesComponent
   ],
-  imports: [CommonModule, FormsModule, RouterModule],
-  exports: [SidebarComponent, TopbarComponent, LayoutComponent]
+  imports: [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    RouterModule
+  ]
 })
 export class AdminModule { }

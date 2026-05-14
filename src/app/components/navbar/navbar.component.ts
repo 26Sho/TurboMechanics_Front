@@ -12,26 +12,29 @@ import { AuthService } from 'src/app/core/services/auth.service';
 export class NavbarComponent implements OnInit, OnDestroy {
   @Output() loginClick = new EventEmitter<void>();
 
-  isScrolled = false;
-  isMobileOpen = false;
-  activeSection = 'inicio';
-  isLoggedIn = false;
-  username = '';
+  isScrolled       = false;
+  isMobileOpen     = false;
+  activeSection    = 'inicio';
+  isLoggedIn       = false;
+  username         = '';
   isMecanicoOrAdmin = false;
+  isSoloMecanico = false; //Nuevo
 
   private authSub!: Subscription;
 
-  constructor(private router: Router, private authService: AuthService) { }
+  constructor(private router: Router, private authService: AuthService) {}
 
   ngOnInit(): void {
-    this.isLoggedIn = this.authService.isLoggedIn();
-    this.username = this.authService.getUsername();
+    this.isLoggedIn       = this.authService.isLoggedIn();
+    this.username         = this.authService.getUsername();
     this.isMecanicoOrAdmin = [2, 3].includes(this.authService.getRolId());
+    this.isSoloMecanico = this.authService.getRolId() === 2; //Nuevo
 
     this.authSub = this.authService.authChanged.subscribe(loggedIn => {
-      this.isLoggedIn = loggedIn;
-      this.username = loggedIn ? this.authService.getUsername() : '';
+      this.isLoggedIn       = loggedIn;
+      this.username         = loggedIn ? this.authService.getUsername() : '';
       this.isMecanicoOrAdmin = loggedIn ? [2, 3].includes(this.authService.getRolId()) : false;
+      this.isSoloMecanico = loggedIn ? this.authService.getRolId() === 2 : false; //Nuevo
     });
   }
 
@@ -60,6 +63,11 @@ export class NavbarComponent implements OnInit, OnDestroy {
     this.router.navigate(['/vehicle-history']);
   }
 
+  goToDiagnosis(): void {
+    this.closeMobile();
+    this.router.navigate(['/diagnosis']);
+  }
+
   @HostListener('window:scroll')
   onScroll(): void {
     this.isScrolled = window.scrollY > 40;
@@ -78,7 +86,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   }
 
   toggleMobile(): void { this.isMobileOpen = !this.isMobileOpen; }
-  closeMobile(): void { this.isMobileOpen = false; }
+  closeMobile():  void { this.isMobileOpen = false; }
 
   onLoginClick(event: Event): void {
     event.preventDefault();

@@ -9,11 +9,12 @@ import { RouterModule } from '@angular/router';
 import { WorkOrderComponent } from './pages/work-order/work-order.component';
 import { VehicleComponent } from './pages/vehicle/vehicle.component';
 import { VehicleHistoryComponent } from './pages/vehicle-history/vehicle-history.component';
+import { TechnicalDiagnosisComponent } from './pages/technical-diagnosis/technical-diagnosis.component';
 
 
 
 @NgModule({
-  declarations: [AuthComponent, LoginComponent, RecoverPasswordComponent, RegisterComponent, WorkOrderComponent, VehicleComponent, VehicleHistoryComponent],
+  declarations: [AuthComponent, LoginComponent, RecoverPasswordComponent, RegisterComponent, WorkOrderComponent, VehicleComponent, VehicleHistoryComponent, TechnicalDiagnosisComponent],
   imports: [
     CommonModule,
     FormsModule,

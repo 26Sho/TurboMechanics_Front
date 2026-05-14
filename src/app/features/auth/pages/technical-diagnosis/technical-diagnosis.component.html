@@ -1,0 +1,217 @@
+<div class="diag-wrapper">
+  <div class="page">
+
+    <!-- Encabezado -->
+    <div class="diag-header">
+      <div class="header-icon">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+        </svg>
+      </div>
+      <div>
+        <h1 class="header-title">Diagnóstico Técnico</h1>
+        <span class="header-sub">Registra el estado del vehículo e identifica fallas</span>
+      </div>
+    </div>
+
+    <!-- Selección de orden -->
+    <div class="card">
+      <h2 class="section-title">Seleccionar Orden de Trabajo</h2>
+      <div class="search-row">
+        <input type="number" class="turbo-input"
+               placeholder="ID de la orden o deja vacío para ver todas..."
+               [(ngModel)]="searchOrderId" (keyup.enter)="buscarOrden()" />
+        <button class="btn btn-primary" (click)="buscarOrden()" [disabled]="loadingOrder || loadingOrders">
+          <span *ngIf="!loadingOrder && !loadingOrders">Seleccionar</span>
+          <span *ngIf="loadingOrder || loadingOrders" class="spinner-sm"></span>
+        </button>
+        <button class="btn btn-ghost" *ngIf="selectedOrder" (click)="limpiarOrden()">Cambiar</button>
+      </div>
+
+      <div class="alert alert--error" *ngIf="orderError">{{ orderError }}</div>
+
+      <!-- Lista desplegable -->
+      <div class="orders-dropdown" *ngIf="showOrdersList && !loadingOrders">
+        <div class="orders-dropdown__hint">Selecciona una orden de trabajo</div>
+        <div class="orders-dropdown__empty" *ngIf="allOrders.length === 0">
+          No hay órdenes registradas.
+        </div>
+        <div class="order-option" *ngFor="let o of allOrders" (click)="seleccionarOrden(o)">
+          <div class="order-option__left">
+            <span class="order-option__number">{{ o.numberorder }}</span>
+            <span class="order-option__plate">{{ o.vehicleplate }}</span>
+          </div>
+          <div class="order-option__center">
+            <span class="order-option__client">{{ o.clientname }}</span>
+            <span class="order-option__car">{{ o.vehiclebrand }} {{ o.vehiclemodel }} {{ o.vehicleyear }}</span>
+          </div>
+          <div class="order-option__right">
+            <span class="order-option__state" [class]="'state-' + o.stateorder.toLowerCase()">
+              {{ stateLabel(o.stateorder) }}
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Chip de orden seleccionada -->
+      <div class="order-chip" *ngIf="selectedOrder">
+        <div class="order-chip__left">
+          <span class="order-chip__number">{{ selectedOrder.numberorder }}</span>
+          <span class="order-chip__plate">{{ selectedOrder.vehicleplate }}</span>
+        </div>
+        <div class="order-chip__center">
+          <span class="order-chip__client">{{ selectedOrder.clientname }}</span>
+          <span class="order-chip__car">
+            {{ selectedOrder.vehiclebrand }} {{ selectedOrder.vehiclemodel }} {{ selectedOrder.vehicleyear }}
+          </span>
+        </div>
+        <div class="order-chip__right">
+          <span class="order-chip__failures" *ngIf="selectedOrder.failuresreported">
+            <strong>Fallas reportadas:</strong> {{ selectedOrder.failuresreported }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs" *ngIf="selectedOrder">
+      <button class="tab-btn" [class.active]="viewMode === 'form'" (click)="viewMode = 'form'">
+        {{ isEditing ? 'Editar Diagnóstico' : 'Nuevo Diagnóstico' }}
+      </button>
+      <button class="tab-btn" [class.active]="viewMode === 'history'" (click)="viewMode = 'history'">
+        Historial
+        <span class="tab-badge" *ngIf="diagnosisList.length > 0">{{ diagnosisList.length }}</span>
+      </button>
+    </div>
+
+    <!-- Formulario -->
+    <div class="card form-card" *ngIf="selectedOrder && viewMode === 'form'">
+
+      <div class="form-header">
+        <h2 class="section-title">
+          {{ isEditing ? 'Editar Diagnóstico #' + editingId : 'Registrar Nuevo Diagnóstico' }}
+        </h2>
+        <button class="btn btn-ghost btn-sm" *ngIf="isEditing" (click)="cancelarEdicion()">
+          Cancelar edición
+        </button>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label required">Fallas Detectadas</label>
+        <textarea class="turbo-textarea" rows="4"
+                  placeholder="Describe todas las fallas detectadas durante la revisión técnica..."
+                  [(ngModel)]="form.detectedfailures"></textarea>
+        <span class="field-hint">Describe detalladamente las fallas observadas en el diagnóstico.</span>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label required">Observaciones del Mecánico</label>
+        <textarea class="turbo-textarea" rows="4"
+                  placeholder="Anota tus observaciones técnicas y recomendaciones de reparación..."
+                  [(ngModel)]="form.mechanicobservations"></textarea>
+        <span class="field-hint">Incluye recomendaciones de reparación y notas técnicas adicionales.</span>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label required">Nivel de Urgencia</label>
+        <div class="urgency-grid">
+          <label class="urgency-option" *ngFor="let opt of urgencyOptions"
+                 [class]="opt.cls" [class.selected]="form.urgencylevel === opt.value">
+            <input type="radio" name="urgency" [value]="opt.value" [(ngModel)]="form.urgencylevel" hidden />
+            <span class="urgency-dot"></span>
+            <span class="urgency-label">{{ opt.label }}</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Registrado por</label>
+        <input type="text" class="turbo-input" placeholder="Nombre del mecánico o técnico..."
+               [(ngModel)]="form.registeredby" />
+      </div>
+
+      <div class="alert alert--error"   *ngIf="formError">{{ formError }}</div>
+      <div class="alert alert--success" *ngIf="formSuccess">{{ formSuccess }}</div>
+      <div class="alert alert--info"    *ngIf="generatedOrderInfo">
+        {{ generatedOrderInfo.message }} — Orden: <strong>{{ generatedOrderInfo.numberorder }}</strong>
+      </div>
+
+      <div class="form-actions">
+        <button class="btn btn-primary" (click)="guardarDiagnostico()" [disabled]="saving">
+          <span *ngIf="!saving">{{ isEditing ? 'Actualizar Diagnóstico' : 'Registrar Diagnóstico' }}</span>
+          <span *ngIf="saving" class="spinner-sm"></span>
+        </button>
+        <button class="btn btn-ghost" (click)="resetForm()" *ngIf="!isEditing" [disabled]="saving">
+          Limpiar
+        </button>
+      </div>
+
+    </div>
+
+    <!-- Historial -->
+    <div class="card" *ngIf="selectedOrder && viewMode === 'history'">
+      <h2 class="section-title">Historial de Diagnósticos</h2>
+
+      <div class="loading-row" *ngIf="loadingList">
+        <span class="spinner-sm"></span> Cargando diagnósticos...
+      </div>
+
+      <div class="empty-state" *ngIf="!loadingList && diagnosisList.length === 0">
+        <p>Sin diagnósticos registrados para esta orden.</p>
+        <button class="btn btn-primary btn-sm" (click)="viewMode = 'form'">
+          Registrar primer diagnóstico
+        </button>
+      </div>
+
+      <div class="diagnosis-list" *ngIf="!loadingList && diagnosisList.length > 0">
+        <div class="diagnosis-card" *ngFor="let d of diagnosisList">
+
+          <div class="diag-card-header">
+            <div class="diag-id-block">
+              <span class="diag-id">#{{ d.id }}</span>
+              <span class="badge" [class]="urgencyClass(d.urgencylevel)">{{ urgencyLabel(d.urgencylevel) }}</span>
+              <span class="badge badge--success" *ngIf="d.ordergenerated">Orden generada</span>
+              <span class="badge badge--neutral" *ngIf="!d.ordergenerated">Sin orden</span>
+            </div>
+            <div class="diag-meta">
+              <span class="meta-text">{{ d.registrationdate | date:'dd/MM/yyyy HH:mm' }}</span>
+              <span class="meta-text" *ngIf="d.registeredby">por {{ d.registeredby }}</span>
+            </div>
+          </div>
+
+          <div class="diag-body">
+            <div class="diag-field">
+              <span class="diag-field-label">Fallas detectadas</span>
+              <p class="diag-field-value">{{ d.detectedfailures }}</p>
+            </div>
+            <div class="diag-field">
+              <span class="diag-field-label">Observaciones del mecánico</span>
+              <p class="diag-field-value">{{ d.mechanicobservations }}</p>
+            </div>
+          </div>
+
+          <div class="diag-actions">
+            <button class="btn btn-sm btn-outline-orange" (click)="editarDiagnostico(d)"
+                    [disabled]="d.ordergenerated"
+                    [title]="d.ordergenerated ? 'No se puede editar: ya se generó una orden' : 'Editar'">
+              Editar
+            </button>
+            <button class="btn btn-sm btn-outline-green" (click)="generarOrden(d)"
+                    [disabled]="d.ordergenerated || generatingOrder"
+                    [title]="d.ordergenerated ? 'Ya se generó una orden' : 'Generar orden de trabajo'">
+              <span *ngIf="!generatingOrder">Generar Orden</span>
+              <span *ngIf="generatingOrder" class="spinner-sm"></span>
+            </button>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="alert alert--success" *ngIf="generatedOrderInfo" style="margin-top:16px">
+        {{ generatedOrderInfo.message }} — Orden: <strong>{{ generatedOrderInfo.numberorder }}</strong>
+      </div>
+      <div class="alert alert--error" *ngIf="formError" style="margin-top:16px">{{ formError }}</div>
+    </div>
+
+  </div>
+</div>
