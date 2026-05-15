@@ -1,0 +1,193 @@
+<div class="est-wrapper">
+  <div class="est-page">
+
+    <!-- Header -->
+    <div class="est-header">
+      <div class="header-left">
+        <div class="header-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+            <polyline points="14 2 14 8 20 8"/>
+            <line x1="16" y1="13" x2="8" y2="13"/>
+            <line x1="16" y1="17" x2="8" y2="17"/>
+          </svg>
+        </div>
+        <div>
+          <h1 class="header-title">Presupuestos</h1>
+          <span class="header-sub">Genera y gestiona presupuestos para los clientes</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="est-tabs">
+      <button class="est-tab" [class.active]="activeTab === 'send'" (click)="activeTab = 'send'">
+        Enviar Presupuesto
+      </button>
+      <button class="est-tab" [class.active]="activeTab === 'list'" (click)="activeTab = 'list'">
+        Consultar Presupuestos
+      </button>
+    </div>
+
+    <!-- ══ TAB: ENVIAR ════════════════════════════════════════════════════════ -->
+    <ng-container *ngIf="activeTab === 'send'">
+      <div class="est-card">
+        <h2 class="section-title">Nuevo Presupuesto</h2>
+
+        <form [formGroup]="sendForm" (ngSubmit)="submitSend()" novalidate>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label required">Orden de trabajo</label>
+              <select class="form-input" formControlName="workOrderId"
+                      [class.input-error]="isInvalid(sendForm, 'workOrderId')">
+                <option [ngValue]="null">Selecciona una orden...</option>
+                <option *ngFor="let o of orders" [ngValue]="o.id">
+                  {{ o.numberorder }} — {{ o.clientname }}
+                </option>
+              </select>
+              <span class="field-error" *ngIf="isInvalid(sendForm, 'workOrderId')">Obligatorio</span>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label required">Canal de envío</label>
+              <select class="form-input" formControlName="canal">
+                <option value="EMAIL">📧 Correo electrónico</option>
+                <option value="WHATSAPP">💬 WhatsApp</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label required">Identificación del cliente</label>
+              <input type="number" class="form-input" formControlName="identification"
+                     placeholder="Cédula o NIT"
+                     [class.input-error]="isInvalid(sendForm, 'identification')" />
+              <span class="field-error" *ngIf="isInvalid(sendForm, 'identification')">Obligatorio</span>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label required">Placa del vehículo</label>
+              <input type="text" class="form-input" formControlName="plate"
+                     placeholder="ABC-123" style="text-transform:uppercase"
+                     [class.input-error]="isInvalid(sendForm, 'plate')" />
+              <span class="field-error" *ngIf="isInvalid(sendForm, 'plate')">Obligatorio</span>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label required">Total estimado</label>
+            <input type="number" class="form-input" formControlName="totalEstimate"
+                   placeholder="0.00" min="1"
+                   [class.input-error]="isInvalid(sendForm, 'totalEstimate')" />
+            <span class="field-error" *ngIf="isInvalid(sendForm, 'totalEstimate')">Debe ser mayor a 0</span>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label required">Detalle del presupuesto</label>
+            <textarea class="form-input form-textarea" formControlName="detailJson"
+                      placeholder='Describe los repuestos, mano de obra y costos... Ej: {"repuestos": "Filtro de aceite $50.000", "manoObra": "Cambio de aceite $30.000"}'
+                      rows="5"
+                      [class.input-error]="isInvalid(sendForm, 'detailJson')"></textarea>
+            <span class="field-hint">Puedes usar texto libre o formato JSON con el detalle</span>
+            <span class="field-error" *ngIf="isInvalid(sendForm, 'detailJson')">El detalle es obligatorio</span>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary" [disabled]="saving">
+              <span *ngIf="!saving">Enviar Presupuesto</span>
+              <span *ngIf="saving" class="spinner-sm"></span>
+            </button>
+          </div>
+
+        </form>
+      </div>
+    </ng-container>
+
+    <!-- ══ TAB: CONSULTAR ════════════════════════════════════════════════════ -->
+    <ng-container *ngIf="activeTab === 'list'">
+
+      <div class="est-card">
+        <h2 class="section-title">Consultar Presupuestos</h2>
+
+        <form [formGroup]="listForm" (ngSubmit)="searchEstimates()" novalidate>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label required">Identificación del cliente</label>
+              <input type="number" class="form-input" formControlName="identification"
+                     placeholder="Cédula o NIT"
+                     [class.input-error]="isInvalid(listForm, 'identification')" />
+              <span class="field-error" *ngIf="isInvalid(listForm, 'identification')">Obligatorio</span>
+            </div>
+            <div class="form-group">
+              <label class="form-label">Placa (opcional)</label>
+              <input type="text" class="form-input" formControlName="plate"
+                     placeholder="ABC-123" style="text-transform:uppercase" />
+            </div>
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary" [disabled]="loading">
+              <span *ngIf="!loading">Buscar</span>
+              <span *ngIf="loading" class="spinner-sm"></span>
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <ng-container *ngIf="searched">
+
+        <div class="est-card empty-state" *ngIf="estimates.length === 0">
+          No se encontraron presupuestos para este cliente.
+        </div>
+
+        <div class="est-card" *ngIf="estimates.length > 0">
+          <div class="est-table-wrap">
+            <table class="est-table">
+              <thead>
+                <tr>
+                  <th>Orden</th>
+                  <th>Vehículo</th>
+                  <th>Total</th>
+                  <th>Estado</th>
+                  <th>Fecha envío</th>
+                  <th>Fecha respuesta</th>
+                  <th>Acciones</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let e of estimates">
+                  <td class="est-order">{{ e.workOrder?.numberorder || '—' }}</td>
+                  <td>{{ e.vehicle?.plate || '—' }}</td>
+                  <td class="est-total">${{ e.totalEstimate | number:'1.2-2' }}</td>
+                  <td>
+                    <span class="badge" [class]="statusClass(e.statusEstimate)">
+                      {{ statusLabel(e.statusEstimate) }}
+                    </span>
+                  </td>
+                  <td class="est-date">{{ e.dateSent | date:'dd/MM/yyyy' }}</td>
+                  <td class="est-date">{{ e.dateResponse ? (e.dateResponse | date:'dd/MM/yyyy') : '—' }}</td>
+                  <td class="est-actions">
+                    <ng-container *ngIf="canRespond(e)">
+                      <button class="btn-action btn-approve"
+                              (click)="respond(e, true)"
+                              [disabled]="respondingId === e.id"
+                              title="Aprobar">✓</button>
+                      <button class="btn-action btn-reject"
+                              (click)="respond(e, false)"
+                              [disabled]="respondingId === e.id"
+                              title="Rechazar">✕</button>
+                    </ng-container>
+                    <span *ngIf="!canRespond(e)" class="est-responded">—</span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+      </ng-container>
+    </ng-container>
+
+  </div>
+</div>

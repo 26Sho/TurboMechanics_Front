@@ -1,0 +1,244 @@
+$orange:  #F45D01;
+$black:   #0D0D0D;
+$white:   #FFFFFF;
+$green:   #22C55E;
+$red:     #DC2626;
+$gray:    #6E6E6E;
+
+.er-wrapper {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #1a1a1a 0%, #0D0D0D 100%);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+}
+
+// ── Center ────────────────────────────────────────────────────────────────────
+.er-center {
+  text-align: center;
+  color: $white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.er-loading-text { color: $gray; font-size: 0.9rem; }
+
+.er-icon {
+  width: 64px; height: 64px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.8rem; font-weight: 700;
+
+  &--error { background: rgba($red, 0.15); color: $red; border: 2px solid $red; }
+}
+
+// ── Card ──────────────────────────────────────────────────────────────────────
+.er-card {
+  background: #1a1a1a;
+  border: 1px solid rgba($orange, 0.25);
+  border-radius: 16px;
+  width: 100%;
+  max-width: 560px;
+  overflow: hidden;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.5);
+}
+
+// ── Header ────────────────────────────────────────────────────────────────────
+.er-header {
+  background: linear-gradient(135deg, #1e3a8a, #1e40af);
+  padding: 28px 24px;
+  text-align: center;
+  border-bottom: 3px solid $orange;
+}
+
+.er-logo {
+  width: 60px; height: 60px;
+  object-fit: contain;
+  margin-bottom: 8px;
+}
+
+.er-brand {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 1.5rem; font-weight: 700;
+  color: $white; margin: 0; letter-spacing: 2px;
+}
+
+.er-brand-sub { font-size: 0.8rem; color: rgba($white, 0.7); margin: 4px 0 0; }
+
+// ── Title section ─────────────────────────────────────────────────────────────
+.er-title-section {
+  padding: 20px 24px 0;
+  text-align: center;
+}
+
+.er-title {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 1.3rem; font-weight: 700;
+  color: $orange; margin: 0 0 8px;
+}
+
+.er-sub { font-size: 0.9rem; color: #aaa; margin: 0; }
+
+// ── Sections ──────────────────────────────────────────────────────────────────
+.er-section {
+  padding: 16px 24px;
+  border-bottom: 1px solid rgba($white, 0.06);
+}
+
+.er-section-title {
+  font-size: 10px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 1px;
+  color: $orange; margin-bottom: 12px;
+}
+
+.er-row {
+  display: flex; justify-content: space-between;
+  align-items: center; padding: 6px 0;
+  border-bottom: 1px solid rgba($white, 0.04);
+
+  &:last-child { border-bottom: none; }
+}
+
+.er-label { font-size: 13px; color: $gray; }
+.er-value { font-size: 13px; color: $white; font-weight: 500; }
+.er-plate {
+  font-family: 'Rajdhani', sans-serif;
+  font-weight: 700; color: $orange;
+  font-size: 1rem; letter-spacing: 1px;
+}
+
+.er-detail-box {
+  background: rgba($white, 0.04);
+  border: 1px solid rgba($white, 0.08);
+  border-radius: 8px;
+  padding: 14px;
+  font-size: 13px; color: #ccc;
+  line-height: 1.6;
+  white-space: pre-wrap;
+}
+
+.er-total-box {
+  display: flex; justify-content: space-between; align-items: center;
+  background: rgba($orange, 0.08);
+  border: 1px solid rgba($orange, 0.3);
+  border-radius: 10px;
+  padding: 16px 20px;
+}
+
+.er-total-label {
+  font-size: 13px; font-weight: 700;
+  text-transform: uppercase; color: $gray;
+  letter-spacing: 0.5px;
+}
+
+.er-total-value {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 1.5rem; font-weight: 700; color: $orange;
+}
+
+.er-date {
+  padding: 10px 24px;
+  font-size: 11px; color: $gray;
+  text-align: center;
+  border-bottom: 1px solid rgba($white, 0.06);
+}
+
+// ── Actions ───────────────────────────────────────────────────────────────────
+.er-actions {
+  padding: 24px;
+  text-align: center;
+}
+
+.er-question {
+  font-size: 0.95rem; color: #ccc;
+  margin-bottom: 16px;
+}
+
+.er-buttons {
+  display: flex; gap: 12px; justify-content: center;
+}
+
+.er-btn {
+  flex: 1; max-width: 180px;
+  padding: 14px 24px;
+  border-radius: 10px; border: none;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 1rem; font-weight: 700;
+  letter-spacing: 0.5px; cursor: pointer;
+  transition: all 0.2s; text-transform: uppercase;
+
+  &:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  &--approve {
+    background: linear-gradient(135deg, #16a34a, $green);
+    color: $white;
+    &:hover:not(:disabled) { opacity: 0.9; transform: translateY(-2px); }
+  }
+
+  &--reject {
+    background: transparent;
+    color: $red;
+    border: 2px solid $red;
+    &:hover:not(:disabled) { background: rgba($red, 0.1); transform: translateY(-2px); }
+  }
+}
+
+// ── Responded ─────────────────────────────────────────────────────────────────
+.er-responded {
+  padding: 32px 24px;
+  text-align: center;
+  display: flex; flex-direction: column; align-items: center; gap: 12px;
+}
+
+.er-responded-icon {
+  width: 72px; height: 72px;
+  border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 2rem; font-weight: 700;
+
+  &.approved { background: rgba($green, 0.15); color: $green; border: 3px solid $green; }
+  &.rejected { background: rgba($red, 0.15);   color: $red;   border: 3px solid $red;   }
+}
+
+.er-responded-title {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 1.3rem; font-weight: 700; margin: 0;
+
+  &.approved { color: $green; }
+  &.rejected { color: $red; }
+}
+
+.er-responded-sub { font-size: 0.85rem; color: $gray; margin: 0; max-width: 360px; }
+
+// ── Footer ────────────────────────────────────────────────────────────────────
+.er-footer {
+  padding: 16px 24px;
+  background: rgba($white, 0.02);
+  border-top: 1px solid rgba($white, 0.06);
+  text-align: center;
+
+  p { font-size: 11px; color: $gray; margin: 2px 0; }
+}
+
+// ── Spinners ──────────────────────────────────────────────────────────────────
+.spinner-lg {
+  width: 48px; height: 48px;
+  border: 4px solid rgba($orange, 0.2);
+  border-top-color: $orange;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+.spinner-sm {
+  width: 16px; height: 16px;
+  border: 2px solid rgba($white, 0.3);
+  border-top-color: $white;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  display: inline-block;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
