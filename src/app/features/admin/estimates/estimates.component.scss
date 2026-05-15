@@ -1,0 +1,217 @@
+$orange:       #F45D01;
+$black:        #0D0D0D;
+$gray-dark:    #2B2B2B;
+$gray-mid:     #6E6E6E;
+$gray-light:   #CFCFCF;
+$white:        #FFFFFF;
+$red:          #DC2626;
+$green:        #22C55E;
+$border:       rgba(244, 93, 1, 0.25);
+
+.est-wrapper {
+  min-height: 100vh;
+  background: $black;
+  padding: 32px 24px 64px;
+}
+
+.est-page {
+  max-width: 960px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+// ── Header ────────────────────────────────────────────────────────────────────
+.est-header {
+  display: flex;
+  align-items: center;
+  padding-bottom: 16px;
+  border-bottom: 1px solid $border;
+}
+
+.header-left { display: flex; align-items: center; gap: 14px; }
+
+.header-icon {
+  width: 52px; height: 52px;
+  border-radius: 12px;
+  background: rgba($orange, 0.12);
+  border: 1px solid $border;
+  display: flex; align-items: center; justify-content: center;
+  color: $orange; flex-shrink: 0;
+}
+
+.header-title {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 1.7rem; font-weight: 700;
+  color: $white; margin: 0;
+}
+
+.header-sub { font-size: 0.85rem; color: $gray-mid; display: block; margin-top: 2px; }
+
+// ── Tabs ──────────────────────────────────────────────────────────────────────
+.est-tabs {
+  display: flex; gap: 4px;
+  background: $gray-dark;
+  border-radius: 8px; padding: 4px;
+  width: fit-content;
+}
+
+.est-tab {
+  padding: 8px 20px; border-radius: 6px;
+  border: none; background: transparent;
+  color: $gray-light; font-size: 0.85rem; font-weight: 600;
+  cursor: pointer; transition: all 0.2s;
+
+  &.active { background: $orange; color: $white; }
+  &:not(.active):hover { background: rgba($white, 0.06); color: $white; }
+}
+
+// ── Card ──────────────────────────────────────────────────────────────────────
+.est-card {
+  background: $gray-dark;
+  border: 1px solid $border;
+  border-radius: 12px;
+  padding: 24px;
+}
+
+.section-title {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 1rem; font-weight: 700;
+  color: $white; text-transform: uppercase;
+  letter-spacing: 0.5px; margin-bottom: 20px;
+}
+
+// ── Form ──────────────────────────────────────────────────────────────────────
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px; margin-bottom: 16px;
+
+  @media (max-width: 600px) { grid-template-columns: 1fr; }
+}
+
+.form-group {
+  display: flex; flex-direction: column; gap: 6px;
+  margin-bottom: 16px;
+}
+
+.form-label {
+  font-size: 11px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.8px;
+  color: $gray-mid;
+
+  &.required::after { content: ' *'; color: $orange; }
+}
+
+.form-input {
+  background: $black;
+  border: 1px solid rgba($white, 0.08);
+  border-radius: 6px; color: $white;
+  font-size: 14px; padding: 10px 12px;
+  font-family: inherit; outline: none;
+  transition: border-color 0.2s;
+
+  &:focus        { border-color: $orange; }
+  &::placeholder { color: $gray-mid; }
+  &.input-error  { border-color: $red; }
+
+  option { background: $gray-dark; }
+}
+
+.form-textarea { resize: vertical; min-height: 100px; }
+
+.form-actions { display: flex; justify-content: flex-end; }
+
+.field-error { font-size: 11px; color: #F87171; }
+.field-hint  { font-size: 11px; color: $gray-mid; }
+
+// ── Table ─────────────────────────────────────────────────────────────────────
+.est-table-wrap { overflow-x: auto; }
+
+.est-table {
+  width: 100%; border-collapse: collapse; font-size: 13px;
+
+  th {
+    text-align: left; padding: 10px 12px;
+    color: $gray-mid; font-size: 11px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.8px;
+    border-bottom: 1px solid rgba($white, 0.06);
+    white-space: nowrap;
+  }
+
+  td {
+    padding: 11px 12px;
+    border-bottom: 1px solid rgba($white, 0.04);
+    color: $gray-light; vertical-align: middle;
+  }
+
+  tr:last-child td { border-bottom: none; }
+}
+
+.est-order { font-family: 'Rajdhani', sans-serif; font-weight: 700; color: $orange; }
+.est-total { font-weight: 700; color: $white; }
+.est-date  { font-size: 12px; color: $gray-mid; }
+.est-actions { text-align: center; white-space: nowrap; }
+.est-responded { color: $gray-mid; font-size: 12px; }
+
+// ── Badges ────────────────────────────────────────────────────────────────────
+.badge {
+  display: inline-block; padding: 3px 10px;
+  border-radius: 20px; font-size: 11px; font-weight: 600;
+
+  &--sent     { background: rgba(59,130,246,0.15); color: #60A5FA; }
+  &--approved { background: rgba($green, 0.15);    color: $green;  }
+  &--rejected { background: rgba($red, 0.15);       color: $red;    }
+}
+
+// ── Action buttons ────────────────────────────────────────────────────────────
+.btn-action {
+  border: none; border-radius: 6px;
+  padding: 5px 10px; font-size: 0.85rem;
+  cursor: pointer; margin: 0 2px;
+  font-weight: 700;
+  transition: opacity 0.15s, transform 0.1s;
+
+  &:hover { opacity: 0.8; transform: scale(1.08); }
+  &:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
+
+  &.btn-approve { background: rgba($green, 0.15); color: $green; }
+  &.btn-reject  { background: rgba($red, 0.15);   color: $red;   }
+}
+
+// ── Empty ─────────────────────────────────────────────────────────────────────
+.empty-state {
+  text-align: center; padding: 40px;
+  color: $gray-mid; font-size: 0.9rem;
+}
+
+// ── Buttons ───────────────────────────────────────────────────────────────────
+.btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 10px 22px; border-radius: 8px; border: none;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 0.95rem; font-weight: 700;
+  letter-spacing: 0.5px; cursor: pointer;
+  transition: all 0.2s; text-transform: uppercase;
+
+  &:disabled { opacity: 0.45; cursor: not-allowed; }
+}
+
+.btn-primary {
+  background: linear-gradient(90deg, $red, $orange);
+  color: $white;
+  &:hover:not(:disabled) { opacity: 0.9; transform: translateY(-1px); }
+}
+
+// ── Spinner ───────────────────────────────────────────────────────────────────
+.spinner-sm {
+  width: 16px; height: 16px;
+  border: 2px solid rgba($white, 0.3);
+  border-top-color: $white;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  display: inline-block;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }

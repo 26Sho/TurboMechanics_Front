@@ -22,6 +22,7 @@ import { PaymentMethodsComponent } from './payment-methods/payment-methods.compo
 import { MovementsComponent } from './movements/movements.component';
 import { BillingComponent } from './billing/billing.component';
 import { CashierComponent } from './cashier/cashier.component';
+import { EstimatesComponent } from './estimates/estimates.component';
 
 @NgModule({
   declarations: [
@@ -39,7 +40,8 @@ import { CashierComponent } from './cashier/cashier.component';
     PaymentMethodsComponent,
     MovementsComponent,
     BillingComponent,
-    CashierComponent
+    CashierComponent,
+    EstimatesComponent
   ],
   imports: [
     CommonModule,

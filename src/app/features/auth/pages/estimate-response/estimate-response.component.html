@@ -1,0 +1,99 @@
+<div class="er-wrapper">
+
+  <!-- Loading -->
+  <div class="er-center" *ngIf="loading">
+    <div class="spinner-lg"></div>
+    <p class="er-loading-text">Cargando presupuesto...</p>
+  </div>
+
+  <!-- Error -->
+  <div class="er-center" *ngIf="error && !loading">
+    <div class="er-icon er-icon--error">✕</div>
+    <h2 class="er-title">Enlace inválido</h2>
+    <p class="er-sub">El enlace no es válido o ha expirado. Por favor contacta al taller.</p>
+  </div>
+
+  <!-- Carta del presupuesto -->
+  <div class="er-card" *ngIf="!loading && !error && estimate">
+
+    <!-- Header -->
+    <div class="er-header">
+      <img src="assets/Logo_turbo_final.webp" alt="TurboMechanics" class="er-logo" />
+      <h1 class="er-brand">TURBO MECHANICS</h1>
+      <p class="er-brand-sub">Taller Especializado</p>
+    </div>
+
+    <!-- Título -->
+    <div class="er-title-section">
+      <h2 class="er-title">Presupuesto de Servicios</h2>
+      <p class="er-sub">Estimado/a <strong>{{ estimate.users?.username }}</strong>, le presentamos el presupuesto para su vehículo.</p>
+    </div>
+
+    <!-- Detalle -->
+    <div class="er-section">
+      <div class="er-section-title">Información del Vehículo</div>
+      <div class="er-row">
+        <span class="er-label">Placa</span>
+        <span class="er-value er-plate">{{ estimate.vehicle?.plate }}</span>
+      </div>
+      <div class="er-row">
+        <span class="er-label">Orden de trabajo</span>
+        <span class="er-value">{{ estimate.workOrder?.numberorder }}</span>
+      </div>
+    </div>
+
+    <div class="er-section">
+      <div class="er-section-title">Detalle del Presupuesto</div>
+      <div class="er-detail-box">{{ estimate.detailJson }}</div>
+    </div>
+
+    <div class="er-section">
+      <div class="er-total-box">
+        <span class="er-total-label">Total Estimado</span>
+        <span class="er-total-value">${{ estimate.totalEstimate | number:'1.2-2' }}</span>
+      </div>
+    </div>
+
+    <!-- Fecha -->
+    <div class="er-date">
+      Presupuesto enviado el {{ estimate.dateSent | date:'dd/MM/yyyy' }}
+    </div>
+
+    <!-- Acciones — pendiente -->
+    <div class="er-actions" *ngIf="!responded">
+      <p class="er-question">¿Desea aprobar este presupuesto?</p>
+      <div class="er-buttons">
+        <button class="er-btn er-btn--reject" (click)="respond(false)" [disabled]="responding">
+          <span *ngIf="!responding">✕ Rechazar</span>
+          <span *ngIf="responding" class="spinner-sm"></span>
+        </button>
+        <button class="er-btn er-btn--approve" (click)="respond(true)" [disabled]="responding">
+          <span *ngIf="!responding">✓ Aprobar</span>
+          <span *ngIf="responding" class="spinner-sm"></span>
+        </button>
+      </div>
+    </div>
+
+    <!-- Respuesta ya registrada -->
+    <div class="er-responded" *ngIf="responded">
+      <div class="er-responded-icon" [class.approved]="decision === 'APPROVED'" [class.rejected]="decision === 'REJECTED'">
+        {{ decision === 'APPROVED' ? '✓' : '✕' }}
+      </div>
+      <h3 class="er-responded-title" [class.approved]="decision === 'APPROVED'" [class.rejected]="decision === 'REJECTED'">
+        {{ decision === 'APPROVED' ? 'Presupuesto Aprobado' : 'Presupuesto Rechazado' }}
+      </h3>
+      <p class="er-responded-sub">
+        {{ decision === 'APPROVED'
+          ? 'Hemos recibido tu aprobación. El taller se pondrá en contacto contigo pronto.'
+          : 'Hemos recibido tu rechazo. Por favor contacta al taller para más información.' }}
+      </p>
+    </div>
+
+    <!-- Footer -->
+    <div class="er-footer">
+      <p>TurboMechanics — Taller Especializado</p>
+      <p>Si tienes dudas, contáctanos directamente.</p>
+    </div>
+
+  </div>
+</div>

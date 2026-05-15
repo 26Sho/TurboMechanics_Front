@@ -30,6 +30,7 @@ import { PaymentMethodsComponent } from './features/admin/payment-methods/paymen
 import { MovementsComponent } from './features/admin/movements/movements.component';
 import { BillingComponent } from './features/admin/billing/billing.component';
 import { CashierComponent } from './features/admin/cashier/cashier.component';
+import { EstimatesComponent } from './features/admin/estimates/estimates.component';
 
 const routes: Routes = [
   // 🔹 Redirección inicial
@@ -108,6 +109,8 @@ const routes: Routes = [
       { path: 'movements', component: MovementsComponent },// ← nuevo
       { path: 'billing', component: BillingComponent },
       { path: 'cashier', component: CashierComponent },
+      { path: 'estimates', component: EstimatesComponent },
+
     ]
   },
 
