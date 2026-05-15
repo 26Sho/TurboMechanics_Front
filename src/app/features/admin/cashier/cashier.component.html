@@ -1,0 +1,212 @@
+<div class="cashier-wrapper">
+    <div class="cashier-page">
+
+        <!-- Header -->
+        <div class="cashier-header">
+            <div class="header-left">
+                <div class="header-icon">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="2" y="3" width="20" height="14" rx="2" />
+                        <line x1="8" y1="21" x2="16" y2="21" />
+                        <line x1="12" y1="17" x2="12" y2="21" />
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="header-title">Caja y Reportes</h1>
+                    <span class="header-sub">Control de caja quincenal y reporte de facturación</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tabs -->
+        <div class="cashier-tabs">
+            <button class="cashier-tab" [class.active]="activeTab === 'cashier'" (click)="activeTab = 'cashier'">
+                Control de Caja
+            </button>
+            <button class="cashier-tab" [class.active]="activeTab === 'report'" (click)="activeTab = 'report'">
+                Reporte de Facturación
+            </button>
+        </div>
+
+        <!-- ══ TAB: CAJA ══════════════════════════════════════════════════════════ -->
+        <ng-container *ngIf="activeTab === 'cashier'">
+
+            <div class="cashier-card">
+                <h2 class="section-title">Control de Caja Quincenal</h2>
+
+                <form [formGroup]="cashierForm" (ngSubmit)="searchCashier()" novalidate>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label required">Fecha inicio</label>
+                            <input type="date" class="form-input" formControlName="start"
+                                [class.input-error]="isInvalid(cashierForm, 'start')" />
+                            <span class="field-error" *ngIf="isInvalid(cashierForm, 'start')">Obligatorio</span>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label required">Fecha fin</label>
+                            <input type="date" class="form-input" formControlName="end"
+                                [class.input-error]="isInvalid(cashierForm, 'end')" />
+                            <span class="field-error" *ngIf="isInvalid(cashierForm, 'end')">Obligatorio</span>
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary" [disabled]="loadingCashier">
+                            <span *ngIf="!loadingCashier">Consultar</span>
+                            <span *ngIf="loadingCashier" class="spinner-sm"></span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <!-- Resultado caja -->
+            <div class="cashier-card" *ngIf="cashierSearched && cashierData">
+                <div class="result-header">
+                    <h2 class="section-title">Resultado del Período</h2>
+                    <button class="btn-export-sm" (click)="exportExcel()" [disabled]="exportingExcel"
+                        title="Exportar Excel">
+                        <span *ngIf="!exportingExcel">📊 Excel</span>
+                        <span *ngIf="exportingExcel" class="spinner-xs"></span>
+                    </button>
+                </div>
+
+                <div class="period-info">
+                    <span>{{ cashierData.start | date:'dd/MM/yyyy' }}</span>
+                    <span class="period-arrow">→</span>
+                    <span>{{ cashierData.end | date:'dd/MM/yyyy' }}</span>
+                </div>
+
+                <div class="cashier-grid">
+                    <div class="cashier-stat cashier-stat--input">
+                        <div class="stat-icon">↑</div>
+                        <div class="stat-info">
+                            <span class="stat-label">Ingresos</span>
+                            <span class="stat-value">${{ cashierData.inputs | number:'1.2-2' }}</span>
+                        </div>
+                    </div>
+                    <div class="cashier-stat cashier-stat--output">
+                        <div class="stat-icon">↓</div>
+                        <div class="stat-info">
+                            <span class="stat-label">Egresos</span>
+                            <span class="stat-value">${{ cashierData.outputs | number:'1.2-2' }}</span>
+                        </div>
+                    </div>
+                    <div class="cashier-stat cashier-stat--balance" [class]="'cashier-stat--' + balanceClass()">
+                        <div class="stat-icon">$</div>
+                        <div class="stat-info">
+                            <span class="stat-label">Balance</span>
+                            <span class="stat-value" [class]="balanceClass()">
+                                ${{ cashierData.balance | number:'1.2-2' }}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="cashier-card empty-state" *ngIf="cashierSearched && !cashierData">
+                No se encontraron movimientos en ese período.
+            </div>
+
+        </ng-container>
+
+        <!-- ══ TAB: REPORTE ═══════════════════════════════════════════════════════ -->
+        <ng-container *ngIf="activeTab === 'report'">
+
+            <div class="cashier-card">
+                <h2 class="section-title">Reporte de Facturación por Período</h2>
+
+                <form [formGroup]="reportForm" (ngSubmit)="searchReport()" novalidate>
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label required">Fecha inicio</label>
+                            <input type="date" class="form-input" formControlName="start"
+                                [class.input-error]="isInvalid(reportForm, 'start')" />
+                            <span class="field-error" *ngIf="isInvalid(reportForm, 'start')">Obligatorio</span>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label required">Fecha fin</label>
+                            <input type="date" class="form-input" formControlName="end"
+                                [class.input-error]="isInvalid(reportForm, 'end')" />
+                            <span class="field-error" *ngIf="isInvalid(reportForm, 'end')">Obligatorio</span>
+                        </div>
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary" [disabled]="loadingReport">
+                            <span *ngIf="!loadingReport">Generar Reporte</span>
+                            <span *ngIf="loadingReport" class="spinner-sm"></span>
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <ng-container *ngIf="reportSearched">
+
+                <div class="empty-state cashier-card" *ngIf="reportBills.length === 0">
+                    No se encontraron facturas en ese período.
+                </div>
+
+                <ng-container *ngIf="reportBills.length > 0">
+
+                    <!-- Resumen -->
+                    <div class="cashier-card report-summary">
+                        <div class="summary-item">
+                            <span class="summary-label">Total facturas</span>
+                            <span class="summary-value">{{ reportBills.length }}</span>
+                        </div>
+                        <div class="summary-item">
+                            <span class="summary-label">Total facturado</span>
+                            <span class="summary-value summary-value--highlight">${{ totalFacturas | number:'1.2-2'
+                                }}</span>
+                        </div>
+                    </div>
+
+                    <!-- Tabla -->
+                    <div class="cashier-card">
+                        <div class="report-table-wrap">
+                            <table class="report-table">
+                                <thead>
+                                    <tr>
+                                        <th>N° Factura</th>
+                                        <th>Fecha</th>
+                                        <th>Cliente</th>
+                                        <th>Vehículo</th>
+                                        <th>Subtotal</th>
+                                        <th>IVA</th>
+                                        <th>Total</th>
+                                        <th>Estado</th>
+                                        <th>PDF</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let b of reportBills">
+                                        <td class="bill-num">{{ b.numBill }}</td>
+                                        <td>{{ b.date | date:'dd/MM/yyyy' }}</td>
+                                        <td>{{ b.users?.username || '—' }}</td>
+                                        <td>{{ b.vehicle?.plate || '—' }}</td>
+                                        <td>${{ b.subtotal | number:'1.2-2' }}</td>
+                                        <td>${{ b.taxes | number:'1.2-2' }}</td>
+                                        <td class="bill-total">${{ b.total | number:'1.2-2' }}</td>
+                                        <td>
+                                            <span class="badge" [class]="statusClass(b.status)">
+                                                {{ statusLabel(b.status) }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <button class="btn-action btn-download" (click)="downloadPdf(b)"
+                                                [disabled]="downloadingId === b.id" title="Descargar PDF">
+                                                <span *ngIf="downloadingId !== b.id">⬇</span>
+                                                <span *ngIf="downloadingId === b.id" class="spinner-xs"></span>
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </ng-container>
+            </ng-container>
+
+        </ng-container>
+
+    </div>
+</div>

@@ -20,6 +20,8 @@ import { MecanicosComponent } from './mecanicos/mecanicos.component';
 
 import { PaymentMethodsComponent } from './payment-methods/payment-methods.component';
 import { MovementsComponent } from './movements/movements.component';
+import { BillingComponent } from './billing/billing.component';
+import { CashierComponent } from './cashier/cashier.component';
 
 @NgModule({
   declarations: [
@@ -35,7 +37,9 @@ import { MovementsComponent } from './movements/movements.component';
     ReportesComponent,
     MecanicosComponent,
     PaymentMethodsComponent,
-    MovementsComponent
+    MovementsComponent,
+    BillingComponent,
+    CashierComponent
   ],
   imports: [
     CommonModule,

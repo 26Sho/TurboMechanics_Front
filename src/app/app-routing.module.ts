@@ -28,6 +28,8 @@ import { MecanicosComponent } from './features/admin/mecanicos/mecanicos.compone
 
 import { PaymentMethodsComponent } from './features/admin/payment-methods/payment-methods.component';
 import { MovementsComponent } from './features/admin/movements/movements.component';
+import { BillingComponent } from './features/admin/billing/billing.component';
+import { CashierComponent } from './features/admin/cashier/cashier.component';
 
 const routes: Routes = [
   // 🔹 Redirección inicial
@@ -104,6 +106,8 @@ const routes: Routes = [
       { path: 'mecanicos', component: MecanicosComponent },
       { path: 'payment-methods', component: PaymentMethodsComponent },  // ← nuevo
       { path: 'movements', component: MovementsComponent },// ← nuevo
+      { path: 'billing', component: BillingComponent },
+      { path: 'cashier', component: CashierComponent },
     ]
   },
 

@@ -8,11 +8,15 @@ export class MovementService {
 
   private readonly apiUrl = 'http://localhost:9090/movimientos';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   private getHeaders(): HttpHeaders {
     const token = localStorage.getItem('token') || '';
     return new HttpHeaders({ Authorization: `Bearer ${token}` });
+  }
+
+  list(): Observable<MovementPay[]> {
+    return this.http.get<MovementPay[]>(this.apiUrl, { headers: this.getHeaders() });
   }
 
   register(data: RegisterMovementRequest): Observable<MovementPay> {

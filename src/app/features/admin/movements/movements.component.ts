@@ -13,47 +13,55 @@ import { MovementConcept, MovementPay, MovementType, PayMethod, RegisterMovement
 export class MovementsComponent implements OnInit {
 
   form!: FormGroup;
-  saving      = false;
-  showForm    = false;
+  saving = false;
+  showForm = false;
 
-  movements:   MovementPay[] = [];
-  payMethods:  PayMethod[]   = [];
+  movements: MovementPay[] = [];
+  payMethods: PayMethod[] = [];
 
   readonly types: { value: MovementType; label: string }[] = [
-    { value: 'Input',  label: 'Entrada' },
-    { value: 'Output', label: 'Salida'  },
+    { value: 'Input', label: 'Entrada' },
+    { value: 'Output', label: 'Salida' },
   ];
 
   readonly concepts: { value: MovementConcept; label: string }[] = [
-    { value: 'Buy',         label: 'Compra'       },
-    { value: 'Devolutions', label: 'Devolución'   },
-    { value: 'Sale',        label: 'Venta'        },
-    { value: 'Use',         label: 'Uso'          },
+    { value: 'Buy', label: 'Compra' },
+    { value: 'Devolutions', label: 'Devolución' },
+    { value: 'Sale', label: 'Venta' },
+    { value: 'Use', label: 'Uso' },
   ];
 
   constructor(
-    private fb:          FormBuilder,
-    private movService:  MovementService,
-    private pmService:   PaymentMethodService,
-    private toast:       ToastService,
-  ) {}
+    private fb: FormBuilder,
+    private movService: MovementService,
+    private pmService: PaymentMethodService,
+    private toast: ToastService,
+  ) { }
 
   ngOnInit(): void {
     this.buildForm();
+    this.loadMovements();
     this.pmService.list().subscribe({
       next: (list) => { this.payMethods = (list ?? []).filter(p => p.active); },
-      error: ()    => {}
+      error: () => { }
+    });
+  }
+
+  loadMovements(): void {
+    this.movService.list().subscribe({
+      next: (list) => { this.movements = list ?? []; },
+      error: () => { }
     });
   }
 
   private buildForm(): void {
     this.form = this.fb.group({
-      type:                     ['', Validators.required],
-      concept:                  ['', Validators.required],
-      description:              [''],
-      amount:                   [null, [Validators.required, Validators.min(1)]],
-      billId:                   [null],
-      payMethod:                [null],
+      type: ['', Validators.required],
+      concept: ['', Validators.required],
+      description: [''],
+      amount: [null, [Validators.required, Validators.min(1)]],
+      billId: [null],
+      payMethod: [null],
       registerByIdentification: [null, Validators.required],
     });
 
@@ -64,7 +72,7 @@ export class MovementsComponent implements OnInit {
     return !!(c && c.invalid && (c.dirty || c.touched));
   }
 
-  openForm(): void  { this.showForm = true; }
+  openForm(): void { this.showForm = true; }
   closeForm(): void { this.showForm = false; this.form.reset(); this.buildForm(); }
 
   submit(): void {
@@ -75,12 +83,12 @@ export class MovementsComponent implements OnInit {
     const v = this.form.value;
 
     const payload: RegisterMovementRequest = {
-      type:                     v.type,
-      concept:                  v.concept,
-      description:              v.description || undefined,
-      amount:                   v.amount,
-      billId:                   v.billId     || undefined,
-      payMethod:                v.payMethod  || undefined,
+      type: v.type,
+      concept: v.concept,
+      description: v.description || undefined,
+      amount: v.amount,
+      billId: v.billId || undefined,
+      payMethod: v.payMethod || undefined,
       registerByIdentification: v.registerByIdentification,
     };
 

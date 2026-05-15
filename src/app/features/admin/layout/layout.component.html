@@ -6,7 +6,7 @@
 
   <main
     class="main-content"
-    [class.expanded]="sidebarService.collapsed()"
+    [class.expanded]="!sidebarService.collapsed()"
   >
     <router-outlet></router-outlet>
   </main>
