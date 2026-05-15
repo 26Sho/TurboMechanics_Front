@@ -101,11 +101,9 @@ const routes: Routes = [
       { path: 'reportes', component: ReportesComponent },
 
       // Rutas de mecánicos
-      { path: 'mecanicos', component: MecanicosComponent }
+      { path: 'mecanicos', component: MecanicosComponent },
       { path: 'payment-methods', component: PaymentMethodsComponent },  // ← nuevo
       { path: 'movements', component: MovementsComponent },// ← nuevo
-
-
     ]
   },
 
