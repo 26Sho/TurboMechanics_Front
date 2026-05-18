@@ -1,0 +1,51 @@
+<section class="survey-container">
+
+  <div class="survey-card">
+
+    <span class="survey-tag">
+      ● ENCUESTA DE SATISFACCIÓN
+    </span>
+
+    <h2>
+      ¿Cómo fue tu experiencia en
+      <span>TurboMechanics</span>?
+    </h2>
+
+    <p>
+      Tu opinión nos ayuda a mejorar nuestros servicios
+      y seguir creciendo.
+    </p>
+
+ 
+    <div class="stars">
+
+      <i
+        *ngFor="let star of [1,2,3,4,5]"
+        class="fa-solid fa-star"
+        [class.active]="star <= (hoverRating || rating)"
+        (mouseenter)="hoverRating = star"
+        (mouseleave)="hoverRating = 0"
+        (click)="setRating(star)"
+      ></i>
+
+    </div>
+
+
+    <textarea
+      [(ngModel)]="comment"
+      placeholder="Escribe aquí tu experiencia..."
+    ></textarea>
+
+
+    <button (click)="submitSurvey()">
+      ENVIAR OPINIÓN
+    </button>
+
+
+    <div class="success-message" *ngIf="submitted">
+      ✅ ¡Gracias por calificarnos!
+    </div>
+
+  </div>
+
+</section>

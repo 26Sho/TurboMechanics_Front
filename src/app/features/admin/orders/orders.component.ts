@@ -22,11 +22,11 @@ export class OrdersComponent implements OnInit {
   cargarOrdersDesdeBD() {
     // Llamada al método del servicio que conecta con el Back y BD
     this._ordersService.getOrders().subscribe({
-      next: (data) => {
+      next: (data: any) => {
         this.orders.set(data); // Llena con los datos reales de la BD
         console.log('Órdenes cargadas desde la BD:', data);
       },
-      error: (err) => {
+      error: (err: any) => {
         console.error('Error al cargar órdenes de la BD', err);
       }
     });
