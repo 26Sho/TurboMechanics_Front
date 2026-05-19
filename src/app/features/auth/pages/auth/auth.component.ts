@@ -15,9 +15,9 @@ export class AuthComponent {
   toggle() { this.isRegister = !this.isRegister; }
 
   // LOGIN
-  loginEmail = '';
+  loginEmail    = '';
   loginPassword = '';
-  loginLoading = false;
+  loginLoading  = false;
 
   login() {
     if (!this.loginEmail || !this.loginPassword) {
@@ -30,12 +30,7 @@ export class AuthComponent {
         this.loginLoading = false;
         if (response?.jwt) {
           this.toast.success('¡Bienvenido!');
-          const rolId = this.authService.getRolId();
-          if (rolId === 3) {
-            this.router.navigate(['/admin']);
-          } else {
-            this.router.navigate(['/home']);
-          }
+          this.router.navigate(['/home']); // todos los roles van al home primero
         } else {
           this.toast.error(response?.message || 'Usuario no encontrado.');
         }
@@ -51,7 +46,7 @@ export class AuthComponent {
 
   // REGISTER
   registerForm: FormGroup;
-  showPolicy = false;
+  showPolicy     = false;
   registerLoading = false;
 
   register() {

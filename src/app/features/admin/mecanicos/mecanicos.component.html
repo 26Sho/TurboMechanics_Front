@@ -48,6 +48,7 @@
           <th>Ingreso</th>
           <th>Teléfono</th>
           <th>Salario</th>
+          <th>Cap.</th>
           <th>Estado</th>
           <th>Acciones</th>
         </tr>
@@ -68,31 +69,30 @@
           <td class="inv-table__desc">{{ m.position }}</td>
           <td>{{ formatFecha(m.hireDate) }}</td>
           <td>{{ m.phone || '—' }}</td>
-          <td>
-            <span class="inv-badge inv-badge--price">{{ formatPeso(m.salary) }}</span>
-          </td>
+          <td><span class="inv-badge inv-badge--price">{{ formatPeso(m.salary) }}</span></td>
+          <td><span class="mec-capacity">{{ m.maxOrderCapacity ?? 3 }}</span></td>
           <td>
             <span class="inv-badge" [ngClass]="estadoBadgeClass(m.laborStatus)">
               {{ estadoLabel(m.laborStatus) }}
             </span>
           </td>
           <td class="inv-table__actions">
-            <!-- Historial -->
             <button class="inv-action-btn inv-action-btn--info"
                     title="Ver historial de trabajos" (click)="verHistorial(m)">
               <i class="fas fa-history"></i>
             </button>
-            <!-- Cambiar estado -->
+            <button class="inv-action-btn inv-action-btn--ausencia"
+                    title="Ver / registrar ausencias" (click)="verAusencias(m)">
+              <i class="fas fa-calendar-times"></i>
+            </button>
             <button class="inv-action-btn inv-action-btn--toggle"
                     title="Cambiar estado laboral" (click)="abrirEstado(m)">
               <i class="fas fa-exchange-alt"></i>
             </button>
-            <!-- Editar -->
             <button class="inv-action-btn inv-action-btn--price"
                     title="Editar mecánico" (click)="abrirEditar(m)">
               <i class="fas fa-pen"></i>
             </button>
-            <!-- Eliminar -->
             <button class="inv-action-btn inv-action-btn--delete"
                     title="Eliminar mecánico" (click)="confirmarEliminar(m.document)">
               <i class="fas fa-trash"></i>
@@ -100,7 +100,7 @@
           </td>
         </tr>
         <tr *ngIf="mecanicosFiltered.length === 0">
-          <td colspan="9" class="inv-table__empty">
+          <td colspan="10" class="inv-table__empty">
             <i class="fas fa-users-slash"></i> No hay mecánicos que mostrar
           </td>
         </tr>
@@ -115,9 +115,7 @@
 </div>
 
 
-<!-- ═══════════════════════════════════════════════════════════
-     Modal — Registrar / Editar mecánico
-═══════════════════════════════════════════════════════════ -->
+<!-- ═══ Modal — Registrar / Editar mecánico ═══════════════════ -->
 <div class="inv-modal" [class.open]="modalAbierto">
   <div class="inv-modal__overlay" (click)="cerrarModal()"></div>
   <div class="inv-modal__box inv-modal__box--lg">
@@ -128,79 +126,67 @@
       </h2>
       <button class="inv-modal__close" (click)="cerrarModal()"><i class="fas fa-times"></i></button>
     </div>
-
     <form [formGroup]="form" (ngSubmit)="guardar()">
       <div class="inv-modal__body">
 
-        <!-- Fila 1 -->
         <div class="mec-form-row">
           <div class="inv-form-group">
             <label>Nombre completo *</label>
             <input type="text" formControlName="name" placeholder="Ej: Carlos Pérez" />
-            <span class="inv-form-error" *ngIf="f['name'].invalid && f['name'].touched">
-              Mínimo 3 caracteres
-            </span>
+            <span class="inv-form-error" *ngIf="f['name'].invalid && f['name'].touched">Mínimo 3 caracteres</span>
           </div>
           <div class="inv-form-group">
             <label>Documento *</label>
-            <input type="number" formControlName="document" placeholder="Ej: 1234567890"
-                   [readOnly]="modoEdicion" />
-            <span class="inv-form-error" *ngIf="f['document'].invalid && f['document'].touched">
-              Documento inválido
-            </span>
+            <input type="number" formControlName="document" placeholder="Ej: 1234567890" [attr.readonly]="modoEdicion ? true : null" />
+            <span class="inv-form-error" *ngIf="f['document'].invalid && f['document'].touched">Documento inválido</span>
           </div>
         </div>
 
-        <!-- Fila 2 -->
         <div class="mec-form-row">
           <div class="inv-form-group">
             <label>Cargo / Especialidad *</label>
             <input type="text" formControlName="position" placeholder="Ej: Mecánico de frenos" />
-            <span class="inv-form-error" *ngIf="f['position'].invalid && f['position'].touched">
-              Campo obligatorio
-            </span>
+            <span class="inv-form-error" *ngIf="f['position'].invalid && f['position'].touched">Campo obligatorio</span>
           </div>
           <div class="inv-form-group">
             <label>Fecha de ingreso *</label>
             <input type="date" formControlName="hireDate" />
-            <span class="inv-form-error" *ngIf="f['hireDate'].invalid && f['hireDate'].touched">
-              Fecha obligatoria
-            </span>
+            <span class="inv-form-error" *ngIf="f['hireDate'].invalid && f['hireDate'].touched">Fecha obligatoria</span>
           </div>
         </div>
 
-        <!-- Fila 3 -->
         <div class="mec-form-row">
           <div class="inv-form-group">
             <label>Teléfono</label>
             <input type="text" formControlName="phone" placeholder="Ej: 3001234567" />
-            <span class="inv-form-error" *ngIf="f['phone'].invalid && f['phone'].touched">
-              Teléfono inválido (7–15 dígitos)
-            </span>
+            <span class="inv-form-error" *ngIf="f['phone'].invalid && f['phone'].touched">Teléfono inválido (7–15 dígitos)</span>
           </div>
           <div class="inv-form-group">
             <label>Correo electrónico</label>
             <input type="email" formControlName="email" placeholder="Ej: carlos@taller.com" />
-            <span class="inv-form-error" *ngIf="f['email'].invalid && f['email'].touched">
-              Correo inválido
-            </span>
+            <span class="inv-form-error" *ngIf="f['email'].invalid && f['email'].touched">Correo inválido</span>
           </div>
         </div>
 
-        <!-- Fila 4 -->
         <div class="mec-form-row">
           <div class="inv-form-group">
             <label>Salario (COP)</label>
             <input type="number" formControlName="salary" min="0" placeholder="Ej: 2000000" />
-            <span class="inv-form-error" *ngIf="f['salary'].invalid && f['salary'].touched">
-              El salario debe ser mayor a 0
-            </span>
+            <span class="inv-form-error" *ngIf="f['salary'].invalid && f['salary'].touched">El salario debe ser mayor a 0</span>
           </div>
           <div class="inv-form-group">
             <label>Estado laboral</label>
             <select formControlName="laborStatus">
               <option *ngFor="let e of estadosLaborales" [value]="e">{{ estadoLabel(e) }}</option>
             </select>
+          </div>
+        </div>
+
+        <div class="mec-form-row">
+          <div class="inv-form-group">
+            <label>Capacidad máx. de órdenes *</label>
+            <input type="number" formControlName="maxOrderCapacity" min="1" max="10" />
+            <span class="inv-form-error" *ngIf="f['maxOrderCapacity'].invalid && f['maxOrderCapacity'].touched">Entre 1 y 10</span>
           </div>
         </div>
 
@@ -218,9 +204,7 @@
 </div>
 
 
-<!-- ═══════════════════════════════════════════════════════════
-     Modal — Cambiar estado laboral
-═══════════════════════════════════════════════════════════ -->
+<!-- ═══ Modal — Cambiar estado laboral ═══════════════════════ -->
 <div class="inv-modal" [class.open]="modalEstado">
   <div class="inv-modal__overlay" (click)="modalEstado = false"></div>
   <div class="inv-modal__box inv-modal__box--sm">
@@ -249,9 +233,7 @@
 </div>
 
 
-<!-- ═══════════════════════════════════════════════════════════
-     Modal — Historial de trabajos
-═══════════════════════════════════════════════════════════ -->
+<!-- ═══ Modal — Historial de trabajos ════════════════════════ -->
 <div class="inv-modal" [class.open]="modalHistorial">
   <div class="inv-modal__overlay" (click)="modalHistorial = false"></div>
   <div class="inv-modal__box inv-modal__box--lg">
@@ -260,30 +242,29 @@
       <button class="inv-modal__close" (click)="modalHistorial = false"><i class="fas fa-times"></i></button>
     </div>
     <div class="inv-modal__body">
-      <div class="inv-table-wrap" *ngIf="historial.length > 0">
+      <div class="inv-loading" *ngIf="cargandoHistorial">
+        <i class="fas fa-spinner fa-spin"></i> Cargando historial...
+      </div>
+      <div class="inv-table-wrap" *ngIf="!cargandoHistorial && historial.length > 0">
         <table class="inv-table">
           <thead>
-            <tr>
-              <th>#</th><th>Orden</th><th>Vehículo</th><th>Servicio</th><th>Fecha</th><th>Estado</th>
-            </tr>
+            <tr><th>#</th><th>Orden</th><th>Cliente</th><th>Vehículo</th><th>Estado</th><th>Prioridad</th><th>Fecha</th></tr>
           </thead>
           <tbody>
             <tr *ngFor="let h of historial; let i = index">
               <td>{{ i + 1 }}</td>
-              <td><code>{{ h.orderId }}</code></td>
-              <td>{{ h.vehicle }}</td>
-              <td>{{ h.service }}</td>
-              <td>{{ formatFecha(h.date) }}</td>
-              <td><span class="inv-badge" [ngClass]="h.badgeClass">{{ h.status }}</span></td>
+              <td><code>{{ h.numberorder }}</code></td>
+              <td>{{ h.clientname }}</td>
+              <td>{{ h.vehiclebrand }} {{ h.vehiclemodel }} — <code>{{ h.vehicleplate }}</code></td>
+              <td><span class="inv-badge inv-badge--active">{{ h.stateorder }}</span></td>
+              <td><span class="inv-badge" [ngClass]="prioridadClass(h.priority)">{{ h.priority }}</span></td>
+              <td>{{ formatDateTime(h.datecreation) }}</td>
             </tr>
           </tbody>
         </table>
       </div>
-      <div *ngIf="historial.length === 0" class="inv-table__empty">
-        <i class="fas fa-inbox"></i> No hay trabajos registrados aún para este mecánico.
-        <br><small style="color:#6E6E6E;margin-top:8px;display:block">
-          El historial estará disponible cuando el módulo de órdenes de trabajo esté integrado.
-        </small>
+      <div *ngIf="!cargandoHistorial && historial.length === 0" class="inv-table__empty">
+        <i class="fas fa-inbox"></i> No hay órdenes de trabajo registradas para este mecánico.
       </div>
     </div>
     <div class="inv-modal__footer">
@@ -293,9 +274,107 @@
 </div>
 
 
-<!-- ═══════════════════════════════════════════════════════════
-     Modal — Confirmar eliminación
-═══════════════════════════════════════════════════════════ -->
+<!-- ═══ Modal — Ausencias ═════════════════════════════════════ -->
+<div class="inv-modal" [class.open]="modalAusencias">
+  <div class="inv-modal__overlay" (click)="modalAusencias = false"></div>
+  <div class="inv-modal__box inv-modal__box--lg">
+    <div class="inv-modal__header">
+      <h2><i class="fas fa-calendar-times"></i> Ausencias — {{ mecanicoAusenciasNombre }}</h2>
+      <button class="inv-modal__close" (click)="modalAusencias = false"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="inv-modal__body">
+
+      <div style="display:flex;justify-content:flex-end;margin-bottom:16px;">
+        <button class="inv-btn inv-btn--primary" (click)="abrirNuevaAusencia()">
+          <i class="fas fa-plus"></i> Registrar ausencia
+        </button>
+      </div>
+
+      <div class="inv-loading" *ngIf="cargandoAusencias">
+        <i class="fas fa-spinner fa-spin"></i> Cargando ausencias...
+      </div>
+      <div class="inv-table-wrap" *ngIf="!cargandoAusencias && ausencias.length > 0">
+        <table class="inv-table">
+          <thead>
+            <tr><th>#</th><th>Tipo</th><th>Inicio</th><th>Fin</th><th>Motivo</th><th>Registrado por</th></tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let a of ausencias; let i = index">
+              <td>{{ i + 1 }}</td>
+              <td><span class="inv-badge inv-badge--warning">{{ ausenciaLabel(a.absenceType) }}</span></td>
+              <td>{{ formatDateTime(a.startDate) }}</td>
+              <td>{{ formatDateTime(a.endDate) }}</td>
+              <td class="inv-table__desc">{{ a.reason }}</td>
+              <td>{{ a.registeredBy || '—' }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div *ngIf="!cargandoAusencias && ausencias.length === 0" class="inv-table__empty">
+        <i class="fas fa-calendar-check"></i> No hay ausencias registradas para este mecánico.
+      </div>
+    </div>
+    <div class="inv-modal__footer">
+      <button class="inv-btn inv-btn--ghost" (click)="modalAusencias = false">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══ Modal — Nueva ausencia ════════════════════════════════ -->
+<div class="inv-modal" [class.open]="modalNuevaAusencia">
+  <div class="inv-modal__overlay" (click)="modalNuevaAusencia = false"></div>
+  <div class="inv-modal__box inv-modal__box--sm">
+    <div class="inv-modal__header">
+      <h2><i class="fas fa-calendar-plus"></i> Nueva Ausencia</h2>
+      <button class="inv-modal__close" (click)="modalNuevaAusencia = false"><i class="fas fa-times"></i></button>
+    </div>
+    <form [formGroup]="ausenciaForm" (ngSubmit)="guardarAusencia()">
+      <div class="inv-modal__body">
+
+        <div class="inv-form-group">
+          <label>Tipo de ausencia *</label>
+          <select formControlName="absenceType">
+            <option value="">Seleccionar...</option>
+            <option *ngFor="let t of tiposAusencia" [value]="t">{{ ausenciaLabel(t) }}</option>
+          </select>
+          <span class="inv-form-error" *ngIf="af['absenceType'].invalid && af['absenceType'].touched">Obligatorio</span>
+        </div>
+
+        <div class="mec-form-row">
+          <div class="inv-form-group">
+            <label>Fecha inicio *</label>
+            <input type="datetime-local" formControlName="startDate" />
+            <span class="inv-form-error" *ngIf="af['startDate'].invalid && af['startDate'].touched">Obligatorio</span>
+          </div>
+          <div class="inv-form-group">
+            <label>Fecha fin *</label>
+            <input type="datetime-local" formControlName="endDate" />
+            <span class="inv-form-error" *ngIf="af['endDate'].invalid && af['endDate'].touched">Obligatorio</span>
+          </div>
+        </div>
+
+        <div class="inv-form-group">
+          <label>Motivo *</label>
+          <textarea formControlName="reason" rows="3" placeholder="Describe el motivo de la ausencia..."></textarea>
+          <span class="inv-form-error" *ngIf="af['reason'].invalid && af['reason'].touched">Mínimo 5 caracteres</span>
+        </div>
+
+      </div>
+      <div class="inv-modal__footer">
+        <button type="button" class="inv-btn inv-btn--ghost" (click)="modalNuevaAusencia = false">Cancelar</button>
+        <button type="submit" class="inv-btn inv-btn--primary" [disabled]="guardandoAusencia">
+          <i class="fas fa-spinner fa-spin" *ngIf="guardandoAusencia"></i>
+          <i class="fas fa-save" *ngIf="!guardandoAusencia"></i>
+          Guardar
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+
+<!-- ═══ Modal — Confirmar eliminación ════════════════════════ -->
 <div class="inv-modal" [class.open]="modalEliminar">
   <div class="inv-modal__overlay" (click)="modalEliminar = false"></div>
   <div class="inv-modal__box inv-modal__box--sm">

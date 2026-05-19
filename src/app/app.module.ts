@@ -3,6 +3,7 @@ import { BrowserModule } from '@angular/platform-browser';
 import { FormsModule } from '@angular/forms';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 
+import { SatisfactionSurveyComponent } from './components/satisfaction-survey/satisfaction-survey.component';
 import { AppComponent } from './app.component';
 import { NavbarComponent } from './components/navbar/navbar.component';
 import { HeroComponent } from './components/hero/hero.component';
@@ -30,7 +31,8 @@ import { authInterceptor } from './core/interceptors/auth.interceptor';
     ContactComponent,
     FooterComponent,
     HomeComponent,
-    ToastComponent
+    ToastComponent,
+    SatisfactionSurveyComponent
   ],
   imports: [
     BrowserModule,

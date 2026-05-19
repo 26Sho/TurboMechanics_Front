@@ -10,11 +10,7 @@ export const noAuthGuard: CanActivateFn = (route, state) => {
     return true;
   }
 
-  // Si ya está autenticado, redirige según rol
-  if (authService.getRolId() === 3) {
-    router.navigate(['/admin']);
-  } else {
-    router.navigate(['/home']);
-  }
+  // Si ya está autenticado, todos van al home
+  router.navigate(['/home']);
   return false;
 };
