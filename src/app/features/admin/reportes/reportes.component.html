@@ -26,9 +26,37 @@
     <div class="inv-tab-toolbar">
       <h2 class="inv-tab-title">{{ getTabLabel() }}</h2>
       <div class="inv-tab-actions">
-        <button class="inv-btn inv-btn--excel" *ngIf="tabActivo === 'servicios'"    (click)="exportarServiciosExcel()"><i class="fas fa-file-excel"></i> Exportar Excel</button>
-        <button class="inv-btn inv-btn--excel" *ngIf="tabActivo === 'masUsados'"    (click)="exportarMasUsadosExcel()"><i class="fas fa-file-excel"></i> Exportar Excel</button>
-        <button class="inv-btn inv-btn--excel" *ngIf="tabActivo === 'stockCritico'" (click)="exportarStockExcel()"><i class="fas fa-file-excel"></i> Exportar Excel</button>
+
+        <!-- Botones Servicios -->
+        <ng-container *ngIf="tabActivo === 'servicios'">
+          <button class="inv-btn inv-btn--pdf" (click)="exportarServiciosPDF()">
+            <i class="fas fa-file-pdf"></i> Exportar PDF
+          </button>
+          <button class="inv-btn inv-btn--excel" (click)="exportarServiciosExcel()">
+            <i class="fas fa-file-excel"></i> Exportar Excel
+          </button>
+        </ng-container>
+
+        <!-- Botones Más Usados -->
+        <ng-container *ngIf="tabActivo === 'masUsados'">
+          <button class="inv-btn inv-btn--pdf" (click)="exportarMasUsadosPDF()">
+            <i class="fas fa-file-pdf"></i> Exportar PDF
+          </button>
+          <button class="inv-btn inv-btn--excel" (click)="exportarMasUsadosExcel()">
+            <i class="fas fa-file-excel"></i> Exportar Excel
+          </button>
+        </ng-container>
+
+        <!-- Botones Stock Crítico -->
+        <ng-container *ngIf="tabActivo === 'stockCritico'">
+          <button class="inv-btn inv-btn--pdf" (click)="exportarStockPDF()">
+            <i class="fas fa-file-pdf"></i> Exportar PDF
+          </button>
+          <button class="inv-btn inv-btn--excel" (click)="exportarStockExcel()">
+            <i class="fas fa-file-excel"></i> Exportar Excel
+          </button>
+        </ng-container>
+
       </div>
     </div>
 
@@ -56,7 +84,9 @@
               </td>
             </tr>
             <tr *ngIf="servicios.length === 0">
-              <td colspan="5" class="inv-table__empty"><i class="fas fa-inbox"></i> No hay servicios registrados</td>
+              <td colspan="5" class="inv-table__empty">
+                <i class="fas fa-inbox"></i> No hay servicios registrados
+              </td>
             </tr>
           </tbody>
         </table>
@@ -84,7 +114,9 @@
               </td>
             </tr>
             <tr *ngIf="repuestosMasUsados.length === 0">
-              <td colspan="5" class="inv-table__empty"><i class="fas fa-inbox"></i> No hay datos disponibles</td>
+              <td colspan="5" class="inv-table__empty">
+                <i class="fas fa-inbox"></i> No hay datos disponibles
+              </td>
             </tr>
           </tbody>
         </table>
@@ -103,20 +135,26 @@
       <div class="inv-table-wrap" *ngIf="stockCritico.length > 0">
         <table class="inv-table">
           <thead>
-            <tr><th>Estado</th><th>Repuesto</th><th>Referencia</th><th>Stock actual</th><th>Stock mínimo</th><th>Déficit</th></tr>
+            <tr>
+              <th>Estado</th><th>Repuesto</th><th>Referencia</th>
+              <th>Stock actual</th><th>Stock mínimo</th><th>Déficit</th>
+            </tr>
           </thead>
           <tbody>
             <tr *ngFor="let a of stockCritico">
               <td>
                 <span class="inv-badge"
                       [ngClass]="a.status === 'AGOTADO' ? 'inv-badge--danger' : 'inv-badge--warning'">
-                  <i class="fas" [ngClass]="a.status === 'AGOTADO' ? 'fa-times-circle' : 'fa-exclamation-circle'"></i>
+                  <i class="fas"
+                     [ngClass]="a.status === 'AGOTADO' ? 'fa-times-circle' : 'fa-exclamation-circle'"></i>
                   {{ a.status }}
                 </span>
               </td>
               <td><strong>{{ a.name }}</strong></td>
               <td><code>{{ a.reference }}</code></td>
-              <td><strong [style.color]="a.status === 'AGOTADO' ? '#D62828' : '#FF8C00'">{{ a.currentStock }}</strong></td>
+              <td><strong [style.color]="a.status === 'AGOTADO' ? '#D62828' : '#FF8C00'">
+                {{ a.currentStock }}
+              </strong></td>
               <td>{{ a.stockMin }}</td>
               <td><span class="inv-deficit">-{{ a.stockMin - a.currentStock }} unidades</span></td>
             </tr>

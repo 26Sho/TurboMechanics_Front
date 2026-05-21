@@ -31,6 +31,9 @@ import { MovementsComponent } from './features/admin/movements/movements.compone
 import { BillingComponent } from './features/admin/billing/billing.component';
 import { CashierComponent } from './features/admin/cashier/cashier.component';
 import { EstimatesComponent } from './features/admin/estimates/estimates.component';
+import { AppointmentsComponent } from './features/admin/appointments/appointments.component';
+import { clientGuard } from './core/guards/client.guard';
+import { AppointmentsComponent as ClientAppointmentsComponent } from './features/auth/pages/appointments/appointments.component';
 
 const routes: Routes = [
   // 🔹 Redirección inicial
@@ -110,8 +113,23 @@ const routes: Routes = [
       { path: 'billing', component: BillingComponent },
       { path: 'cashier', component: CashierComponent },
       { path: 'estimates', component: EstimatesComponent },
+      { path: 'appointments', component: AppointmentsComponent },
 
     ]
+  },
+
+    // 🔹 Citas del cliente
+  {
+    path: 'appointments',
+    component: ClientAppointmentsComponent,
+    canActivate: [clientGuard]
+  },
+
+  // 🔹 Citas del mecánico (HU 7.2 agenda + HU 7.6 recordatorios)
+  {
+    path: 'mechanic/appointments',
+    component: AppointmentsComponent,
+    canActivate: [mechanicGuard]
   },
 
   // 🔹 Comodín

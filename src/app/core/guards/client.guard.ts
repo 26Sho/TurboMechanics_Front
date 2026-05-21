@@ -2,15 +2,14 @@ import { inject } from '@angular/core';
 import { CanActivateFn, Router } from '@angular/router';
 import { AuthService } from '../services/auth.service';
 
-export const noAuthGuard: CanActivateFn = (route, state) => {
-  const authService = inject(AuthService);
+export const clientGuard: CanActivateFn = () => {
+  const auth   = inject(AuthService);
   const router = inject(Router);
 
-  if (!authService.isLoggedIn()) {
+  if (auth.isLoggedIn() && auth.getRolId() === 1) {
     return true;
   }
 
-  // Si ya está autenticado, todos van al home
   router.navigate(['/home']);
   return false;
 };
