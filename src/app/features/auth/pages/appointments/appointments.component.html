@@ -125,7 +125,7 @@
                 <tr *ngFor="let a of manageAppointments">
                   <td>{{ a.date | date:'dd/MM/yyyy' }}</td>
                   <td>{{ a.time }}</td>
-                  <td>{{ a.vehicle?.plate || '—' }}</td>
+                  <td>{{ a.vehicle.plate || '—' }}</td>
                   <td class="apt-reason">{{ a.reason || '—' }}</td>
                   <td><span class="badge" [class]="statusClass(a.status)">{{ statusLabel(a.status) }}</span></td>
                   <td class="apt-actions">

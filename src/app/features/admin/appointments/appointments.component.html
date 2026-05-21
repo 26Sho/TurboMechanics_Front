@@ -88,15 +88,16 @@
             <table class="apt-table">
               <thead>
                 <tr>
-                  <th>Fecha</th><th>Hora</th><th>Cliente</th><th>Vehículo</th><th>Motivo</th><th>Estado</th>
+                  <th>ID</th><th>Fecha</th><th>Hora</th><th>Cliente</th><th>Vehículo</th><th>Motivo</th><th>Estado</th>
                 </tr>
               </thead>
               <tbody>
                 <tr *ngFor="let a of appointmentsFiltradas">
+                  <td>{{ a.id }}</td>
                   <td>{{ a.date | date:'dd/MM/yyyy' }}</td>
                   <td>{{ a.time }}</td>
-                  <td>{{ a.users?.username || '—' }}</td>
-                  <td>{{ a.vehicle?.plate || '—' }}</td>
+                  <td>{{ a.users.username || '—' }}</td>
+                  <td>{{ a.vehicle.plate || '—' }}</td>
                   <td class="apt-reason">{{ a.reason || '—' }}</td>
                   <td><span class="badge" [class]="statusClass(a.status)">{{ statusLabel(a.status) }}</span></td>
                 </tr>
