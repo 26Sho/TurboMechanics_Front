@@ -13,34 +13,28 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
   @Output() loginClick = new EventEmitter<void>();
 
-  isScrolled        = false;
-  isMobileOpen      = false;
-  activeSection     = 'inicio';
-  isLoggedIn        = false;
-  username          = '';
+  isScrolled = false;
+  isMobileOpen = false;
+  activeSection = 'inicio';
+  isLoggedIn = false;
+  username = '';
   isMecanicoOrAdmin = false;
-  isSoloMecanico    = false;
-  isAdmin           = false;  // ← agregado
+  isSoloMecanico = false;
+  isAdmin = false;  // ← agregado
+  isCliente = false; // ← nuevo
+
 
   private authSub!: Subscription;
 
   constructor(private router: Router, private authService: AuthService) { }
 
   ngOnInit(): void {
-    // Lee el estado actual directamente sin esperar evento
+    // Lee el estado actual al iniciar
     this.actualizarEstado(this.authService.isLoggedIn());
-    this.isLoggedIn = this.authService.isLoggedIn();
-    this.username = this.authService.getUsername();
-    this.isMecanicoOrAdmin = [2, 3].includes(this.authService.getRolId());
-    this.isSoloMecanico = this.authService.getRolId() === 2; //Nuevo
 
     // Escucha cambios futuros (login / logout)
     this.authSub = this.authService.authChanged.subscribe(loggedIn => {
       this.actualizarEstado(loggedIn);
-      this.isLoggedIn = loggedIn;
-      this.username = loggedIn ? this.authService.getUsername() : '';
-      this.isMecanicoOrAdmin = loggedIn ? [2, 3].includes(this.authService.getRolId()) : false;
-      this.isSoloMecanico = loggedIn ? this.authService.getRolId() === 2 : false; //Nuevo
     });
   }
 
@@ -50,12 +44,13 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
   // Centraliza la lectura del estado para no duplicar lógica
   private actualizarEstado(loggedIn: boolean): void {
-    this.isLoggedIn        = loggedIn;
-    this.username          = loggedIn ? this.authService.getUsername() : '';
-    const rolId            = loggedIn ? this.authService.getRolId() : 0;
+    this.isLoggedIn = loggedIn;
+    this.username = loggedIn ? this.authService.getUsername() : '';
+    const rolId = loggedIn ? this.authService.getRolId() : 0;
     this.isMecanicoOrAdmin = [2, 3].includes(rolId);
-    this.isSoloMecanico    = rolId === 2;
-    this.isAdmin           = rolId === 3;  // ← se evalúa siempre al cargar
+    this.isSoloMecanico = rolId === 2;
+    this.isAdmin = rolId === 3;
+    this.isCliente = rolId === 1; // ← corregido: faltaba aquí
   }
 
   // ─── Navegación ──────────────────────────────────────────────
@@ -89,6 +84,16 @@ export class NavbarComponent implements OnInit, OnDestroy {
   goToDiagnosis(): void {
     this.closeMobile();
     this.router.navigate(['/diagnosis']);
+  }
+
+  goToAppointments(): void {
+    this.closeMobile();
+    this.router.navigate(['/appointments']);
+  }
+
+  goToMechanicAppointments(): void {
+    this.closeMobile();
+    this.router.navigate(['/mechanic/appointments']);
   }
 
   // ─── Scroll ──────────────────────────────────────────────────

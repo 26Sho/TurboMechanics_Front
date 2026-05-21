@@ -23,6 +23,7 @@ import { MovementsComponent } from './movements/movements.component';
 import { BillingComponent } from './billing/billing.component';
 import { CashierComponent } from './cashier/cashier.component';
 import { EstimatesComponent } from './estimates/estimates.component';
+import { AppointmentsComponent } from './appointments/appointments.component';
 
 @NgModule({
   declarations: [
@@ -41,7 +42,8 @@ import { EstimatesComponent } from './estimates/estimates.component';
     MovementsComponent,
     BillingComponent,
     CashierComponent,
-    EstimatesComponent
+    EstimatesComponent,
+    AppointmentsComponent
   ],
   imports: [
     CommonModule,

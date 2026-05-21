@@ -1,0 +1,142 @@
+<div class="apt-wrapper">
+  <div class="apt-page">
+
+    <!-- Header -->
+    <div class="apt-header">
+      <div class="header-left">
+        <div class="header-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+            <line x1="16" y1="2" x2="16" y2="6"/>
+            <line x1="8" y1="2" x2="8" y2="6"/>
+            <line x1="3" y1="10" x2="21" y2="10"/>
+          </svg>
+        </div>
+        <div>
+          <h1 class="header-title">Citas</h1>
+          <span class="header-sub">Gestión de citas del taller</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="apt-tabs">
+      <button class="apt-tab" [class.active]="activeTab === 'agenda'" (click)="activeTab = 'agenda'">Agenda</button>
+      <!-- Recordatorios: solo mecánico (rolId=2) -->
+      <button *ngIf="isMecanico" class="apt-tab" [class.active]="activeTab === 'reminders'" (click)="activeTab = 'reminders'">Recordatorios</button>
+    </div>
+
+    <!-- ══ TAB: AGENDA ═══════════════════════════════════════════════════════ -->
+    <ng-container *ngIf="activeTab === 'agenda'">
+      <div class="apt-card">
+        <h2 class="section-title">Consultar Agenda</h2>
+        <div class="agenda-type-row">
+          <button class="type-btn" [class.active]="agendaType === 'daily'" (click)="agendaType = 'daily'">Diaria</button>
+          <button class="type-btn" [class.active]="agendaType === 'weekly'" (click)="agendaType = 'weekly'">Semanal</button>
+        </div>
+        <form [formGroup]="agendaForm" (ngSubmit)="searchAgenda()" novalidate>
+          <div class="form-row" *ngIf="agendaType === 'daily'">
+            <div class="form-group">
+              <label class="form-label required">Fecha</label>
+              <input type="date" class="form-input" formControlName="date" />
+            </div>
+          </div>
+          <div class="form-row" *ngIf="agendaType === 'weekly'">
+            <div class="form-group">
+              <label class="form-label required">Fecha inicio</label>
+              <input type="date" class="form-input" formControlName="start" />
+            </div>
+            <div class="form-group">
+              <label class="form-label required">Fecha fin</label>
+              <input type="date" class="form-input" formControlName="end" />
+            </div>
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary" [disabled]="loadingAgenda">
+              <span *ngIf="!loadingAgenda">Consultar</span>
+              <span *ngIf="loadingAgenda" class="spinner-sm"></span>
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <ng-container *ngIf="agendaSearched">
+        <div class="apt-card empty-state" *ngIf="appointments.length === 0">No hay citas en este período.</div>
+
+        <div class="apt-card" *ngIf="appointments.length > 0">
+
+          <!-- ── Filtro por estado ── -->
+          <div class="form-row" style="margin-bottom: 1rem;">
+            <div class="form-group">
+              <label class="form-label">Filtrar por estado</label>
+              <select class="form-input" [(ngModel)]="filtroEstado">
+                <option value="">Todos</option>
+                <option value="Scheduled">Programada</option>
+                <option value="Reprogrammed">Reprogramada</option>
+                <option value="Cancelled">Cancelada</option>
+                <option value="Completed">Completada</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Mensaje si el filtro no arroja resultados -->
+          <div class="empty-state" *ngIf="appointmentsFiltradas.length === 0">
+            No hay citas con el estado seleccionado.
+          </div>
+
+          <div class="apt-table-wrap" *ngIf="appointmentsFiltradas.length > 0">
+            <table class="apt-table">
+              <thead>
+                <tr>
+                  <th>Fecha</th><th>Hora</th><th>Cliente</th><th>Vehículo</th><th>Motivo</th><th>Estado</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let a of appointmentsFiltradas">
+                  <td>{{ a.date | date:'dd/MM/yyyy' }}</td>
+                  <td>{{ a.time }}</td>
+                  <td>{{ a.users?.username || '—' }}</td>
+                  <td>{{ a.vehicle?.plate || '—' }}</td>
+                  <td class="apt-reason">{{ a.reason || '—' }}</td>
+                  <td><span class="badge" [class]="statusClass(a.status)">{{ statusLabel(a.status) }}</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </ng-container>
+    </ng-container>
+
+    <!-- ══ TAB: RECORDATORIOS (solo mecánico) ════════════════════════════════ -->
+    <ng-container *ngIf="activeTab === 'reminders' && isMecanico">
+      <div class="apt-card">
+        <h2 class="section-title">Enviar Recordatorio</h2>
+        <form [formGroup]="reminderForm" (ngSubmit)="submitReminder()" novalidate>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label required">ID de la cita</label>
+              <input type="number" class="form-input" formControlName="appointmentId"
+                     placeholder="ID de la cita"
+                     [class.input-error]="isInvalid(reminderForm, 'appointmentId')" />
+              <span class="field-error" *ngIf="isInvalid(reminderForm, 'appointmentId')">Obligatorio</span>
+            </div>
+            <div class="form-group">
+              <label class="form-label required">Canal de envío</label>
+              <select class="form-input" formControlName="canal">
+                <option value="EMAIL">📧 Correo electrónico</option>
+                <option value="WHATSAPP">💬 WhatsApp</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary" [disabled]="sendingReminder">
+              <span *ngIf="!sendingReminder">Enviar Recordatorio</span>
+              <span *ngIf="sendingReminder" class="spinner-sm"></span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </ng-container>
+
+  </div>
+</div>
