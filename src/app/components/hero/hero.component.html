@@ -19,9 +19,9 @@
         para mantener tu vehículo siempre en óptimas condiciones.
       </p>
       <div class="hero__actions">
-        <a href="https://wa.me/573000000000?text=Hola,%20quiero%20agendar%20una%20cita"
-           class="btn btn--primary" target="_blank">
-          <i class="fab fa-whatsapp"></i> Agendar cita
+        <!-- Navega a /appointments si es cliente, o a /login si no está autenticado -->
+        <a class="btn btn--primary" (click)="goToAppointments()" style="cursor:pointer">
+          <i class="fas fa-calendar"></i> Agendar cita
         </a>
         <a class="btn btn--outline" (click)="scrollTo('servicios')" style="cursor:pointer">
           Ver servicios
