@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { StateOrder, WorkOrderRequest, WorkOrderResponse, WorkOrderUpdateRequest } from '../models/work-order';
+import { AssignMechanicRequest, MechanicAvailabilityDTO, StateOrder, WorkOrderRequest, WorkOrderResponse, WorkOrderUpdateRequest } from '../models/work-order';
 
 @Injectable({ providedIn: 'root' })
 export class WorkOrderService {
@@ -49,5 +49,30 @@ export class WorkOrderService {
   }
   cancel(id: number, cancellationreason: string): Observable<{ message: string; order: WorkOrderResponse }> {
     return this.http.patch<{ message: string; order: WorkOrderResponse }>(`${this.apiUrl}/${id}/cancel`,{ cancellationreason },{ headers: this.getHeaders() });
+  }
+
+  // ── HU 6.7 — Asignación de mecánicos ─────────────────────────────────────
+
+  getMechanicAvailability(): Observable<MechanicAvailabilityDTO[]> {
+    return this.http.get<MechanicAvailabilityDTO[]>(
+      'http://localhost:9090/mecanicos/disponibilidad',
+      { headers: this.getHeaders() }
+    );
+  }
+
+  assignMechanic(orderId: number, mechanicDocument: number): Observable<WorkOrderResponse> {
+    const body: AssignMechanicRequest = { mechanicDocument };
+    return this.http.post<WorkOrderResponse>(
+      `http://localhost:9090/mecanicos/ordenes/${orderId}/asignar`,
+      body,
+      { headers: this.getHeaders() }
+    );
+  }
+
+  unassignMechanic(orderId: number): Observable<WorkOrderResponse> {
+    return this.http.delete<WorkOrderResponse>(
+      `http://localhost:9090/mecanicos/ordenes/${orderId}/desasignar`,
+      { headers: this.getHeaders() }
+    );
   }
 }

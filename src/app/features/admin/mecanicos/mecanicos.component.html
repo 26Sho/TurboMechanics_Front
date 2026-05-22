@@ -70,7 +70,7 @@
           <td>{{ formatFecha(m.hireDate) }}</td>
           <td>{{ m.phone || '—' }}</td>
           <td><span class="inv-badge inv-badge--price">{{ formatPeso(m.salary) }}</span></td>
-          <td><span class="mec-capacity">{{ m.maxOrderCapacity ?? 3 }}</span></td>
+          <td><span class="mec-capacity">{{ m.maxOrderCapacity }}</span></td>
           <td>
             <span class="inv-badge" [ngClass]="estadoBadgeClass(m.laborStatus)">
               {{ estadoLabel(m.laborStatus) }}
@@ -324,7 +324,7 @@
 <!-- ═══ Modal — Nueva ausencia ════════════════════════════════ -->
 <div class="inv-modal" [class.open]="modalNuevaAusencia">
   <div class="inv-modal__overlay" (click)="modalNuevaAusencia = false"></div>
-  <div class="inv-modal__box inv-modal__box--sm">
+  <div class="inv-modal__box inv-modal__box--ausencia">
     <div class="inv-modal__header">
       <h2><i class="fas fa-calendar-plus"></i> Nueva Ausencia</h2>
       <button class="inv-modal__close" (click)="modalNuevaAusencia = false"><i class="fas fa-times"></i></button>
@@ -341,17 +341,16 @@
           <span class="inv-form-error" *ngIf="af['absenceType'].invalid && af['absenceType'].touched">Obligatorio</span>
         </div>
 
-        <div class="mec-form-row">
-          <div class="inv-form-group">
-            <label>Fecha inicio *</label>
-            <input type="datetime-local" formControlName="startDate" />
-            <span class="inv-form-error" *ngIf="af['startDate'].invalid && af['startDate'].touched">Obligatorio</span>
-          </div>
-          <div class="inv-form-group">
-            <label>Fecha fin *</label>
-            <input type="datetime-local" formControlName="endDate" />
-            <span class="inv-form-error" *ngIf="af['endDate'].invalid && af['endDate'].touched">Obligatorio</span>
-          </div>
+        <div class="inv-form-group">
+          <label>Fecha inicio *</label>
+          <input type="datetime-local" formControlName="startDate" />
+          <span class="inv-form-error" *ngIf="af['startDate'].invalid && af['startDate'].touched">Obligatorio</span>
+        </div>
+
+        <div class="inv-form-group">
+          <label>Fecha fin *</label>
+          <input type="datetime-local" formControlName="endDate" />
+          <span class="inv-form-error" *ngIf="af['endDate'].invalid && af['endDate'].touched">Obligatorio</span>
         </div>
 
         <div class="inv-form-group">

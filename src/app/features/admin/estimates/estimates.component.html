@@ -157,8 +157,8 @@
               </thead>
               <tbody>
                 <tr *ngFor="let e of estimates">
-                  <td class="est-order">{{ e.workOrder?.numberorder || '—' }}</td>
-                  <td>{{ e.vehicle?.plate || '—' }}</td>
+                  <td class="est-order">{{ e.workOrder.numberorder || '—' }}</td>
+                  <td>{{ e.vehicle.plate || '—' }}</td>
                   <td class="est-total">${{ e.totalEstimate | number:'1.2-2' }}</td>
                   <td>
                     <span class="badge" [class]="statusClass(e.statusEstimate)">

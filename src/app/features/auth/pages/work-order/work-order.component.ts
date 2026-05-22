@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { ToastService } from 'src/app/shared/services/toast.service';
 import { WorkOrderService } from 'src/app/core/services/work-order.service';
-import { LevelFuel, Priority, StateCondition, StateOrder, WorkOrderRequest, WorkOrderResponse, WorkOrderUpdateRequest } from 'src/app/core/models/work-order';
+import { LevelFuel, MechanicAvailabilityDTO, Priority, StateCondition, StateOrder, WorkOrderRequest, WorkOrderResponse, WorkOrderUpdateRequest } from 'src/app/core/models/work-order';
 import { AuthService } from 'src/app/core/services/auth.service';
 import { ReceptionVoucherService } from 'src/app/features/admin/service/reception-voucher.service';
 
@@ -50,6 +50,17 @@ export class WorkOrderComponent implements OnInit {
 
   // ── Comprobante ───────────────────────────────────────────────────────────
   downloadingId: number | null = null;
+
+  // ── HU 6.7 — Modal asignar mecánico ───────────────────────────────────────
+  showAsignar           = false;
+  asignarOrder: WorkOrderResponse | null = null;
+  asignarLoading        = false;
+  cargandoMecanicos     = false;
+  asignarBusqueda       = '';
+  mecanicosDisponibles: MechanicAvailabilityDTO[]          = [];
+  mecanicosDisponiblesFiltrados: MechanicAvailabilityDTO[] = [];
+  mecanicosOcupadosFiltrados: MechanicAvailabilityDTO[]    = [];
+  mecanicoSeleccionado: MechanicAvailabilityDTO | null     = null;
 
   // ── Modals ────────────────────────────────────────────────────────────────
   showConfirmation = false;
@@ -474,6 +485,93 @@ export class WorkOrderComponent implements OnInit {
       error: () => {
         this.downloadingId = null;
         this.toastService.error('Error al generar el comprobante');
+      }
+    });
+  }
+
+  // ── HU 6.7 — Asignar mecánico ─────────────────────────────────────────────
+
+  openAsignar(order: WorkOrderResponse, event?: Event): void {
+    event?.stopPropagation();
+    this.asignarOrder             = order;
+    this.mecanicoSeleccionado     = null;
+    this.asignarBusqueda          = '';
+    this.mecanicosDisponibles     = [];
+    this.mecanicosDisponiblesFiltrados = [];
+    this.mecanicosOcupadosFiltrados    = [];
+    this.showAsignar  = true;
+    this.showDetail   = false;
+    this._cargarDisponibilidad();
+  }
+
+  closeAsignar(): void {
+    this.showAsignar  = false;
+    this.asignarOrder = null;
+  }
+
+  private _cargarDisponibilidad(): void {
+    this.cargandoMecanicos = true;
+    this.workOrderService.getMechanicAvailability().subscribe({
+      next: (data: MechanicAvailabilityDTO[]) => {
+        this.mecanicosDisponibles = data;
+        this.cargandoMecanicos    = false;
+        this.filtrarMecanicosDisponibles();
+      },
+      error: (_err: unknown) => {
+        this.toastService.error('Error al cargar la disponibilidad de mecánicos.');
+        this.cargandoMecanicos = false;
+      }
+    });
+  }
+
+  filtrarMecanicosDisponibles(): void {
+    const q = this.asignarBusqueda.toLowerCase().trim();
+    const lista = q
+      ? this.mecanicosDisponibles.filter(m =>
+          m.name.toLowerCase().includes(q) || m.position.toLowerCase().includes(q))
+      : [...this.mecanicosDisponibles];
+    this.mecanicosDisponiblesFiltrados = lista.filter(m => m.available);
+    this.mecanicosOcupadosFiltrados    = lista.filter(m => !m.available);
+  }
+
+  seleccionarMecanico(m: MechanicAvailabilityDTO): void {
+    this.mecanicoSeleccionado = m;
+  }
+
+  confirmarAsignacion(): void {
+    if (!this.mecanicoSeleccionado || !this.asignarOrder) return;
+    this.asignarLoading = true;
+    this.workOrderService.assignMechanic(this.asignarOrder.id, this.mecanicoSeleccionado.document).subscribe({
+      next: (updatedOrder: WorkOrderResponse) => {
+        this.asignarLoading = false;
+        this.toastService.success(`Mecánico ${this.mecanicoSeleccionado!.name} asignado correctamente.`);
+        this._replaceInList(this.orders, updatedOrder);
+        this._replaceInList(this.searchResults, updatedOrder);
+        this.closeAsignar();
+      },
+      error: (err: { error?: { message?: string } }) => {
+        this.asignarLoading = false;
+        this.toastService.error(err.error?.message || 'Error al asignar el mecánico.');
+      }
+    });
+  }
+
+  desasignarMecanico(): void {
+    if (!this.asignarOrder) return;
+    this.asignarLoading = true;
+    this.workOrderService.unassignMechanic(this.asignarOrder.id).subscribe({
+      next: (updatedOrder: WorkOrderResponse) => {
+        this.asignarLoading       = false;
+        this.mecanicoSeleccionado = null;
+        this.asignarOrder         = updatedOrder;
+        this._replaceInList(this.orders, updatedOrder);
+        this._replaceInList(this.searchResults, updatedOrder);
+        this.toastService.success('Mecánico desasignado correctamente.');
+        this._cargarDisponibilidad();
+      },
+      error: (err: { error?: { message?: string } }) => {
+        this.asignarLoading = false;
+        this.toastService.error(err.error?.message || 'Error al desasignar el mecánico.');
       }
     });
   }
