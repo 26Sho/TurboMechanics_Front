@@ -162,6 +162,12 @@
   max-width: 720px;
 }
 
+// ─── Modal ausencia — tamaño controlado ──────────────────────
+.inv-modal__box--ausencia {
+  max-width: 480px;
+  width: 100%;
+}
+
 // ─── Loading ─────────────────────────────────────────────────
 .inv-loading {
   text-align: center;
@@ -173,7 +179,7 @@
 
 // ─── Footer info ─────────────────────────────────────────────
 .inv-footer-info {
-  font-size: 0.85rem;
-  color: #6E6E6E;
+  font-size: 0.85rem;        
+  color: #6E6E6E; 
   margin-top: 8px;
 }

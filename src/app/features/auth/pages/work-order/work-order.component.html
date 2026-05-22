@@ -196,7 +196,7 @@
             <thead>
               <tr>
                 <th>N° Orden</th><th>Cliente</th><th>Placa</th><th>Vehículo</th>
-                <th>Estado</th><th>Prioridad</th><th>Fecha ingreso</th><th>Acciones</th>
+                <th>Estado</th><th>Prioridad</th><th>Mecánico</th><th>Fecha ingreso</th><th>Acciones</th>
               </tr>
             </thead>
             <tbody>
@@ -207,8 +207,20 @@
                 <td>{{ o.vehiclebrand }} {{ o.vehiclemodel }} {{ o.vehicleyear }}</td>
                 <td><span class="wo-badge" [ngClass]="stateBadgeClass(o.stateorder)">{{ stateLabels[o.stateorder] }}</span></td>
                 <td><span class="wo-badge" [ngClass]="priorityBadgeClass(o.priority)">{{ o.priority }}</span></td>
+                <td class="col-mechanic">
+                  <ng-container *ngIf="o.assignedMechanicName as mec; else sinMecLista">
+                    <span class="mec-chip mec-chip--assigned">
+                      <span class="mec-chip__dot"></span>{{ mec }}
+                    </span>
+                  </ng-container>
+                  <ng-template #sinMecLista>
+                    <span class="mec-chip mec-chip--empty">Sin asignar</span>
+                  </ng-template>
+                </td>
                 <td class="col-sub">{{ o.dateentry | date:'dd/MM/yyyy HH:mm' }}</td>
                 <td class="col-actions" (click)="$event.stopPropagation()">
+                  <button class="btn-action btn-assign" *ngIf="canEdit(o)" (click)="openAsignar(o, $event)"
+                          [title]="o.assignedMechanicName ? 'Reasignar mecánico' : 'Asignar mecánico'">👤</button>
                   <button class="btn-action btn-edit" *ngIf="canEdit(o)" (click)="openEdit(o, $event)" title="Editar orden">✏️</button>
                   <button class="btn-action btn-cancel" *ngIf="isAdmin() && canEdit(o)" (click)="openCancel(o, $event)" title="Cancelar orden">✕</button>
                   <button class="btn-action btn-pdf" (click)="descargarComprobante(o, $event)"
@@ -224,8 +236,7 @@
       </div>
     </ng-container>
 
-    <!-- ══ TAB: BUSCAR ═══════════════════════════════════════════════════════ -->
-    <ng-container *ngIf="activeTab === 'buscar'">
+    <!-- ══ TAB: BUSCAR
       <div class="wo-card">
         <div class="wo-card-title">Buscar orden</div>
         <div class="wo-search-row">
@@ -257,7 +268,7 @@
             <thead>
               <tr>
                 <th>N° Orden</th><th>Cliente</th><th>Placa</th><th>Vehículo</th>
-                <th>Estado</th><th>Prioridad</th><th>Fecha ingreso</th><th>Acciones</th>
+                <th>Estado</th><th>Prioridad</th><th>Mecánico</th><th>Fecha ingreso</th><th>Acciones</th>
               </tr>
             </thead>
             <tbody>
@@ -268,8 +279,20 @@
                 <td>{{ o.vehiclebrand }} {{ o.vehiclemodel }} {{ o.vehicleyear }}</td>
                 <td><span class="wo-badge" [ngClass]="stateBadgeClass(o.stateorder)">{{ stateLabels[o.stateorder] }}</span></td>
                 <td><span class="wo-badge" [ngClass]="priorityBadgeClass(o.priority)">{{ o.priority }}</span></td>
+                <td class="col-mechanic">
+                  <ng-container *ngIf="o.assignedMechanicName as mec; else sinMecBuscar">
+                    <span class="mec-chip mec-chip--assigned">
+                      <span class="mec-chip__dot"></span>{{ mec }}
+                    </span>
+                  </ng-container>
+                  <ng-template #sinMecBuscar>
+                    <span class="mec-chip mec-chip--empty">Sin asignar</span>
+                  </ng-template>
+                </td>
                 <td class="col-sub">{{ o.dateentry | date:'dd/MM/yyyy HH:mm' }}</td>
                 <td class="col-actions" (click)="$event.stopPropagation()">
+                  <button class="btn-action btn-assign" *ngIf="canEdit(o)" (click)="openAsignar(o, $event)"
+                          [title]="o.assignedMechanicName ? 'Reasignar mecánico' : 'Asignar mecánico'">👤</button>
                   <button class="btn-action btn-edit" *ngIf="canEdit(o)" (click)="openEdit(o, $event)" title="Editar orden">✏️</button>
                   <button class="btn-action btn-cancel" *ngIf="isAdmin() && canEdit(o)" (click)="openCancel(o, $event)" title="Cancelar orden">✕</button>
                   <button class="btn-action btn-pdf" (click)="descargarComprobante(o, $event)"
@@ -346,6 +369,14 @@
         <div class="modal-section-title">Estado y prioridad</div>
         <div class="modal-row"><span class="modal-key">Estado actual</span><span class="modal-val"><span class="wo-badge" [ngClass]="stateBadgeClass(detailOrder.stateorder)">{{ stateLabels[detailOrder.stateorder] }}</span></span></div>
         <div class="modal-row"><span class="modal-key">Prioridad</span><span class="modal-val"><span class="wo-badge" [ngClass]="priorityBadgeClass(detailOrder.priority)">{{ detailOrder.priority }}</span></span></div>
+        <div class="modal-row"><span class="modal-key">Mecánico</span><span class="modal-val">
+          <ng-container *ngIf="detailOrder.assignedMechanicName as mec; else sinMecDetalle">
+            <span class="mec-chip mec-chip--assigned"><span class="mec-chip__dot"></span>{{ mec }}</span>
+          </ng-container>
+          <ng-template #sinMecDetalle>
+            <span class="mec-chip mec-chip--empty">Sin asignar</span>
+          </ng-template>
+        </span></div>
         <div class="modal-row"><span class="modal-key">Fecha ingreso</span><span class="modal-val">{{ detailOrder.dateentry | date:'dd/MM/yyyy HH:mm' }}</span></div>
         <div class="modal-row" *ngIf="detailOrder.dateestimateddelivery"><span class="modal-key">Entrega estimada</span><span class="modal-val">{{ detailOrder.dateestimateddelivery | date:'dd/MM/yyyy' }}</span></div>
         <div class="modal-row" *ngIf="detailOrder.createdBy"><span class="modal-key">Creado por</span><span class="modal-val">{{ detailOrder.createdBy }}</span></div>
@@ -374,6 +405,9 @@
     </div>
     <div class="modal-actions">
       <button class="btn-secondary" (click)="closeDetail()">Cerrar</button>
+      <button class="btn-assign-detail" *ngIf="detailOrder && canEdit(detailOrder)" (click)="openAsignar(detailOrder)">
+        👤 {{ detailOrder.assignedMechanicName ? 'Reasignar mecánico' : 'Asignar mecánico' }}
+      </button>
       <button class="btn-warning" *ngIf="detailOrder && canEdit(detailOrder)" (click)="openEdit(detailOrder)">✏️ Actualizar información</button>
       <button class="btn-danger" *ngIf="detailOrder && isAdmin() && canEdit(detailOrder)" (click)="openCancel(detailOrder)">✕ Cancelar orden</button>
     </div>
@@ -555,5 +589,118 @@
         </button>
       </div>
     </form>
+  </div>
+</div>
+
+<!-- ══ MODAL: ASIGNAR MECÁNICO ══════════════════════════════════════════════ -->
+<div class="modal-overlay" *ngIf="showAsignar && asignarOrder as order" (click)="closeAsignar()">
+  <div class="modal-card modal-card--asignar" (click)="$event.stopPropagation()">
+
+    <div class="modal-header">
+      <div class="modal-detail-icon">👤</div>
+      <h2 class="modal-title">Asignar Mecánico</h2>
+      <p class="modal-subtitle">
+        Orden <strong>{{ order.numberorder }}</strong> —
+        {{ order.vehiclebrand }} {{ order.vehiclemodel }}
+        ({{ order.vehicleplate }})
+      </p>
+    </div>
+
+    <!-- Mecánico actualmente asignado -->
+    <ng-container *ngIf="order.assignedMechanicName as mecActual; else sinMecanico">
+      <div class="asignar-current">
+        <span class="asignar-current__label">Mecánico actual:</span>
+        <span class="asignar-current__name">{{ mecActual }}</span>
+        <button class="asignar-current__remove" (click)="desasignarMecanico()"
+                [disabled]="asignarLoading">✕ Quitar</button>
+      </div>
+    </ng-container>
+    <ng-template #sinMecanico>
+      <div class="asignar-current asignar-current--empty">
+        <span class="asignar-current__label">Sin mecánico asignado actualmente</span>
+      </div>
+    </ng-template>
+
+    <!-- Buscador -->
+    <div class="asignar-search">
+      <input type="text" class="form-style" placeholder="Buscar por nombre o cargo..."
+             [(ngModel)]="asignarBusqueda" (input)="filtrarMecanicosDisponibles()" />
+    </div>
+
+    <!-- Loading -->
+    <div class="asignar-loading" *ngIf="cargandoMecanicos">
+      <span class="spinner-xs"></span>&nbsp; Cargando mecánicos...
+    </div>
+
+    <!-- Lista -->
+    <div class="asignar-list" *ngIf="!cargandoMecanicos">
+
+      <div *ngIf="mecanicosDisponiblesFiltrados.length === 0 && mecanicosOcupadosFiltrados.length === 0"
+           class="asignar-empty">No hay mecánicos activos disponibles.</div>
+
+      <!-- Disponibles -->
+      <ng-container *ngIf="mecanicosDisponiblesFiltrados.length > 0">
+        <p class="asignar-section-title">
+          <span class="asignar-dot asignar-dot--ok"></span>
+          Disponibles ({{ mecanicosDisponiblesFiltrados.length }})
+        </p>
+        <div class="asignar-card"
+             *ngFor="let m of mecanicosDisponiblesFiltrados"
+             [class.asignar-card--selected]="mecanicoSeleccionado !== null && mecanicoSeleccionado.document === m.document"
+             (click)="seleccionarMecanico(m)">
+          <div class="asignar-card__avatar">{{ m.name.charAt(0).toUpperCase() }}</div>
+          <div class="asignar-card__info">
+            <strong>{{ m.name }}</strong>
+            <small>{{ m.position }}</small>
+          </div>
+          <div class="asignar-card__cap">
+            <div class="cap-bar">
+              <div class="cap-bar__fill"
+                   [style.width.%]="(m.currentOrderCount / m.maxOrderCapacity) * 100"
+                   [class.cap-bar__fill--warn]="(m.currentOrderCount / m.maxOrderCapacity) >= 0.6"
+                   [class.cap-bar__fill--ok]="(m.currentOrderCount / m.maxOrderCapacity) < 0.6">
+              </div>
+            </div>
+            <span class="cap-label">{{ m.currentOrderCount }}/{{ m.maxOrderCapacity }}</span>
+          </div>
+          <span class="asignar-card__check"
+                *ngIf="mecanicoSeleccionado !== null && mecanicoSeleccionado.document === m.document">✓</span>
+        </div>
+      </ng-container>
+
+      <!-- Llenos -->
+      <ng-container *ngIf="mecanicosOcupadosFiltrados.length > 0">
+        <p class="asignar-section-title" style="margin-top:1rem">
+          <span class="asignar-dot asignar-dot--full"></span>
+          Capacidad llena ({{ mecanicosOcupadosFiltrados.length }})
+        </p>
+        <div class="asignar-card asignar-card--disabled" *ngFor="let m of mecanicosOcupadosFiltrados">
+          <div class="asignar-card__avatar asignar-card__avatar--muted">{{ m.name.charAt(0).toUpperCase() }}</div>
+          <div class="asignar-card__info">
+            <strong>{{ m.name }}</strong>
+            <small>{{ m.position }}</small>
+          </div>
+          <div class="asignar-card__cap">
+            <div class="cap-bar">
+              <div class="cap-bar__fill cap-bar__fill--full" style="width:100%"></div>
+            </div>
+            <span class="cap-label cap-label--full">{{ m.currentOrderCount }}/{{ m.maxOrderCapacity }}</span>
+          </div>
+          <span class="asignar-card__full-badge">Lleno</span>
+        </div>
+      </ng-container>
+
+    </div><!-- /asignar-list -->
+
+    <div class="modal-actions">
+      <button class="btn-secondary" (click)="closeAsignar()" [disabled]="asignarLoading">Cancelar</button>
+      <button class="btn-primary"
+              [disabled]="mecanicoSeleccionado === null || asignarLoading"
+              (click)="confirmarAsignacion()">
+        <span *ngIf="asignarLoading" class="spinner-xs"></span>
+        {{ asignarLoading ? 'Asignando...' : '✓ Confirmar asignación' }}
+      </button>
+    </div>
+
   </div>
 </div>

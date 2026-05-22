@@ -50,6 +50,26 @@ export interface WorkOrderResponse {
   priority: Priority;
   createdBy?: string;
   datecreation: string;             // LocalDateTime
+  // HU 6.7 — mecánico asignado
+  assignedMechanicName?: string | null;
+  assignedMechanicDocument?: number | null;
+}
+
+// ─── HU 6.7 — Disponibilidad de mecánicos ────────────────────────────────────
+
+export interface MechanicAvailabilityDTO {
+  id: number;
+  name: string;
+  document: number;
+  position: string;
+  laborStatus: string;
+  maxOrderCapacity: number;
+  currentOrderCount: number;   // órdenes activas actualmente asignadas
+  available: boolean;          // true si currentOrderCount < maxOrderCapacity
+}
+
+export interface AssignMechanicRequest {
+  mechanicDocument: number;
 }
 
 // ─── Update Request ────────────────────────────────────────────────────────────
