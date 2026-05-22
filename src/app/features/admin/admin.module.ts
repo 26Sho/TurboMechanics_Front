@@ -16,15 +16,13 @@ import { CatalogoServiciosComponent } from './catalogo-servicios/catalogo-servic
 import { InventarioRepuestosComponent } from './inventario-repuestos/inventario-repuestos.component';
 import { ReportesComponent } from './reportes/reportes.component';
 import { MecanicosComponent } from './mecanicos/mecanicos.component';
-
-
-
 import { PaymentMethodsComponent } from './payment-methods/payment-methods.component';
 import { MovementsComponent } from './movements/movements.component';
 import { BillingComponent } from './billing/billing.component';
 import { CashierComponent } from './cashier/cashier.component';
 import { EstimatesComponent } from './estimates/estimates.component';
 import { AppointmentsComponent } from './appointments/appointments.component';
+import { GarantiasComponent } from './garantias/Garantias_component';
 
 @NgModule({
   declarations: [
@@ -44,7 +42,8 @@ import { AppointmentsComponent } from './appointments/appointments.component';
     BillingComponent,
     CashierComponent,
     EstimatesComponent,
-    AppointmentsComponent
+    AppointmentsComponent,
+    GarantiasComponent,
   ],
   imports: [
     CommonModule,

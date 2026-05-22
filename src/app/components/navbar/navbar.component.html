@@ -70,12 +70,6 @@
           <span>Citas</span>
         </button>
 
-        <!-- Botón Admin — solo visible para administradores -->
-        <button *ngIf="isAdmin" class="navbar__admin-btn" (click)="goToAdmin()">
-          <i class="fas fa-shield-alt"></i>
-          <span>Admin</span>
-        </button>
-
         <!-- Cerrar sesión — siempre visible -->
         <button class="navbar__logout-btn" (click)="onLogout()">
           <i class="fas fa-sign-out-alt"></i>
@@ -119,12 +113,6 @@
         <a *ngIf="isSoloMecanico" href="#" class="mobile-workorder" (click)="goToDiagnosis(); $event.preventDefault()">
           <i class="fas fa-wrench"></i> Diagnóstico
         </a>
-
-        <!-- Admin en mobile -->
-        <a *ngIf="isAdmin" href="#" class="mobile-admin" (click)="goToAdmin(); $event.preventDefault()">
-          <i class="fas fa-shield-alt"></i> Panel Admin
-        </a>
-
         <a *ngIf="isSoloMecanico" href="#" class="mobile-workorder" (click)="goToMovements(); $event.preventDefault()">
           <i class="fas fa-dollar-sign"></i> Movimientos
         </a>

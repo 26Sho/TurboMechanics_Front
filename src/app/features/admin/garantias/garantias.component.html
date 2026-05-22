@@ -1,0 +1,639 @@
+<div class="gar-wrapper">
+  <div class="gar-page">
+
+    <!-- ══ HEADER ══════════════════════════════════════════════════════════ -->
+    <div class="gar-header">
+      <div class="header-left">
+        <div class="header-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>
+          </svg>
+        </div>
+        <div>
+          <h1 class="header-title">Garantías y Calidad</h1>
+          <span class="header-sub">Gestión de garantías, talleres, control de calidad y evidencias</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- ══ TABS ═════════════════════════════════════════════════════════════ -->
+    <div class="gar-tabs">
+      <button class="gar-tab" [class.active]="activeTab === 'garantias'" (click)="activeTab = 'garantias'">Garantías</button>
+      <button class="gar-tab" [class.active]="activeTab === 'talleres'" (click)="activeTab = 'talleres'">Talleres</button>
+      <button class="gar-tab" [class.active]="activeTab === 'calidad'" (click)="activeTab = 'calidad'">Control de Calidad</button>
+      <button class="gar-tab" [class.active]="activeTab === 'evidencias'" (click)="activeTab = 'evidencias'">Evidencias</button>
+    </div>
+
+    <!-- ══ TAB: GARANTÍAS ═══════════════════════════════════════════════════ -->
+    <ng-container *ngIf="activeTab === 'garantias'">
+
+      <!-- Sub-tabs internos -->
+      <div class="sub-tabs">
+        <ng-template #subTabLabel let-id="id" let-label="label"></ng-template>
+      </div>
+
+      <!-- Buscador + botón registrar -->
+      <div class="gar-card">
+        <div class="card-toolbar">
+          <h2 class="section-title">Listado de Garantías</h2>
+          <div class="toolbar-actions">
+            <input type="text" class="form-input search-input" placeholder="Buscar garantía..."
+                   [(ngModel)]="warrantySearchTerm" (keyup.enter)="loadWarranties()" />
+            <button class="btn btn-secondary" (click)="loadWarranties()">Buscar</button>
+            <button class="btn btn-primary" (click)="openWarrantyForm()">+ Registrar</button>
+          </div>
+        </div>
+
+        <div class="spinner-wrap" *ngIf="loadingWarranties">
+          <span class="spinner"></span>
+        </div>
+
+        <div class="empty-state" *ngIf="!loadingWarranties && warranties.length === 0">
+          No se encontraron garantías.
+        </div>
+
+        <div class="table-wrap" *ngIf="!loadingWarranties && warranties.length > 0">
+          <table class="gar-table">
+            <thead>
+              <tr>
+                <th>Comprobante</th><th>Orden</th><th>Cliente</th><th>Placa</th>
+                <th>Cobertura</th><th>Inicio</th><th>Fin</th><th>Estado</th><th>Acciones</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let w of warranties">
+                <td class="mono">{{ w.voucherNumber || '—' }}</td>
+                <td>{{ w.workOrderNumber || w.workOrderId }}</td>
+                <td>{{ w.clientName || '—' }}</td>
+                <td>{{ w.vehiclePlate || '—' }}</td>
+                <td>{{ w.serviceName || w.sparePartName || '—' }}</td>
+                <td>{{ w.startDate | date:'dd/MM/yyyy' }}</td>
+                <td>{{ w.endDate | date:'dd/MM/yyyy' }}</td>
+                <td><span class="badge" [class]="statusClass(w.status)">{{ statusLabel(w.status) }}</span></td>
+                <td class="actions-cell">
+                  <button class="icon-btn" title="Editar" (click)="openWarrantyForm(w)"
+                          [disabled]="w.status === 'CERRADA'">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                      <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+                    </svg>
+                  </button>
+                  <button class="icon-btn icon-btn--danger" title="Cerrar garantía" (click)="openCloseModal(w)"
+                          [disabled]="w.status === 'CERRADA'">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>
+                    </svg>
+                  </button>
+                  <button class="icon-btn icon-btn--orange" title="Generar comprobante" (click)="downloadVoucher(w)" [disabled]="generatingVoucher">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                      <polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/>
+                      <polyline points="9 15 12 18 15 15"/>
+                    </svg>
+                  </button>
+                  <button class="icon-btn icon-btn--blue" title="Historial de validaciones" (click)="openValidationsModal(w)">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+                    </svg>
+                  </button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Historial + Validar -->
+      <div class="row-cards">
+
+        <!-- Historial HU 8.8 -->
+        <div class="gar-card flex-1">
+          <h2 class="section-title">Historial de Garantías</h2>
+          <form [formGroup]="historyForm" (ngSubmit)="searchHistory()" novalidate>
+            <div class="form-row">
+              <div class="form-group form-group--sm">
+                <label class="form-label">Buscar por</label>
+                <select class="form-input" formControlName="tipo">
+                  <option value="cliente">Cliente</option>
+                  <option value="vehiculo">Vehículo (placa)</option>
+                </select>
+              </div>
+              <div class="form-group flex-1">
+                <label class="form-label required">Valor</label>
+                <input type="text" class="form-input" formControlName="valor" placeholder="Nombre o placa..." />
+                <span class="error-msg" *ngIf="isInvalid(historyForm, 'valor')">Campo requerido</span>
+              </div>
+            </div>
+            <div class="form-actions">
+              <button type="submit" class="btn btn-primary" [disabled]="loadingHistory">
+                <span *ngIf="!loadingHistory">Consultar</span>
+                <span *ngIf="loadingHistory" class="spinner-sm"></span>
+              </button>
+            </div>
+          </form>
+
+          <div class="spinner-wrap" *ngIf="loadingHistory"><span class="spinner"></span></div>
+
+          <div class="empty-state" *ngIf="!loadingHistory && historyList.length === 0 && historyForm.touched">
+            Sin resultados en el historial.
+          </div>
+
+          <div class="mini-list" *ngIf="historyList.length > 0">
+            <div class="mini-item" *ngFor="let h of historyList">
+              <div class="mini-item__main">
+                <span class="mono">{{ h.voucherNumber || '#'+h.id }}</span>
+                <span>{{ h.clientName }}</span> · <span>{{ h.vehiclePlate }}</span>
+              </div>
+              <span class="badge" [class]="statusClass(h.status)">{{ statusLabel(h.status) }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Validar vigencia HU 8.9 -->
+        <div class="gar-card flex-1">
+          <h2 class="section-title">Validar Vigencia</h2>
+          <form [formGroup]="validateForm" (ngSubmit)="validateWarranty()" novalidate>
+            <div class="form-row">
+              <div class="form-group flex-1">
+                <label class="form-label required">ID de Garantía</label>
+                <input type="number" class="form-input" formControlName="warrantyId" placeholder="ID..." />
+                <span class="error-msg" *ngIf="isInvalid(validateForm, 'warrantyId')">Ingresa un ID válido</span>
+              </div>
+            </div>
+            <div class="form-actions">
+              <button type="submit" class="btn btn-primary" [disabled]="validating">
+                <span *ngIf="!validating">Validar</span>
+                <span *ngIf="validating" class="spinner-sm"></span>
+              </button>
+            </div>
+          </form>
+
+          <div class="validation-result" *ngIf="lastValidation">
+            <div class="val-row">
+              <span class="val-label">Resultado</span>
+              <span class="badge" [class]="statusClass(lastValidation.result)">{{ statusLabel(lastValidation.result) }}</span>
+            </div>
+            <div class="val-row">
+              <span class="val-label">Cobertura</span>
+              <span>{{ lastValidation.coverageDescription }}</span>
+            </div>
+            <div class="val-row">
+              <span class="val-label">Cliente</span>
+              <span>{{ lastValidation.clientName }}</span>
+            </div>
+            <div class="val-row">
+              <span class="val-label">Vehículo</span>
+              <span>{{ lastValidation.vehiclePlate }}</span>
+            </div>
+            <div class="val-row">
+              <span class="val-label">Vigencia</span>
+              <span>{{ lastValidation.startDate | date:'dd/MM/yyyy' }} – {{ lastValidation.endDate | date:'dd/MM/yyyy' }}</span>
+            </div>
+            <div class="val-row">
+              <span class="val-label">Aprobada</span>
+              <span [class.text-green]="lastValidation.coverageApproved" [class.text-red]="!lastValidation.coverageApproved">
+                {{ lastValidation.coverageApproved ? 'Sí' : 'No' }}
+              </span>
+            </div>
+            <p class="val-msg">{{ lastValidation.message }}</p>
+          </div>
+        </div>
+
+      </div>
+    </ng-container>
+
+    <!-- ══ TAB: TALLERES ════════════════════════════════════════════════════ -->
+    <ng-container *ngIf="activeTab === 'talleres'">
+      <div class="gar-card">
+        <div class="card-toolbar">
+          <h2 class="section-title">Talleres de la Franquicia</h2>
+          <div class="toolbar-actions">
+            <input type="text" class="form-input search-input" placeholder="Filtrar por ciudad..."
+                   [(ngModel)]="workshopCity" (keyup.enter)="loadWorkshops()" />
+            <button class="btn btn-secondary" (click)="loadWorkshops()">Buscar</button>
+            <button class="btn btn-primary" (click)="openWorkshopForm()">+ Registrar</button>
+          </div>
+        </div>
+
+        <div class="spinner-wrap" *ngIf="loadingWorkshops"><span class="spinner"></span></div>
+
+        <div class="empty-state" *ngIf="!loadingWorkshops && workshops.length === 0">
+          No hay talleres registrados.
+        </div>
+
+        <div class="workshop-grid" *ngIf="!loadingWorkshops && workshops.length > 0">
+          <div class="workshop-card" *ngFor="let w of workshops">
+            <div class="workshop-card__header">
+              <div class="workshop-icon">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                  <polyline points="9 22 9 12 15 12 15 22"/>
+                </svg>
+              </div>
+              <div>
+                <p class="workshop-name">{{ w.name }}</p>
+                <span class="badge" [class]="w.active ? 'badge--active' : 'badge--expired'">{{ w.active ? 'Activo' : 'Inactivo' }}</span>
+              </div>
+            </div>
+            <div class="workshop-info">
+              <p><strong>Ciudad:</strong> {{ w.city }}{{ w.state ? ', ' + w.state : '' }}</p>
+              <p><strong>Dirección:</strong> {{ w.address }}</p>
+              <p *ngIf="w.phone"><strong>Teléfono:</strong> {{ w.phone }}</p>
+              <p *ngIf="w.email"><strong>Email:</strong> {{ w.email }}</p>
+              <p *ngIf="w.schedule"><strong>Horario:</strong> {{ w.schedule }}</p>
+              <p *ngIf="w.distanceKm != null"><strong>Distancia:</strong> {{ w.distanceKm | number:'1.1-1' }} km</p>
+              <p class="coord-row">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
+                </svg>
+                {{ w.latitude | number:'1.4-4' }}, {{ w.longitude | number:'1.4-4' }}
+              </p>
+            </div>
+            <div class="workshop-card__actions">
+              <button class="btn btn-sm btn-secondary" (click)="openWorkshopForm(w)">Editar</button>
+              <button class="btn btn-sm btn-danger" (click)="deleteWorkshop(w.id)"
+                      [disabled]="deletingWorkshopId === w.id">Eliminar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+
+    <!-- ══ TAB: CONTROL DE CALIDAD ══════════════════════════════════════════ -->
+    <ng-container *ngIf="activeTab === 'calidad'">
+      <div class="gar-card">
+        <h2 class="section-title">Control de Calidad Antes de Entrega</h2>
+        <form [formGroup]="qualitySearchForm" novalidate>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label required">ID Orden de Trabajo</label>
+              <input type="number" class="form-input" formControlName="ordenId" placeholder="ID de la orden..." />
+              <span class="error-msg" *ngIf="isInvalid(qualitySearchForm, 'ordenId')">Campo requerido</span>
+            </div>
+            <div class="form-group form-actions-inline">
+              <button type="button" class="btn btn-secondary" (click)="searchQualityCheck()" [disabled]="loadingQuality">
+                <span *ngIf="!loadingQuality">Consultar</span>
+                <span *ngIf="loadingQuality" class="spinner-sm"></span>
+              </button>
+              <button type="button" class="btn btn-primary" (click)="startQualityCheck()" [disabled]="startingQuality">
+                <span *ngIf="!startingQuality">Iniciar Control</span>
+                <span *ngIf="startingQuality" class="spinner-sm"></span>
+              </button>
+            </div>
+          </div>
+        </form>
+      </div>
+
+      <ng-container *ngIf="qualityCheck">
+        <div class="gar-card">
+          <div class="quality-header">
+            <div>
+              <h3 class="quality-order">Orden {{ qualityCheck.workOrderNumber }} · {{ qualityCheck.vehiclePlate }}</h3>
+              <span class="badge" [class]="statusClass(qualityCheck.status)">{{ statusLabel(qualityCheck.status) }}</span>
+            </div>
+            <div class="quality-progress">
+              <span class="progress-label">{{ qualityCheck.verifiedItems }}/{{ qualityCheck.totalItems }} verificados</span>
+              <div class="progress-bar">
+                <div class="progress-fill" [style.width.%]="qualityProgress()"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Observaciones -->
+          <div class="form-group" style="margin-top: 1rem;">
+            <label class="form-label">Observaciones generales</label>
+            <textarea class="form-input" rows="2" [(ngModel)]="qualityCheck.observations"
+                      [disabled]="qualityCheck.status === 'APROBADO' || qualityCheck.status === 'RECHAZADO'"></textarea>
+          </div>
+
+          <!-- Ítems -->
+          <div class="quality-items">
+            <div class="quality-item" *ngFor="let item of qualityCheck.items"
+                 [class.quality-item--verified]="item.verified">
+              <label class="item-check">
+                <input type="checkbox" [(ngModel)]="item.verified"
+                       [disabled]="qualityCheck.status === 'APROBADO' || qualityCheck.status === 'RECHAZADO'" />
+                <span class="item-name">{{ item.serviceName }}</span>
+              </label>
+              <input type="text" class="form-input item-obs" placeholder="Observación..." [(ngModel)]="item.observation"
+                     [disabled]="qualityCheck.status === 'APROBADO' || qualityCheck.status === 'RECHAZADO'" />
+              <span class="item-verifier" *ngIf="item.verifiedBy">
+                ✓ {{ item.verifiedBy }} · {{ item.verifiedAt | date:'dd/MM HH:mm' }}
+              </span>
+            </div>
+          </div>
+
+          <!-- Acciones -->
+          <div class="quality-actions" *ngIf="qualityCheck.status !== 'APROBADO' && qualityCheck.status !== 'RECHAZADO'">
+            <button class="btn btn-secondary" (click)="saveQualityItems()" [disabled]="savingQuality">
+              <span *ngIf="!savingQuality">Guardar ítems</span>
+              <span *ngIf="savingQuality" class="spinner-sm"></span>
+            </button>
+            <button class="btn btn-primary" (click)="approveQualityCheck()" [disabled]="approvingQuality">
+              <span *ngIf="!approvingQuality">Aprobar</span>
+              <span *ngIf="approvingQuality" class="spinner-sm"></span>
+            </button>
+            <button class="btn btn-danger" (click)="openRejectModal()">Rechazar</button>
+          </div>
+
+          <div class="quality-result" *ngIf="qualityCheck.status === 'APROBADO' || qualityCheck.status === 'RECHAZADO'">
+            <p>
+              <strong>{{ qualityCheck.status === 'APROBADO' ? 'Aprobado' : 'Rechazado' }} por:</strong>
+              {{ qualityCheck.approvedBy }} · {{ qualityCheck.approvedAt | date:'dd/MM/yyyy HH:mm' }}
+            </p>
+          </div>
+        </div>
+      </ng-container>
+    </ng-container>
+
+    <!-- ══ TAB: EVIDENCIAS ══════════════════════════════════════════════════ -->
+    <ng-container *ngIf="activeTab === 'evidencias'">
+      <div class="gar-card">
+        <h2 class="section-title">Evidencias del Trabajo</h2>
+        <form [formGroup]="evidenceSearchForm" novalidate>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label required">ID Orden de Trabajo</label>
+              <input type="number" class="form-input" formControlName="ordenId" placeholder="ID de la orden..." />
+              <span class="error-msg" *ngIf="isInvalid(evidenceSearchForm, 'ordenId')">Campo requerido</span>
+            </div>
+            <div class="form-group form-group--sm">
+              <label class="form-label">Tipo</label>
+              <select class="form-input" [(ngModel)]="evidenceTipo" [ngModelOptions]="{standalone: true}">
+                <option value="">Todos</option>
+                <option value="IMAGEN">Imagen</option>
+                <option value="VIDEO">Video</option>
+                <option value="DOCUMENTO">Documento</option>
+              </select>
+            </div>
+            <div class="form-group form-actions-inline">
+              <button type="button" class="btn btn-secondary" (click)="loadEvidences()" [disabled]="loadingEvidences">Consultar</button>
+            </div>
+          </div>
+        </form>
+
+        <!-- Subir evidencia -->
+        <div class="evidence-upload">
+          <h3 class="sub-section-title">Adjuntar evidencia</h3>
+          <div class="form-row">
+            <div class="form-group flex-1">
+              <label class="form-label">Archivo</label>
+              <input type="file" class="form-input" (change)="onFileSelected($event)" />
+            </div>
+            <div class="form-group flex-1">
+              <label class="form-label">Descripción (opcional)</label>
+              <input type="text" class="form-input" [(ngModel)]="evidenceDescription" placeholder="Descripción..." />
+            </div>
+            <div class="form-group form-actions-inline">
+              <button type="button" class="btn btn-primary" (click)="uploadEvidence()" [disabled]="uploadingEvidence">
+                <span *ngIf="!uploadingEvidence">Subir</span>
+                <span *ngIf="uploadingEvidence" class="spinner-sm"></span>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="spinner-wrap" *ngIf="loadingEvidences"><span class="spinner"></span></div>
+
+      <div class="empty-state gar-card" *ngIf="!loadingEvidences && evidences.length === 0 && evidenceSearchForm.touched">
+        No hay evidencias registradas para esta orden.
+      </div>
+
+      <div class="evidence-grid" *ngIf="evidences.length > 0">
+        <div class="evidence-card" *ngFor="let e of evidences">
+          <div class="evidence-card__type">
+            <svg *ngIf="e.evidenceType === 'IMAGEN'" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/>
+              <polyline points="21 15 16 10 5 21"/>
+            </svg>
+            <svg *ngIf="e.evidenceType === 'VIDEO'" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2"/>
+            </svg>
+            <svg *ngIf="e.evidenceType === 'DOCUMENTO'" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+              <polyline points="14 2 14 8 20 8"/>
+            </svg>
+            <span class="badge badge--process">{{ e.evidenceType }}</span>
+          </div>
+          <p class="evidence-name">{{ e.fileName }}</p>
+          <p class="evidence-meta" *ngIf="e.description">{{ e.description }}</p>
+          <p class="evidence-meta">{{ fileSizeLabel(e.fileSizeBytes) }} · {{ e.uploadedBy }} · {{ e.uploadedAt | date:'dd/MM/yyyy HH:mm' }}</p>
+          <button class="btn btn-sm btn-danger" (click)="deleteEvidence(e.id)" [disabled]="deletingEvidenceId === e.id">Eliminar</button>
+        </div>
+      </div>
+    </ng-container>
+
+  </div>
+</div>
+
+<!-- ══ MODAL: Registrar / Editar Garantía ════════════════════════════════════ -->
+<div class="modal-overlay" *ngIf="showWarrantyForm" (click)="closeWarrantyFormPanel()">
+  <div class="modal" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>{{ editingWarranty ? 'Editar Garantía' : 'Registrar Garantía' }}</h2>
+      <button class="modal-close" (click)="closeWarrantyFormPanel()">✕</button>
+    </div>
+    <div class="modal-body">
+      <form [formGroup]="warrantyForm" novalidate>
+        <div class="form-row">
+          <div class="form-group flex-1">
+            <label class="form-label required">ID Orden de trabajo</label>
+            <input type="number" class="form-input" formControlName="workOrderId" placeholder="ID..." />
+            <span class="error-msg" *ngIf="isInvalid(warrantyForm, 'workOrderId')">Campo requerido</span>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group flex-1">
+            <label class="form-label">ID Servicio (opcional)</label>
+            <input type="number" class="form-input" formControlName="serviceId" placeholder="ID servicio..." />
+          </div>
+          <div class="form-group flex-1">
+            <label class="form-label">ID Repuesto (opcional)</label>
+            <input type="number" class="form-input" formControlName="sparePartId" placeholder="ID repuesto..." />
+          </div>
+        </div>
+        <p class="hint">Debe especificar al menos un servicio o repuesto.</p>
+        <div class="form-row">
+          <div class="form-group flex-1">
+            <label class="form-label required">Fecha inicio</label>
+            <input type="date" class="form-input" formControlName="startDate" />
+            <span class="error-msg" *ngIf="isInvalid(warrantyForm, 'startDate')">Requerido</span>
+          </div>
+          <div class="form-group flex-1">
+            <label class="form-label required">Fecha fin</label>
+            <input type="date" class="form-input" formControlName="endDate" />
+            <span class="error-msg" *ngIf="isInvalid(warrantyForm, 'endDate')">Requerido</span>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Observaciones</label>
+          <textarea class="form-input" rows="3" formControlName="observations" placeholder="Condiciones de la garantía..."></textarea>
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" (click)="closeWarrantyFormPanel()">Cancelar</button>
+      <button class="btn btn-primary" (click)="submitWarranty()" [disabled]="savingWarranty">
+        <span *ngIf="!savingWarranty">{{ editingWarranty ? 'Actualizar' : 'Registrar' }}</span>
+        <span *ngIf="savingWarranty" class="spinner-sm"></span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL: Cerrar Garantía ════════════════════════════════════════════════ -->
+<div class="modal-overlay" *ngIf="showCloseModal" (click)="showCloseModal = false">
+  <div class="modal modal--sm" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>Cerrar Garantía</h2>
+      <button class="modal-close" (click)="showCloseModal = false">✕</button>
+    </div>
+    <div class="modal-body">
+      <p class="modal-desc">Garantía: <strong>{{ selectedWarranty?.voucherNumber || '#'+selectedWarranty?.id }}</strong></p>
+      <form [formGroup]="closeForm" novalidate>
+        <div class="form-group">
+          <label class="form-label required">Motivo de cierre</label>
+          <textarea class="form-input" rows="3" formControlName="closureReason" placeholder="Describa el motivo..."></textarea>
+          <span class="error-msg" *ngIf="isInvalid(closeForm, 'closureReason')">Campo requerido</span>
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" (click)="showCloseModal = false">Cancelar</button>
+      <button class="btn btn-danger" (click)="submitClose()" [disabled]="closingWarranty">
+        <span *ngIf="!closingWarranty">Cerrar garantía</span>
+        <span *ngIf="closingWarranty" class="spinner-sm"></span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL: Historial de Validaciones ══════════════════════════════════════ -->
+<div class="modal-overlay" *ngIf="showValidationsModal" (click)="showValidationsModal = false">
+  <div class="modal modal--lg" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>Historial de Validaciones · Garantía {{ selectedWarranty?.voucherNumber || '#'+selectedWarranty?.id }}</h2>
+      <button class="modal-close" (click)="showValidationsModal = false">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="spinner-wrap" *ngIf="loadingValidations"><span class="spinner"></span></div>
+      <div class="empty-state" *ngIf="!loadingValidations && validations.length === 0">Sin validaciones registradas.</div>
+      <div class="table-wrap" *ngIf="validations.length > 0">
+        <table class="gar-table">
+          <thead>
+            <tr><th>Fecha</th><th>Resultado</th><th>Cobertura aprobada</th><th>Validado por</th><th>Mensaje</th></tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let v of validations">
+              <td>{{ v.validatedAt | date:'dd/MM/yyyy HH:mm' }}</td>
+              <td><span class="badge" [class]="statusClass(v.result)">{{ statusLabel(v.result) }}</span></td>
+              <td [class.text-green]="v.coverageApproved" [class.text-red]="!v.coverageApproved">{{ v.coverageApproved ? 'Sí' : 'No' }}</td>
+              <td>{{ v.validatedBy }}</td>
+              <td>{{ v.message }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL: Registrar / Editar Taller ══════════════════════════════════════ -->
+<div class="modal-overlay" *ngIf="showWorkshopForm" (click)="closeWorkshopForm()">
+  <div class="modal" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>{{ editingWorkshop ? 'Editar Taller' : 'Registrar Taller' }}</h2>
+      <button class="modal-close" (click)="closeWorkshopForm()">✕</button>
+    </div>
+    <div class="modal-body">
+      <form [formGroup]="workshopForm" novalidate>
+        <div class="form-row">
+          <div class="form-group flex-1">
+            <label class="form-label required">Nombre</label>
+            <input type="text" class="form-input" formControlName="name" placeholder="Nombre del taller..." />
+            <span class="error-msg" *ngIf="isInvalid(workshopForm, 'name')">Requerido</span>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group flex-1">
+            <label class="form-label required">Dirección</label>
+            <input type="text" class="form-input" formControlName="address" placeholder="Dirección..." />
+            <span class="error-msg" *ngIf="isInvalid(workshopForm, 'address')">Requerido</span>
+          </div>
+          <div class="form-group flex-1">
+            <label class="form-label required">Ciudad</label>
+            <input type="text" class="form-input" formControlName="city" placeholder="Ciudad..." />
+            <span class="error-msg" *ngIf="isInvalid(workshopForm, 'city')">Requerido</span>
+          </div>
+          <div class="form-group flex-1">
+            <label class="form-label">Departamento</label>
+            <input type="text" class="form-input" formControlName="state" placeholder="Dpto..." />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group flex-1">
+            <label class="form-label">Teléfono</label>
+            <input type="text" class="form-input" formControlName="phone" placeholder="Teléfono..." />
+          </div>
+          <div class="form-group flex-1">
+            <label class="form-label">Email</label>
+            <input type="email" class="form-input" formControlName="email" placeholder="correo@..." />
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group flex-1">
+            <label class="form-label required">Latitud</label>
+            <input type="number" class="form-input" formControlName="latitude" placeholder="Ej: 4.7109" step="0.0001" />
+            <span class="error-msg" *ngIf="isInvalid(workshopForm, 'latitude')">Requerido</span>
+          </div>
+          <div class="form-group flex-1">
+            <label class="form-label required">Longitud</label>
+            <input type="number" class="form-input" formControlName="longitude" placeholder="Ej: -74.0721" step="0.0001" />
+            <span class="error-msg" *ngIf="isInvalid(workshopForm, 'longitude')">Requerido</span>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group flex-1">
+            <label class="form-label">Horario</label>
+            <input type="text" class="form-input" formControlName="schedule" placeholder="Ej: Lun-Sáb 8am-6pm..." />
+          </div>
+          <div class="form-group form-group--sm form-group--center">
+            <label class="form-label">Activo</label>
+            <input type="checkbox" formControlName="active" />
+          </div>
+        </div>
+      </form>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" (click)="closeWorkshopForm()">Cancelar</button>
+      <button class="btn btn-primary" (click)="submitWorkshop()" [disabled]="savingWorkshop">
+        <span *ngIf="!savingWorkshop">{{ editingWorkshop ? 'Actualizar' : 'Registrar' }}</span>
+        <span *ngIf="savingWorkshop" class="spinner-sm"></span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL: Rechazar Control de Calidad ════════════════════════════════════ -->
+<div class="modal-overlay" *ngIf="showRejectModal" (click)="showRejectModal = false">
+  <div class="modal modal--sm" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2>Rechazar Control de Calidad</h2>
+      <button class="modal-close" (click)="showRejectModal = false">✕</button>
+    </div>
+    <div class="modal-body">
+      <div class="form-group">
+        <label class="form-label">Observaciones del rechazo</label>
+        <textarea class="form-input" rows="3" [(ngModel)]="rejectObservations" placeholder="Motivo del rechazo..."></textarea>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" (click)="showRejectModal = false">Cancelar</button>
+      <button class="btn btn-danger" (click)="confirmReject()" [disabled]="rejectingQuality">
+        <span *ngIf="!rejectingQuality">Confirmar rechazo</span>
+        <span *ngIf="rejectingQuality" class="spinner-sm"></span>
+      </button>
+    </div>
+  </div>
+</div>
