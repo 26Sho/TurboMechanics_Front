@@ -70,7 +70,7 @@
           <td>{{ formatFecha(m.hireDate) }}</td>
           <td>{{ m.phone || '—' }}</td>
           <td><span class="inv-badge inv-badge--price">{{ formatPeso(m.salary) }}</span></td>
-          <td><span class="mec-capacity">{{ m.maxOrderCapacity ?? 3 }}</span></td>
+          <span class="mec-capacity">{{ m.maxOrderCapacity || 3 }}</span>
           <td>
             <span class="inv-badge" [ngClass]="estadoBadgeClass(m.laborStatus)">
               {{ estadoLabel(m.laborStatus) }}

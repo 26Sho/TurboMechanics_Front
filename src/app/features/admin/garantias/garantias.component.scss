@@ -1,0 +1,529 @@
+// ── Variables ─────────────────────────────────────────────────────────────────
+$orange:      #F45D01;
+$black:       #0D0D0D;
+$gray-dark:   #2B2B2B;
+$gray-mid:    #6E6E6E;
+$gray-light:  #CFCFCF;
+$white:       #FFFFFF;
+$red:         #DC2626;
+$green:       #22C55E;
+$blue:        #3B82F6;
+$yellow:      #F59E0B;
+$border:      rgba(244, 93, 1, 0.25);
+$border-dim:  rgba(255, 255, 255, 0.07);
+
+// ── Layout ────────────────────────────────────────────────────────────────────
+.gar-wrapper {
+  min-height: 100vh;
+  background: $black;
+  padding: 32px 24px 64px;
+}
+
+.gar-page {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+// ── Header ────────────────────────────────────────────────────────────────────
+.gar-header {
+  display: flex;
+  align-items: center;
+  padding-bottom: 16px;
+  border-bottom: 1px solid $border;
+}
+
+.header-left { display: flex; align-items: center; gap: 14px; }
+
+.header-icon {
+  width: 52px; height: 52px;
+  border-radius: 12px;
+  background: rgba($orange, 0.12);
+  border: 1px solid $border;
+  display: flex; align-items: center; justify-content: center;
+  color: $orange; flex-shrink: 0;
+}
+
+.header-title {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 1.7rem; font-weight: 700;
+  color: $white; margin: 0;
+}
+
+.header-sub { font-size: 0.85rem; color: $gray-mid; display: block; margin-top: 2px; }
+
+// ── Tabs ──────────────────────────────────────────────────────────────────────
+.gar-tabs {
+  display: flex; gap: 4px; flex-wrap: wrap;
+  background: $gray-dark;
+  border-radius: 8px; padding: 4px;
+  width: fit-content;
+}
+
+.gar-tab {
+  padding: 8px 18px;
+  border-radius: 6px;
+  border: none; background: transparent;
+  color: $gray-light; font-size: 0.82rem; font-weight: 600;
+  cursor: pointer; transition: all 0.2s;
+
+  &.active { background: $orange; color: $white; }
+  &:not(.active):hover { background: rgba($white, 0.06); color: $white; }
+}
+
+// ── Card ──────────────────────────────────────────────────────────────────────
+.gar-card {
+  background: $gray-dark;
+  border: 1px solid $border;
+  border-radius: 12px;
+  padding: 24px;
+}
+
+.card-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.toolbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.search-input { min-width: 200px; }
+
+.section-title {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 1.1rem; font-weight: 700;
+  color: $white; margin: 0 0 16px;
+}
+
+.sub-section-title {
+  font-size: 0.95rem; font-weight: 600;
+  color: $gray-light; margin: 16px 0 8px;
+}
+
+// ── Forms ─────────────────────────────────────────────────────────────────────
+.form-row {
+  display: flex; gap: 16px; flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.form-group {
+  display: flex; flex-direction: column; gap: 4px;
+  min-width: 120px;
+
+  &.flex-1 { flex: 1; }
+  &.form-group--sm { flex: 0 0 140px; }
+  &.form-group--center {
+    justify-content: center; align-items: center;
+    input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; }
+  }
+}
+
+.form-actions-inline {
+  flex-direction: row !important;
+  align-items: flex-end !important;
+  gap: 8px !important;
+}
+
+.form-label {
+  font-size: 0.78rem; font-weight: 600;
+  color: $gray-light; text-transform: uppercase; letter-spacing: 0.04em;
+
+  &.required::after { content: ' *'; color: $orange; }
+}
+
+.form-input {
+  background: rgba($white, 0.05);
+  border: 1px solid $border-dim;
+  border-radius: 8px;
+  color: $white;
+  font-size: 0.88rem;
+  padding: 9px 12px;
+  outline: none;
+  width: 100%;
+  transition: border-color 0.2s;
+
+  &:focus { border-color: $orange; }
+  &::placeholder { color: $gray-mid; }
+  &[disabled] { opacity: 0.5; cursor: not-allowed; }
+
+  option { background: $gray-dark; color: $white; }
+}
+
+textarea.form-input { resize: vertical; }
+
+.error-msg { font-size: 0.74rem; color: $red; }
+.hint      { font-size: 0.76rem; color: $gray-mid; margin: -8px 0 12px; }
+
+.form-actions {
+  display: flex; justify-content: flex-end; gap: 8px; margin-top: 4px;
+}
+
+// ── Buttons ───────────────────────────────────────────────────────────────────
+.btn {
+  padding: 9px 18px;
+  border-radius: 8px;
+  border: none;
+  font-size: 0.85rem; font-weight: 600;
+  cursor: pointer; transition: all 0.2s;
+  display: inline-flex; align-items: center; gap: 6px;
+  white-space: nowrap;
+
+  &.btn-primary   { background: $orange; color: $white; &:hover:not(:disabled) { background: darken($orange, 8%); } }
+  &.btn-secondary { background: rgba($white,0.08); color: $white; border: 1px solid $border-dim; &:hover:not(:disabled) { background: rgba($white,0.14); } }
+  &.btn-danger    { background: $red; color: $white; &:hover:not(:disabled) { background: darken($red, 8%); } }
+  &.btn-sm        { padding: 6px 12px; font-size: 0.78rem; border-radius: 6px; }
+  &:disabled      { opacity: 0.5; cursor: not-allowed; }
+}
+
+.icon-btn {
+  width: 30px; height: 30px;
+  border-radius: 6px;
+  border: 1px solid $border-dim;
+  background: rgba($white, 0.05);
+  color: $gray-light;
+  display: inline-flex; align-items: center; justify-content: center;
+  cursor: pointer; transition: all 0.15s;
+  padding: 0;
+
+  &:hover:not(:disabled) { background: rgba($white, 0.12); color: $white; }
+  &:disabled { opacity: 0.35; cursor: not-allowed; }
+  &.icon-btn--danger  { &:hover:not(:disabled) { background: rgba($red, 0.2); color: $red; border-color: rgba($red, 0.4); } }
+  &.icon-btn--orange  { &:hover:not(:disabled) { background: rgba($orange, 0.2); color: $orange; border-color: $border; } }
+  &.icon-btn--blue    { &:hover:not(:disabled) { background: rgba($blue, 0.2); color: $blue; border-color: rgba($blue, 0.4); } }
+}
+
+// ── Table ─────────────────────────────────────────────────────────────────────
+.table-wrap { overflow-x: auto; border-radius: 8px; }
+
+.gar-table {
+  width: 100%; border-collapse: collapse; font-size: 0.84rem;
+
+  th {
+    background: rgba($white, 0.04);
+    color: $gray-mid;
+    font-size: 0.73rem; font-weight: 700; text-transform: uppercase;
+    padding: 10px 12px; text-align: left; white-space: nowrap;
+  }
+
+  td {
+    padding: 11px 12px;
+    color: $gray-light;
+    border-top: 1px solid $border-dim;
+  }
+
+  tr:hover td { background: rgba($white, 0.03); }
+
+  .actions-cell { display: flex; gap: 6px; align-items: center; }
+  .mono { font-family: monospace; font-size: 0.82rem; color: $orange; }
+}
+
+// ── Badges ────────────────────────────────────────────────────────────────────
+.badge {
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 0.72rem; font-weight: 700; text-transform: uppercase;
+
+  &.badge--active    { background: rgba($green, 0.15); color: $green; }
+  &.badge--expired   { background: rgba($red, 0.15); color: $red; }
+  &.badge--closed    { background: rgba($gray-mid, 0.2); color: $gray-mid; }
+  &.badge--process   { background: rgba($yellow, 0.15); color: $yellow; }
+  &.badge--completed { background: rgba($blue, 0.15); color: $blue; }
+}
+
+// ── Spinner ───────────────────────────────────────────────────────────────────
+.spinner-wrap { display: flex; justify-content: center; padding: 32px; }
+
+.spinner {
+  width: 32px; height: 32px;
+  border: 3px solid rgba($orange, 0.2);
+  border-top-color: $orange;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+.spinner-sm {
+  display: inline-block;
+  width: 14px; height: 14px;
+  border: 2px solid rgba($white, 0.3);
+  border-top-color: $white;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+// ── Empty state ───────────────────────────────────────────────────────────────
+.empty-state {
+  text-align: center;
+  color: $gray-mid;
+  font-size: 0.88rem;
+  padding: 24px 0;
+}
+
+// ── Row de cards ──────────────────────────────────────────────────────────────
+.row-cards {
+  display: flex; gap: 20px; flex-wrap: wrap;
+  .flex-1 { flex: 1; min-width: 280px; }
+}
+
+// ── Mini list (historial) ─────────────────────────────────────────────────────
+.mini-list { display: flex; flex-direction: column; gap: 8px; margin-top: 12px; }
+
+.mini-item {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 10px 14px;
+  background: rgba($white, 0.04);
+  border: 1px solid $border-dim;
+  border-radius: 8px;
+  gap: 12px;
+}
+
+.mini-item__main {
+  display: flex; gap: 10px; flex-wrap: wrap;
+  font-size: 0.84rem; color: $gray-light;
+  .mono { color: $orange; font-family: monospace; }
+}
+
+// ── Validación resultado ──────────────────────────────────────────────────────
+.validation-result {
+  margin-top: 20px;
+  padding: 16px;
+  background: rgba($white, 0.04);
+  border: 1px solid $border-dim;
+  border-radius: 10px;
+}
+
+.val-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 6px 0;
+  border-bottom: 1px solid $border-dim;
+  font-size: 0.84rem;
+  &:last-of-type { border-bottom: none; }
+}
+
+.val-label { color: $gray-mid; font-weight: 600; font-size: 0.78rem; text-transform: uppercase; }
+.val-msg   { font-size: 0.82rem; color: $gray-light; margin-top: 10px; }
+
+.text-green { color: $green; font-weight: 600; }
+.text-red   { color: $red; font-weight: 600; }
+
+// ── Workshop grid ─────────────────────────────────────────────────────────────
+.workshop-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+  margin-top: 8px;
+}
+
+.workshop-card {
+  background: rgba($white, 0.04);
+  border: 1px solid $border-dim;
+  border-radius: 10px;
+  padding: 16px;
+  display: flex; flex-direction: column; gap: 10px;
+  transition: border-color 0.2s;
+
+  &:hover { border-color: $border; }
+}
+
+.workshop-card__header {
+  display: flex; align-items: flex-start; gap: 12px;
+}
+
+.workshop-icon {
+  width: 40px; height: 40px; flex-shrink: 0;
+  background: rgba($orange, 0.1);
+  border: 1px solid $border;
+  border-radius: 8px;
+  display: flex; align-items: center; justify-content: center;
+  color: $orange;
+}
+
+.workshop-name { font-weight: 700; color: $white; margin: 0 0 4px; font-size: 0.95rem; }
+
+.workshop-info {
+  p { margin: 4px 0; font-size: 0.83rem; color: $gray-light; }
+  strong { color: $gray-light; }
+}
+
+.coord-row {
+  display: flex; align-items: center; gap: 4px;
+  color: $gray-mid !important; font-size: 0.76rem !important;
+}
+
+.workshop-card__actions {
+  display: flex; gap: 8px; padding-top: 8px;
+  border-top: 1px solid $border-dim;
+}
+
+// ── Quality check ─────────────────────────────────────────────────────────────
+.quality-header {
+  display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap;
+  gap: 16px; margin-bottom: 8px;
+}
+
+.quality-order {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 1.1rem; font-weight: 700; color: $white; margin: 0 0 6px;
+}
+
+.quality-progress {
+  display: flex; flex-direction: column; align-items: flex-end; gap: 6px;
+}
+
+.progress-label { font-size: 0.78rem; color: $gray-mid; }
+
+.progress-bar {
+  width: 200px; height: 6px;
+  background: rgba($white, 0.1);
+  border-radius: 4px; overflow: hidden;
+}
+
+.progress-fill {
+  height: 100%; background: $orange;
+  border-radius: 4px; transition: width 0.4s ease;
+}
+
+.quality-items {
+  display: flex; flex-direction: column; gap: 8px;
+  margin: 16px 0;
+}
+
+.quality-item {
+  display: flex; align-items: center; gap: 12px;
+  padding: 10px 14px;
+  background: rgba($white, 0.03);
+  border: 1px solid $border-dim;
+  border-radius: 8px;
+  transition: background 0.2s;
+
+  &.quality-item--verified { background: rgba($green, 0.06); border-color: rgba($green, 0.2); }
+}
+
+.item-check {
+  display: flex; align-items: center; gap: 10px;
+  cursor: pointer; flex: 0 0 auto; max-width: 260px;
+
+  input[type="checkbox"] {
+    width: 18px; height: 18px; cursor: pointer;
+    accent-color: $orange;
+  }
+}
+
+.item-name { font-size: 0.87rem; color: $white; }
+
+.item-obs {
+  flex: 1;
+  padding: 6px 10px !important;
+  font-size: 0.82rem !important;
+}
+
+.item-verifier {
+  font-size: 0.74rem; color: $green; white-space: nowrap; flex-shrink: 0;
+}
+
+.quality-actions {
+  display: flex; gap: 10px; flex-wrap: wrap;
+  padding-top: 16px; border-top: 1px solid $border-dim;
+}
+
+.quality-result {
+  margin-top: 16px; padding: 12px 16px;
+  background: rgba($white, 0.04);
+  border-radius: 8px;
+  font-size: 0.84rem; color: $gray-light;
+}
+
+// ── Evidence ──────────────────────────────────────────────────────────────────
+.evidence-upload {
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid $border-dim;
+}
+
+.evidence-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 14px;
+}
+
+.evidence-card {
+  background: $gray-dark;
+  border: 1px solid $border-dim;
+  border-radius: 10px;
+  padding: 16px;
+  display: flex; flex-direction: column; gap: 8px;
+  transition: border-color 0.2s;
+  &:hover { border-color: $border; }
+}
+
+.evidence-card__type {
+  display: flex; align-items: center; gap: 8px;
+  color: $orange;
+}
+
+.evidence-name {
+  font-size: 0.88rem; font-weight: 600; color: $white;
+  word-break: break-all; margin: 0;
+}
+
+.evidence-meta { font-size: 0.75rem; color: $gray-mid; margin: 0; }
+
+// ── Modals ────────────────────────────────────────────────────────────────────
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.72);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 1000; padding: 20px;
+}
+
+.modal {
+  background: #1C1C1C;
+  border: 1px solid $border;
+  border-radius: 14px;
+  width: 100%; max-width: 600px;
+  max-height: 90vh;
+  display: flex; flex-direction: column;
+  overflow: hidden;
+
+  &.modal--sm { max-width: 420px; }
+  &.modal--lg { max-width: 800px; }
+}
+
+.modal-header {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: 18px 24px;
+  border-bottom: 1px solid $border-dim;
+
+  h2 { font-family: 'Rajdhani', sans-serif; font-size: 1.1rem; font-weight: 700; color: $white; margin: 0; }
+}
+
+.modal-close {
+  background: none; border: none; color: $gray-mid;
+  font-size: 1rem; cursor: pointer;
+  &:hover { color: $white; }
+}
+
+.modal-body {
+  padding: 24px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.modal-footer {
+  padding: 16px 24px;
+  border-top: 1px solid $border-dim;
+  display: flex; justify-content: flex-end; gap: 10px;
+}
+
+.modal-desc { font-size: 0.88rem; color: $gray-light; margin-bottom: 16px; }

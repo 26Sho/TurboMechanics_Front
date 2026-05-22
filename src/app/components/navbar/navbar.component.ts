@@ -44,14 +44,18 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
   // Centraliza la lectura del estado para no duplicar lógica
   private actualizarEstado(loggedIn: boolean): void {
-    this.isLoggedIn = loggedIn;
-    this.username = loggedIn ? this.authService.getUsername() : '';
-    const rolId = loggedIn ? this.authService.getRolId() : 0;
-    this.isMecanicoOrAdmin = [2, 3].includes(rolId);
-    this.isSoloMecanico = rolId === 2;
-    this.isAdmin = rolId === 3;
-    this.isCliente = rolId === 1; // ← corregido: faltaba aquí
+  this.isLoggedIn = loggedIn;
+  this.username = loggedIn ? this.authService.getUsername() : '';
+  const rolId = loggedIn ? this.authService.getRolId() : 0;
+  this.isMecanicoOrAdmin = [2, 3].includes(rolId);
+  this.isSoloMecanico = rolId === 2;
+  this.isAdmin = rolId === 3;
+  this.isCliente = rolId === 1;
+
+  if (loggedIn && rolId === 3) {
+    this.router.navigate(['/admin/dashboard']);
   }
+}
 
   // ─── Navegación ──────────────────────────────────────────────
 

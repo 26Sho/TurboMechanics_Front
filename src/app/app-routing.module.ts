@@ -25,7 +25,6 @@ import { InventarioRepuestosComponent } from './features/admin/inventario-repues
 import { ReportesComponent } from './features/admin/reportes/reportes.component';
 import { MecanicosComponent } from './features/admin/mecanicos/mecanicos.component';
 
-
 import { PaymentMethodsComponent } from './features/admin/payment-methods/payment-methods.component';
 import { MovementsComponent } from './features/admin/movements/movements.component';
 import { BillingComponent } from './features/admin/billing/billing.component';
@@ -34,6 +33,7 @@ import { EstimatesComponent } from './features/admin/estimates/estimates.compone
 import { AppointmentsComponent } from './features/admin/appointments/appointments.component';
 import { clientGuard } from './core/guards/client.guard';
 import { AppointmentsComponent as ClientAppointmentsComponent } from './features/auth/pages/appointments/appointments.component';
+import { GarantiasComponent } from './features/admin/garantias/Garantias_component';
 
 const routes: Routes = [
   // 🔹 Redirección inicial
@@ -108,17 +108,19 @@ const routes: Routes = [
 
       // Rutas de mecánicos
       { path: 'mecanicos', component: MecanicosComponent },
-      { path: 'payment-methods', component: PaymentMethodsComponent },  // ← nuevo
-      { path: 'movements', component: MovementsComponent },// ← nuevo
+      { path: 'payment-methods', component: PaymentMethodsComponent },
+      { path: 'movements', component: MovementsComponent },
       { path: 'billing', component: BillingComponent },
       { path: 'cashier', component: CashierComponent },
       { path: 'estimates', component: EstimatesComponent },
       { path: 'appointments', component: AppointmentsComponent },
 
+      // ── Módulo 8 ────────────────────────────────────────────────────────
+      { path: 'garantias', component: GarantiasComponent },
     ]
   },
 
-    // 🔹 Citas del cliente
+  // 🔹 Citas del cliente
   {
     path: 'appointments',
     component: ClientAppointmentsComponent,
