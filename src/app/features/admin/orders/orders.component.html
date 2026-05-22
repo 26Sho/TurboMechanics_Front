@@ -1,66 +1,199 @@
 <div class="page">
+
+  <!-- ─── Header ─────────────────────────────────────────── -->
   <div class="page-header">
     <div>
       <h1 class="page-title">Órdenes de Trabajo</h1>
-      <p class="page-sub">Gestión de órdenes — <span class="text-accent">{{ orders().length }} registros en BD</span></p>
+      <p class="page-sub">Gestión de órdenes —
+        <span class="text-accent">{{ orders().length }} registros en BD</span>
+      </p>
     </div>
     <button class="btn btn-primary" (click)="nuevaOrden()">
-      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+           stroke-linecap="round" stroke-linejoin="round">
+        <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+      </svg>
       Nueva Orden
     </button>
   </div>
 
+  <!-- ─── Filtros ──────────────────────────────────────────── -->
   <div class="filters-bar card">
-    <input type="text" class="turbo-input search-input" placeholder="Buscar por cliente, vehículo o ID..."
+    <input type="text" class="turbo-input search-input"
+           placeholder="Buscar por cliente, placa o número de orden..."
            [value]="search" (input)="onSearchChange($event)" />
     <select class="turbo-select status-select" [value]="filterStatus" (change)="onStatusChange($event)">
       <option value="">Todos los estados</option>
-      <option value="En proceso">En proceso</option>
-      <option value="Pendiente">Pendiente</option>
-      <option value="Listo">Listo</option>
-      <option value="Entregado">Entregado</option>
+      <option value="RECIBIDO">Recibido</option>
+      <option value="EN_DIAGNOSTICO">En diagnóstico</option>
+      <option value="EN_REPARACION">En reparación</option>
+      <option value="LISTO">Listo</option>
+      <option value="ENTREGADO">Entregado</option>
+      <option value="CANCELADO">Cancelado</option>
     </select>
     <div class="filters-spacer"></div>
     <span class="text-muted results-count">{{ filteredOrders.length }} resultado(s)</span>
   </div>
 
-  <div class="card table-card">
+  <!-- ─── Loading ─────────────────────────────────────────── -->
+  <div class="orders-loading" *ngIf="cargando">
+    <i class="fas fa-spinner fa-spin"></i> Cargando órdenes...
+  </div>
+
+  <!-- ─── Tabla ────────────────────────────────────────────── -->
+  <div class="card table-card" *ngIf="!cargando">
     <div class="table-wrapper">
       <table class="turbo-table">
         <thead>
           <tr>
-            <th>ID Orden</th>
+            <th>Nº Orden</th>
             <th>Fecha</th>
             <th>Cliente</th>
             <th>Vehículo</th>
-            <th>Técnico</th>
+            <th>Mecánico</th>
             <th>Estado</th>
-            <th>Total</th>
+            <th>Prioridad</th>
             <th>Acciones</th>
           </tr>
         </thead>
         <tbody>
           <tr *ngFor="let o of filteredOrders">
-            <td><span class="order-id">#{{ o.id }}</span></td>
-            <td><span class="date-cell">{{ o.date }}</span></td>
-            <td><p class="client-cell">{{ o.client }}</p></td>
-            <td><span class="vehicle-cell">{{ o.vehicle }}</span></td>
+            <td><span class="order-id">{{ o.numberorder }}</span></td>
+            <td><span class="date-cell">{{ formatFecha(o.datecreation) }}</span></td>
             <td>
-              <div class="tech-chip">
-                <span class="tech-avatar">{{ o.tech[0] }}</span>
-                {{ o.tech }}
-              </div>
+              <p class="client-cell">{{ o.clientname }}</p>
+              <small class="text-muted">{{ o.clientidentification }}</small>
             </td>
-            <td><span class="badge" [class]="statusClass(o.status)">{{ o.status }}</span></td>
-            <td><span class="fw-semibold text-accent">{{ o.total }}</span></td>
             <td>
-              <button class="btn-icon">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+              <span class="vehicle-cell">{{ o.vehiclebrand }} {{ o.vehiclemodel }}</span>
+              <small class="text-muted"> — {{ o.vehicleplate }}</small>
+            </td>
+            <td>
+              <div class="tech-chip" *ngIf="o.assignedMechanicName; else sinAsignar">
+                <span class="tech-avatar">{{ o.assignedMechanicName.charAt(0) }}</span>
+                {{ o.assignedMechanicName }}
+              </div>
+              <ng-template #sinAsignar>
+                <span class="badge badge--neutral">Sin asignar</span>
+              </ng-template>
+            </td>
+            <td>
+              <span class="badge" [class]="statusClass(o.stateorder)">
+                {{ statusLabel(o.stateorder) }}
+              </span>
+            </td>
+            <td>
+              <span class="badge" [class]="priorityClass(o.priority)">{{ o.priority }}</span>
+            </td>
+            <td class="actions-cell">
+              <!-- Ver detalle -->
+              <button class="btn-icon" title="Ver detalle" (click)="verDetalle(o)">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                  <circle cx="12" cy="12" r="3"/>
+                </svg>
               </button>
+              <!-- Asignar mecánico -->
+              <button class="btn-icon btn-icon--assign" title="Asignar mecánico"
+                      *ngIf="puedeAsignar(o)" (click)="abrirAsignar(o)">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+                  <circle cx="12" cy="7" r="4"/>
+                  <line x1="19" y1="8" x2="19" y2="14"/>
+                  <line x1="22" y1="11" x2="16" y2="11"/>
+                </svg>
+              </button>
+            </td>
+          </tr>
+          <tr *ngIf="filteredOrders.length === 0">
+            <td colspan="8" class="empty-row">
+              <i class="fas fa-inbox"></i> No hay órdenes que mostrar
             </td>
           </tr>
         </tbody>
       </table>
     </div>
+  </div>
+</div>
+
+
+<!-- ═══════════════════════════════════════════════════════════
+     Modal — Asignar mecánico (HU 6.7)
+═══════════════════════════════════════════════════════════ -->
+<div class="orders-modal" [class.open]="modalAsignar">
+  <div class="orders-modal__overlay" (click)="modalAsignar = false"></div>
+  <div class="orders-modal__box">
+
+    <div class="orders-modal__header">
+      <div>
+        <h2>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
+            <circle cx="12" cy="7" r="4"/>
+            <line x1="19" y1="8" x2="19" y2="14"/>
+            <line x1="22" y1="11" x2="16" y2="11"/>
+          </svg>
+          Asignar Mecánico
+        </h2>
+        <p class="orders-modal__orden">
+          Orden <strong>{{ ordenSeleccionada?.numberorder }}</strong> —
+          {{ ordenSeleccionada?.clientname }} |
+          {{ ordenSeleccionada?.vehiclebrand }} {{ ordenSeleccionada?.vehiclemodel }}
+          ({{ ordenSeleccionada?.vehicleplate }})
+        </p>
+      </div>
+      <button class="orders-modal__close" (click)="modalAsignar = false">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    </div>
+
+    <div class="orders-modal__body">
+
+      <!-- Loading mecánicos -->
+      <div class="orders-loading" *ngIf="cargandoMecanicos">
+        <i class="fas fa-spinner fa-spin"></i> Cargando mecánicos disponibles...
+      </div>
+
+      <!-- Lista de mecánicos -->
+      <div class="mec-list" *ngIf="!cargandoMecanicos">
+        <p class="mec-list__hint" *ngIf="mecanicos.length === 0">
+          No hay mecánicos activos disponibles.
+        </p>
+        <label class="mec-card"
+               *ngFor="let m of mecanicos"
+               [class.selected]="mecanicoDocumento === m.document"
+               (click)="mecanicoDocumento = m.document">
+          <div class="mec-card__avatar">{{ m.name.charAt(0).toUpperCase() }}</div>
+          <div class="mec-card__info">
+            <strong>{{ m.name }}</strong>
+            <small>{{ m.position }}</small>
+            <small class="mec-card__cap">
+              Cap. máx: {{ m.maxOrderCapacity }} órdenes
+            </small>
+          </div>
+          <div class="mec-card__check" *ngIf="mecanicoDocumento === m.document">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <polyline points="20 6 9 17 4 12"/>
+            </svg>
+          </div>
+        </label>
+      </div>
+
+    </div>
+
+    <div class="orders-modal__footer">
+      <button class="btn btn-ghost" (click)="modalAsignar = false">Cancelar</button>
+      <button class="btn btn-primary" (click)="confirmarAsignacion()" [disabled]="asignando || !mecanicoDocumento">
+        <i class="fas fa-spinner fa-spin" *ngIf="asignando"></i>
+        <svg *ngIf="!asignando" width="14" height="14" viewBox="0 0 24 24" fill="none"
+             stroke="currentColor" stroke-width="2">
+          <polyline points="20 6 9 17 4 12"/>
+        </svg>
+        {{ asignando ? 'Asignando...' : 'Confirmar asignación' }}
+      </button>
+    </div>
+
   </div>
 </div>
