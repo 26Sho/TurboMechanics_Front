@@ -19,7 +19,7 @@ import { HomeComponent } from './components/home/home.component';
 import { ToastComponent } from './shared/components/toast/toast.component';
 import { AdminModule } from './features/admin/admin.module';
 import { authInterceptor } from './core/interceptors/auth.interceptor';
-
+import { SessionExpiredComponent } from './shared/components/sesion_expired/session.expired.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -32,7 +32,8 @@ import { authInterceptor } from './core/interceptors/auth.interceptor';
     FooterComponent,
     HomeComponent,
     ToastComponent,
-    SatisfactionSurveyComponent
+    SatisfactionSurveyComponent,
+    SessionExpiredComponent          // ← nuevo
   ],
   imports: [
     BrowserModule,
