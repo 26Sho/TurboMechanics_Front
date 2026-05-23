@@ -43,7 +43,7 @@ export class AuthService {
   }
 
   refreshToken(): Observable<RefreshTokenResponse> {
-    return this.http.get<RefreshTokenResponse>(`${this.apiUrl}/refreshToken`).pipe(
+    return this.http.get<RefreshTokenResponse>(`${this.apiUrl}/refresh`).pipe(
       tap(res => { if (res.jwt) localStorage.setItem('token', res.jwt); })
     );
   }
