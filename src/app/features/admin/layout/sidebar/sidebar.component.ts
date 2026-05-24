@@ -17,22 +17,10 @@ export class SidebarComponent {
       icon: `<i class="fas fa-chart-bar"></i>`
     },
     {
-      label: 'Órdenes',
-      route: '/admin/orders',
-      badge: 0,
-      icon: `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>`
-    },
-    {
       label: 'Clientes',
       route: '/admin/clients',
       badge: 0,
-      icon: `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="7" r="4"/></svg>`
-    },
-    {
-      label: 'Vehículos',
-      route: '/admin/vehicles',
-      badge: 0,
-      icon: `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"/></svg>`
+      icon: `<i class="fas fa-users"></i>`
     },
 
     // 🔥 LOS QUE AGREGASTE (integrados bien)
@@ -40,25 +28,25 @@ export class SidebarComponent {
       label: 'Orden de Trabajo',
       route: '/admin/work-order',
       badge: 0,
-      icon: `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"><path d="M3 3h18v18H3z"/></svg>`
+      icon: `<i class="fas fa-tools"></i>`
     },
     {
       label: 'Asociar Vehículo',
       route: '/admin/vehicle-assign',
       badge: 0,
-      icon: `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"><circle cx="12" cy="12" r="10"/></svg>`
+      icon: `<i class="fas fa-link"></i>`
     },
     {
       label: 'Historial',
       route: '/admin/vehicle-history',
       badge: 0,
-      icon: `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"><path d="M12 8v4l3 3"/></svg>`
+      icon: `<i class="fas fa-history"></i>`
     },
     {
       label: 'Diagnóstico',
       route: '/admin/diagnosis',
       badge: 0,
-      icon: `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"><path d="M12 2l9 21H3z"/></svg>`
+      icon: `<i class="fas fa-stethoscope"></i>`
     },
 
     // 🔧 originales avanzados
@@ -66,67 +54,67 @@ export class SidebarComponent {
       label: 'Servicios',
       route: '/admin/servicios',
       badge: 0,
-      icon: `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"><path d="M14.7 6.3l3 3"/></svg>`
+      icon: `<i class="fas fa-cogs"></i>`
     },
     {
       label: 'Repuestos',
       route: '/admin/repuestos',
       badge: 0,
-      icon: `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20"><path d="M21 16V8"/></svg>`
+      icon: `<i class="fas fa-boxes"></i>`
     },
     {
       label: 'Reportes',
       route: '/admin/reportes',
       badge: 0,
-      icon: `<i class="fas fa-chart-bar"></i>`
+      icon: `<i class="fas fa-chart-pie"></i>`
     },
     {
       label: 'Mecánicos',
       route: '/admin/mecanicos',
       badge: 0,
-      icon: `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>`
+      icon: `<i class="fas fa-user-cog"></i>`
     },
     {
       label: 'Métodos de Pago',
       route: '/admin/payment-methods',
       badge: 0,
-      icon: `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="4" width="22" height="16" rx="2" ry="2"/><line x1="1" y1="10" x2="23" y2="10"/></svg>`
+      icon: `<i class="fas fa-credit-card"></i>`
     },
     {
       label: 'Movimientos',
       route: '/admin/movements',
       badge: 0,
-      icon: `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>`
+      icon: `<i class="fas fa-money-bill-wave"></i>`
     },
     {
       label: 'Facturación',
       route: '/admin/billing',
       badge: 0,
-      icon: `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>`
+      icon: `<i class="fas fa-file-invoice-dollar"></i>`
     },
     {
       label: 'Caja y Reportes',
       route: '/admin/cashier',
       badge: 0,
-      icon: `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>`
+      icon: `<i class="fas fa-cash-register"></i>`
     },
     {
       label: 'Presupuestos',
       route: '/admin/estimates',
       badge: 0,
-      icon: `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>`
+      icon: `<i class="fas fa-file-signature"></i>`
     },
     {
       label: 'Citas',
       route: '/admin/appointments',
       badge: 0,
-      icon: `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>`
+      icon: `<i class="fas fa-calendar-check"></i>`
     },
     {
       label: 'Garantías',
       route: '/admin/garantias',
       badge: 0,
-      icon: `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>`
-    },
+      icon: `<i class="fas fa-shield-alt"></i>`
+    }
   ];
 }
