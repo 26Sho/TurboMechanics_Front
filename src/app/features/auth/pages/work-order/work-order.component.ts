@@ -489,7 +489,7 @@ export class WorkOrderComponent implements OnInit {
     });
   }
 
-  // ── HU 6.7 — Asignar mecánico ─────────────────────────────────────────────
+  // ── Asignar mecánico ─────────────────────────────────────────────
 
   openAsignar(order: WorkOrderResponse, event?: Event): void {
     event?.stopPropagation();

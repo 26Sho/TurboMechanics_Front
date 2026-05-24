@@ -8,8 +8,6 @@ import { RouterModule } from '@angular/router';
 import { LayoutComponent } from './layout/layout.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { ClientsComponent } from './clients/clients.component';
-import { VehiclesComponent } from './vehicles/vehicles.component';
-import { OrdersComponent } from './orders/orders.component';
 import { SidebarComponent } from './layout/sidebar/sidebar.component';
 import { TopbarComponent } from './layout/topbar/topbar.component';
 import { CatalogoServiciosComponent } from './catalogo-servicios/catalogo-servicios.component';
@@ -29,8 +27,6 @@ import { GarantiasComponent } from './garantias/Garantias_component';
     LayoutComponent,
     DashboardComponent,
     ClientsComponent,
-    VehiclesComponent,
-    OrdersComponent,
     SidebarComponent,
     TopbarComponent,
     CatalogoServiciosComponent,

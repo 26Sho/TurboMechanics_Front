@@ -18,8 +18,6 @@ import { TechnicalDiagnosisComponent } from './features/auth/pages/technical-dia
 import { LayoutComponent } from './features/admin/layout/layout.component';
 import { DashboardComponent } from './features/admin/dashboard/dashboard.component';
 import { ClientsComponent } from './features/admin/clients/clients.component';
-import { VehiclesComponent } from './features/admin/vehicles/vehicles.component';
-import { OrdersComponent } from './features/admin/orders/orders.component';
 import { CatalogoServiciosComponent } from './features/admin/catalogo-servicios/catalogo-servicios.component';
 import { InventarioRepuestosComponent } from './features/admin/inventario-repuestos/inventario-repuestos.component';
 import { ReportesComponent } from './features/admin/reportes/reportes.component';
@@ -92,8 +90,6 @@ const routes: Routes = [
 
       { path: 'dashboard', component: DashboardComponent },
       { path: 'clients', component: ClientsComponent },
-      { path: 'orders', component: OrdersComponent },
-      { path: 'vehicles', component: VehiclesComponent },
 
       // Admin reutiliza vistas
       { path: 'work-order', component: WorkOrderComponent },
