@@ -25,9 +25,9 @@ export class AuthService {
     return this.http.post<LoginResponse>(`${this.apiUrl}/login`, data).pipe(
       tap(res => {
         if (res.jwt) {
-          localStorage.setItem('token', res.jwt);
-          localStorage.setItem('username', data.email);
-          localStorage.setItem('rolId', String(res.rolId));
+          sessionStorage.setItem('token', res.jwt);
+          sessionStorage.setItem('username', data.email);
+          sessionStorage.setItem('rolId', String(res.rolId));
           this.authState$.next(true);
         }
       })
@@ -35,26 +35,26 @@ export class AuthService {
   }
 
   getUsername(): string {
-    return localStorage.getItem('username') || '';
+    return sessionStorage.getItem('username') || '';
   }
 
   getRolId(): number {
-    return Number(localStorage.getItem('rolId'));
+    return Number(sessionStorage.getItem('rolId'));
   }
 
   refreshToken(): Observable<RefreshTokenResponse> {
     return this.http.get<RefreshTokenResponse>(`${this.apiUrl}/refresh`).pipe(
-      tap(res => { if (res.jwt) localStorage.setItem('token', res.jwt); })
+      tap(res => { if (res.jwt) sessionStorage.setItem('token', res.jwt); })
     );
   }
 
-  getToken(): string | null { return localStorage.getItem('token'); }
+  getToken(): string | null { return sessionStorage.getItem('token'); }
   isLoggedIn(): boolean { return !!this.getToken(); }
 
   logout() {
-    localStorage.removeItem('token');
-    localStorage.removeItem('username');
-    localStorage.removeItem('rolId');
+    sessionStorage.removeItem('token');
+    sessionStorage.removeItem('username');
+    sessionStorage.removeItem('rolId');
     this.authState$.next(false);
   }
 
@@ -65,7 +65,7 @@ export class AuthService {
   }
 
   validateResetToken(data: ValidateResetTokenRequest): Observable<MessageResponse> {
-    return this.http.post<MessageResponse>(`${this.apiUrl}/validate-code`, data); // ← URL corregida
+    return this.http.post<MessageResponse>(`${this.apiUrl}/validate-code`, data);
   }
 
   resetPassword(data: ResetPasswordRequest): Observable<MessageResponse> {

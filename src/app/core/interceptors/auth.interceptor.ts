@@ -8,7 +8,7 @@ export const authInterceptor: HttpInterceptorFn = (req: HttpRequest<unknown>, ne
   const authService = inject(AuthService);
   const sessionExpiredService = inject(SessionExpiredService);
 
-  const token = localStorage.getItem('token');
+  const token = sessionStorage.getItem('token');
 
   const clonedReq = token
     ? req.clone({ setHeaders: { Authorization: `Bearer ${token}` } })
