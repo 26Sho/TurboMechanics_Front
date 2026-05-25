@@ -19,7 +19,7 @@ import { HomeComponent } from './components/home/home.component';
 import { AdminModule } from './features/admin/admin.module';
 import { authInterceptor } from './core/interceptors/auth.interceptor';
 import { SessionExpiredComponent } from './shared/components/sesion_expired/session.expired.component';
-import { SharedModule } from './shared/shared.module';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -33,12 +33,10 @@ import { SharedModule } from './shared/shared.module';
     HomeComponent,
     SatisfactionSurveyComponent,
     SessionExpiredComponent,
-    
   ],
   imports: [
     BrowserModule,
     FormsModule,
-    SharedModule,
     AppRoutingModule,
     AuthModule,
     CoreModule,
