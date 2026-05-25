@@ -16,10 +16,10 @@ import { AppRoutingModule } from './app-routing.module';
 import { AuthModule } from './features/auth/auth.module';
 import { CoreModule } from './core/core.module';
 import { HomeComponent } from './components/home/home.component';
-import { ToastComponent } from './shared/components/toast/toast.component';
 import { AdminModule } from './features/admin/admin.module';
 import { authInterceptor } from './core/interceptors/auth.interceptor';
 import { SessionExpiredComponent } from './shared/components/sesion_expired/session.expired.component';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -31,9 +31,8 @@ import { SessionExpiredComponent } from './shared/components/sesion_expired/sess
     ContactComponent,
     FooterComponent,
     HomeComponent,
-    ToastComponent,
     SatisfactionSurveyComponent,
-    SessionExpiredComponent          // ← nuevo
+    SessionExpiredComponent,
   ],
   imports: [
     BrowserModule,
