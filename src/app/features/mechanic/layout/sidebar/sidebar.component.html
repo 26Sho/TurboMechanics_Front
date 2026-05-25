@@ -1,0 +1,67 @@
+<aside class="sidebar" [class.collapsed]="sidebarService.collapsed()">
+
+  <div class="sidebar__logo">
+    <img src="assets/Logo.png" alt="Turbo Mechanics" class="logo-img" />
+    <div class="logo-text" *ngIf="!sidebarService.collapsed()">
+      <span class="logo-brand">TURBO</span>
+      <span class="logo-sub">MECHANICS</span>
+    </div>
+  </div>
+
+   <div class="sidebar__divider"></div>
+
+  <nav class="sidebar__nav">
+
+    <span
+      class="nav-section-label"
+      *ngIf="!sidebarService.collapsed()">
+
+      MECÁNICO
+
+    </span>
+
+    <a
+      *ngFor="let item of navItems"
+      [routerLink]="item.route"
+      routerLinkActive="active"
+      class="nav-item"
+      [title]="item.label">
+
+      <span
+        class="nav-icon"
+        [innerHTML]="item.icon">
+
+      </span>
+
+
+      <span
+        class="nav-label"
+        *ngIf="!sidebarService.collapsed()">
+
+        {{ item.label }}
+
+      </span>
+
+
+      <span
+        class="nav-badge"
+        *ngIf="item.badge && !sidebarService.collapsed()">
+
+        {{ item.badge }}
+
+      </span>
+
+    </a>
+
+  </nav>
+
+
+  <div
+    class="user-avatar-sm"
+    *ngIf="sidebarService.collapsed()">
+
+    JM
+
+  </div>
+
+</aside>
