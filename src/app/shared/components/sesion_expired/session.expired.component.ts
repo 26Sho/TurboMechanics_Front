@@ -27,6 +27,6 @@ export class SessionExpiredComponent implements OnInit, OnDestroy {
 
   goToLogin(): void {
     this.sessionExpiredService.hide();
-    this.router.navigate(['/auth/login']);
+    this.router.navigate(['/login']);
   }
 }
