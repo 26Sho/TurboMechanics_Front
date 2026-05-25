@@ -32,6 +32,8 @@ import { AppointmentsComponent } from './features/admin/appointments/appointment
 import { clientGuard } from './core/guards/client.guard';
 import { AppointmentsComponent as ClientAppointmentsComponent } from './features/auth/pages/appointments/appointments.component';
 import { GarantiasComponent } from './features/admin/garantias/Garantias_component';
+import { MaintenanceTrackingComponent } from './features/auth/pages/maintenance-tracking/maintenance-tracking.component';
+import { MechanicMaintenanceComponent } from './features/auth/pages/mechanic-maintenance/mechanic-maintenance.component';
 
 const routes: Routes = [
   // 🔹 Redirección inicial
@@ -122,11 +124,19 @@ const routes: Routes = [
     component: ClientAppointmentsComponent,
     canActivate: [clientGuard]
   },
+  {
+    path: 'maintenance', component: MaintenanceTrackingComponent,
+    canActivate: [clientGuard]
+  },
 
   // 🔹 Citas del mecánico (HU 7.2 agenda + HU 7.6 recordatorios)
   {
     path: 'mechanic/appointments',
     component: AppointmentsComponent,
+    canActivate: [mechanicGuard]
+  },
+  {
+    path: 'mechanic/maintenance', component: MechanicMaintenanceComponent,
     canActivate: [mechanicGuard]
   },
 

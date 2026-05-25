@@ -11,9 +11,11 @@ import { VehicleComponent } from './pages/vehicle/vehicle.component';
 import { VehicleHistoryComponent } from './pages/vehicle-history/vehicle-history.component';
 import { TechnicalDiagnosisComponent } from './pages/technical-diagnosis/technical-diagnosis.component';
 import { AppointmentsComponent } from './pages/appointments/appointments.component';
+import { MaintenanceTrackingComponent } from './pages/maintenance-tracking/maintenance-tracking.component';
+import { MechanicMaintenanceComponent } from './pages/mechanic-maintenance/mechanic-maintenance.component';
 
 @NgModule({
-  declarations: [AuthComponent, LoginComponent, RecoverPasswordComponent, RegisterComponent, WorkOrderComponent, VehicleComponent, VehicleHistoryComponent, TechnicalDiagnosisComponent, AppointmentsComponent],
+  declarations: [AuthComponent, LoginComponent, RecoverPasswordComponent, RegisterComponent, WorkOrderComponent, VehicleComponent, VehicleHistoryComponent, TechnicalDiagnosisComponent, AppointmentsComponent, MaintenanceTrackingComponent, MechanicMaintenanceComponent],
   imports: [
     CommonModule,
     FormsModule,

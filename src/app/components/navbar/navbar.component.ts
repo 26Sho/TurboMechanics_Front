@@ -20,19 +20,16 @@ export class NavbarComponent implements OnInit, OnDestroy {
   username = '';
   isMecanicoOrAdmin = false;
   isSoloMecanico = false;
-  isAdmin = false;  // ← agregado
-  isCliente = false; // ← nuevo
-
+  isAdmin = false;
+  isCliente = false;
 
   private authSub!: Subscription;
 
   constructor(private router: Router, private authService: AuthService) { }
 
   ngOnInit(): void {
-    // Lee el estado actual al iniciar
     this.actualizarEstado(this.authService.isLoggedIn());
 
-    // Escucha cambios futuros (login / logout)
     this.authSub = this.authService.authChanged.subscribe(loggedIn => {
       this.actualizarEstado(loggedIn);
     });
@@ -42,20 +39,19 @@ export class NavbarComponent implements OnInit, OnDestroy {
     this.authSub?.unsubscribe();
   }
 
-  // Centraliza la lectura del estado para no duplicar lógica
   private actualizarEstado(loggedIn: boolean): void {
-  this.isLoggedIn = loggedIn;
-  this.username = loggedIn ? this.authService.getUsername() : '';
-  const rolId = loggedIn ? this.authService.getRolId() : 0;
-  this.isMecanicoOrAdmin = [2, 3].includes(rolId);
-  this.isSoloMecanico = rolId === 2;
-  this.isAdmin = rolId === 3;
-  this.isCliente = rolId === 1;
+    this.isLoggedIn = loggedIn;
+    this.username = loggedIn ? this.authService.getUsername() : '';
+    const rolId = loggedIn ? this.authService.getRolId() : 0;
+    this.isMecanicoOrAdmin = [2, 3].includes(rolId);
+    this.isSoloMecanico = rolId === 2;
+    this.isAdmin = rolId === 3;
+    this.isCliente = rolId === 1;
 
-  if (loggedIn && rolId === 3) {
-    this.router.navigate(['/admin/dashboard']);
+    if (loggedIn && rolId === 3) {
+      this.router.navigate(['/admin/dashboard']);
+    }
   }
-}
 
   // ─── Navegación ──────────────────────────────────────────────
 
@@ -80,7 +76,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
     this.router.navigate(['/vehicle-history']);
   }
 
-  goToAdmin(): void {  // ← agregado
+  goToAdmin(): void {
     this.closeMobile();
     this.router.navigate(['/admin/dashboard']);
   }
@@ -98,6 +94,16 @@ export class NavbarComponent implements OnInit, OnDestroy {
   goToMechanicAppointments(): void {
     this.closeMobile();
     this.router.navigate(['/mechanic/appointments']);
+  }
+
+  goToMaintenance(): void {
+    this.closeMobile();
+    this.router.navigate(['/maintenance']);
+  }
+
+  goToMechanicMaintenance(): void {
+    this.closeMobile();
+    this.router.navigate(['/mechanic/maintenance']);
   }
 
   // ─── Scroll ──────────────────────────────────────────────────

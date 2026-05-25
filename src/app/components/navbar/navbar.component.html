@@ -30,6 +30,11 @@
         <a class="navbar__link" (click)="goToAppointments(); $event.preventDefault()" href="#"
           style="cursor:pointer">Agendar Cita</a>
       </li>
+      <!-- Mi Mantenimiento — solo cliente -->
+      <li *ngIf="isCliente">
+        <a class="navbar__link" (click)="goToMaintenance(); $event.preventDefault()" href="#"
+          style="cursor:pointer">Mi Mantenimiento</a>
+      </li>
     </ul>
 
     <div class="navbar__auth">
@@ -69,6 +74,11 @@
           <i class="fas fa-calendar"></i>
           <span>Citas</span>
         </button>
+        <!-- Mantenimiento — solo mecánico -->
+        <button *ngIf="isSoloMecanico" class="navbar__workorder-btn" (click)="goToMechanicMaintenance()">
+          <i class="fas fa-wrench"></i>
+          <span>Mantenimiento</span>
+        </button>
 
         <!-- Cerrar sesión — siempre visible -->
         <button class="navbar__logout-btn" (click)="onLogout()">
@@ -92,6 +102,9 @@
       <li><a (click)="scrollTo('ubicacion'); $event.preventDefault()" href="#ubicacion">Ubicación</a></li>
       <li><a (click)="scrollTo('contacto'); $event.preventDefault()" href="#contacto">Contacto</a></li>
       <li><a href="#" (click)="goToAppointments(); $event.preventDefault()">Agendar Cita</a></li>
+      <li *ngIf="isCliente">
+        <a href="#" (click)="goToMaintenance(); $event.preventDefault()">Mi Mantenimiento</a>
+      </li>
 
       <li *ngIf="!isLoggedIn">
         <a href="#" class="mobile-login" (click)="onLoginClick($event)">Iniciar sesión</a>
@@ -118,6 +131,10 @@
         </a>
         <a *ngIf="isSoloMecanico" href="#" class="mobile-workorder" (click)="goToMechanicAppointments(); $event.preventDefault()">
           <i class="fas fa-calendar"></i> Citas
+        </a>
+        <!-- Mantenimiento mecánico mobile -->
+        <a *ngIf="isSoloMecanico" href="#" class="mobile-workorder" (click)="goToMechanicMaintenance(); $event.preventDefault()">
+          <i class="fas fa-wrench"></i> Mantenimiento
         </a>
         <a href="#" class="mobile-logout" (click)="onLogout(); $event.preventDefault()">
           <i class="fas fa-sign-out-alt"></i> Cerrar sesión
