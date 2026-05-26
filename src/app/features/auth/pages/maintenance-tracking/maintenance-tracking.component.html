@@ -51,8 +51,6 @@
         </div>
 
         <div class="apt-card" *ngIf="status">
-
-          <!-- Estado general -->
           <div class="section-title" style="margin-bottom:1rem;">
             Orden: <strong>{{ status.numberOrder }}</strong>
             &nbsp;
@@ -144,6 +142,95 @@
                     <td>
                       <span class="badge" [class]="issueClass(i.status)">
                         {{ i.status === 'Open' ? 'Abierto' : 'Cerrado' }}
+                      </span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </ng-container>
+        </div>
+
+        <!-- ── Historial de servicios (ST-9.3.7) ─────────────────────────── -->
+        <div class="apt-card" *ngIf="status">
+          <h2 class="section-title">Historial de servicios anteriores</h2>
+          <div *ngIf="loadingHistory" style="text-align:center;padding:1rem;">
+            <span class="spinner-sm"></span>
+          </div>
+          <ng-container *ngIf="!loadingHistory">
+            <div class="empty-state" *ngIf="history.length === 0">
+              No hay servicios anteriores registrados.
+            </div>
+            <div class="apt-table-wrap" *ngIf="history.length > 0">
+              <table class="apt-table">
+                <thead>
+                  <tr><th>Orden</th><th>Fecha ingreso</th><th>Servicio</th><th>Estado</th></tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let h of history">
+                    <td>{{ h.numberOrder }}</td>
+                    <td>{{ h.dateEntry | date:'dd/MM/yyyy' }}</td>
+                    <td class="apt-reason">{{ h.serviceDescription || '—' }}</td>
+                    <td>
+                      <span class="badge" [class]="stateClass(h.stateOrder)">
+                        {{ stateLabel(h.stateOrder) }}
+                      </span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </ng-container>
+        </div>
+
+        <!-- ── Historial de notificaciones (ST-9.5.8) ────────────────────── -->
+        <div class="apt-card" *ngIf="status">
+          <h2 class="section-title">Historial de notificaciones</h2>
+          <div *ngIf="loadingNotifications" style="text-align:center;padding:1rem;">
+            <span class="spinner-sm"></span>
+          </div>
+          <ng-container *ngIf="!loadingNotifications">
+            <div class="empty-state" *ngIf="notifications.length === 0">
+              Aún no se han enviado notificaciones para esta orden.
+            </div>
+            <div class="apt-table-wrap" *ngIf="notifications.length > 0">
+              <table class="apt-table">
+                <thead>
+                  <tr><th>Fecha</th><th>Canal</th><th>Asunto</th></tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let n of notifications">
+                    <td>{{ n.fechaEnvio | date:'dd/MM/yyyy HH:mm' }}</td>
+                    <td>{{ n.canal }}</td>
+                    <td class="apt-reason">{{ n.asunto }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </ng-container>
+        </div>
+        <div class="apt-card" *ngIf="status">
+          <h2 class="section-title">Historial de servicios anteriores</h2>
+          <div *ngIf="loadingHistory" style="text-align:center;padding:1rem;">
+            <span class="spinner-sm"></span>
+          </div>
+          <ng-container *ngIf="!loadingHistory">
+            <div class="empty-state" *ngIf="history.length === 0">
+              No hay servicios anteriores registrados.
+            </div>
+            <div class="apt-table-wrap" *ngIf="history.length > 0">
+              <table class="apt-table">
+                <thead>
+                  <tr><th>Orden</th><th>Fecha ingreso</th><th>Servicio</th><th>Estado</th></tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let h of history">
+                    <td>{{ h.numberOrder }}</td>
+                    <td>{{ h.dateEntry | date:'dd/MM/yyyy' }}</td>
+                    <td class="apt-reason">{{ h.serviceDescription || '—' }}</td>
+                    <td>
+                      <span class="badge" [class]="stateClass(h.stateOrder)">
+                        {{ stateLabel(h.stateOrder) }}
                       </span>
                     </td>
                   </tr>

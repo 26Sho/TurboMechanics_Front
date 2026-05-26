@@ -2,29 +2,23 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
-// ── Enums ─────────────────────────────────────────────────────────────────────
 export type StateOrder =
-  | 'RECIBIDO'
-  | 'EN_DIAGNOSTICO'
-  | 'EN_REPARACION'
-  | 'LISTO'
-  | 'ENTREGADO'
-  | 'CANCELADO';
+  | 'RECIBIDO' | 'EN_DIAGNOSTICO' | 'EN_REPARACION'
+  | 'LISTO' | 'ENTREGADO' | 'CANCELADO';
 
 export type NotificationChannel = 'Email' | 'Whastapp' | 'Both';
 
-// ── DTOs ──────────────────────────────────────────────────────────────────────
 export interface MaintenanceStatusResponse {
-  workOrderId:           number;       // ← nuevo
-  numberOrder:           string;
-  stateOrder:            StateOrder;
-  assignedMechanicName:  string;
-  serviceDescription:    string;
-  dateEntry:             string;
-  estimatedDelivery:     string | null;
-  vehicleBrand:          string;
-  vehicleModel:          string;
-  vehiclePlate:          string;
+  workOrderId:          number;
+  numberOrder:          string;
+  stateOrder:           StateOrder;
+  assignedMechanicName: string;
+  serviceDescription:   string;
+  dateEntry:            string;
+  estimatedDelivery:    string | null;
+  vehicleBrand:         string;
+  vehicleModel:         string;
+  vehiclePlate:         string;
 }
 
 export interface Issue {
@@ -41,6 +35,15 @@ export interface MaintenanceProgress {
   description:  string;
   registeredAt: string;
   registeredBy: string;
+}
+
+// ← nuevo: historial de notificaciones (ST-9.5.8)
+export interface NotificationLog {
+  id:         number;
+  canal:      string;
+  asunto:     string;
+  cuerpo:     string;
+  fechaEnvio: string;
 }
 
 export interface NotificationConsent {
@@ -61,9 +64,9 @@ export interface ReportIssueRequest {
 }
 
 export interface RegisterProgressRequest {
-  workOrderId:   number;
-  description:   string;
-  registeredBy:  string;
+  workOrderId:  number;
+  description:  string;
+  registeredBy: string;
 }
 
 export interface NotificationConsentRequest {
@@ -89,6 +92,15 @@ export class MaintenanceTrackingService {
   getStatusByPlate(plate: string): Observable<MaintenanceStatusResponse> {
     const params = new HttpParams().set('plate', plate);
     return this.http.get<MaintenanceStatusResponse>(`${this.apiUrl}/status`, { headers: this.getHeaders(), params });
+  }
+
+  getHistoryByPlate(plate: string): Observable<MaintenanceStatusResponse[]> {
+    const params = new HttpParams().set('plate', plate);
+    return this.http.get<MaintenanceStatusResponse[]>(`${this.apiUrl}/history`, { headers: this.getHeaders(), params });
+  }
+
+  getNotifications(workOrderId: number): Observable<NotificationLog[]> {
+    return this.http.get<NotificationLog[]>(`${this.apiUrl}/${workOrderId}/notifications`, { headers: this.getHeaders() });
   }
 
   getConsent(identification: number): Observable<NotificationConsent> {

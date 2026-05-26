@@ -6,7 +6,8 @@ import {
   NotificationConsent,
   NotificationChannel,
   Issue,
-  MaintenanceProgress
+  MaintenanceProgress,
+  NotificationLog
 } from '../../../admin/service/maintenance-tracking.service';
 import { ToastService } from '../../../../shared/services/toast.service';
 import { AuthService } from '../../../../core/services/auth.service';
@@ -22,10 +23,10 @@ export class MaintenanceTrackingComponent implements OnInit {
 
   activeTab: TabType = 'status';
 
-  // ── Estado del mantenimiento (HU 9.1, 9.2, 9.3) ──────────────────────────
+  // ── Estado (HU 9.1, 9.2, 9.3) ────────────────────────────────────────────
   statusForm!: FormGroup;
   status: MaintenanceStatusResponse | null = null;
-  loadingStatus = false;
+  loadingStatus  = false;
   statusSearched = false;
 
   // ── Avances e inconvenientes (HU 9.6.7, 9.7.7) ───────────────────────────
@@ -33,6 +34,14 @@ export class MaintenanceTrackingComponent implements OnInit {
   issues: Issue[] = [];
   loadingProgress = false;
   loadingIssues   = false;
+
+  // ── Historial de notificaciones (ST-9.5.8) ────────────────────────────────
+  notifications: NotificationLog[] = [];
+  loadingNotifications = false;
+
+  // ── Historial de servicios (ST-9.3.7) ────────────────────────────────────
+  history: MaintenanceStatusResponse[] = [];
+  loadingHistory = false;
 
   // ── Consentimiento (HU 9.8, 9.9) ─────────────────────────────────────────
   consentForm!: FormGroup;
@@ -75,7 +84,6 @@ export class MaintenanceTrackingComponent implements OnInit {
     return !!(c && c.invalid && (c.dirty || c.touched));
   }
 
-  // ── HU 9.1 / 9.2 / 9.3 ────────────────────────────────────────────────────
   searchStatus(): void {
     this.statusForm.markAllAsTouched();
     if (this.statusForm.invalid) return;
@@ -83,14 +91,18 @@ export class MaintenanceTrackingComponent implements OnInit {
     this.statusSearched = false;
     this.progresses     = [];
     this.issues         = [];
-    this.service.getStatusByPlate(this.statusForm.value.plate).subscribe({
+    this.history        = [];
+    this.notifications  = [];
+    const plate = this.statusForm.value.plate;
+    this.service.getStatusByPlate(plate).subscribe({
       next: (data) => {
         this.status         = data;
         this.loadingStatus  = false;
         this.statusSearched = true;
-        // Cargar avances e inconvenientes automáticamente
         this.loadProgress(data.workOrderId);
         this.loadIssues(data.workOrderId);
+        this.loadHistory(plate);
+        this.loadNotifications(data.workOrderId); // ← nuevo
       },
       error: () => {
         this.loadingStatus  = false;
@@ -100,7 +112,6 @@ export class MaintenanceTrackingComponent implements OnInit {
     });
   }
 
-  // ── HU 9.7.7 Avances del cliente ──────────────────────────────────────────
   loadProgress(workOrderId: number): void {
     this.loadingProgress = true;
     this.service.getProgress(workOrderId).subscribe({
@@ -109,12 +120,31 @@ export class MaintenanceTrackingComponent implements OnInit {
     });
   }
 
-  // ── HU 9.6.7 Inconvenientes del cliente ───────────────────────────────────
   loadIssues(workOrderId: number): void {
     this.loadingIssues = true;
     this.service.getIssues(workOrderId).subscribe({
       next: (list) => { this.issues = list ?? []; this.loadingIssues = false; },
       error: ()    => { this.loadingIssues = false; }
+    });
+  }
+
+  // ── ST-9.5.8 Historial de notificaciones ──────────────────────────────────
+  loadNotifications(workOrderId: number): void {
+    this.loadingNotifications = true;
+    this.service.getNotifications(workOrderId).subscribe({
+      next: (list) => { this.notifications = list ?? []; this.loadingNotifications = false; },
+      error: ()    => { this.loadingNotifications = false; }
+    });
+  }
+
+  loadHistory(plate: string): void {
+    this.loadingHistory = true;
+    this.service.getHistoryByPlate(plate).subscribe({
+      next: (list) => {
+        this.history = (list ?? []).filter(o => o.workOrderId !== this.status?.workOrderId);
+        this.loadingHistory = false;
+      },
+      error: () => { this.loadingHistory = false; }
     });
   }
 
@@ -124,29 +154,22 @@ export class MaintenanceTrackingComponent implements OnInit {
 
   stateLabel(state: string): string {
     const map: Record<string, string> = {
-      RECIBIDO:       'Recibido',
-      EN_DIAGNOSTICO: 'En diagnóstico',
-      EN_REPARACION:  'En reparación',
-      LISTO:          'Listo para entrega',
-      ENTREGADO:      'Entregado',
-      CANCELADO:      'Cancelado',
+      RECIBIDO: 'Recibido', EN_DIAGNOSTICO: 'En diagnóstico',
+      EN_REPARACION: 'En reparación', LISTO: 'Listo para entrega',
+      ENTREGADO: 'Entregado', CANCELADO: 'Cancelado',
     };
     return map[state] ?? state;
   }
 
   stateClass(state: string): string {
     const map: Record<string, string> = {
-      RECIBIDO:       'badge--scheduled',
-      EN_DIAGNOSTICO: 'badge--reprogrammed',
-      EN_REPARACION:  'badge--reprogrammed',
-      LISTO:          'badge--completed',
-      ENTREGADO:      'badge--completed',
-      CANCELADO:      'badge--cancelled',
+      RECIBIDO: 'badge--scheduled', EN_DIAGNOSTICO: 'badge--reprogrammed',
+      EN_REPARACION: 'badge--reprogrammed', LISTO: 'badge--completed',
+      ENTREGADO: 'badge--completed', CANCELADO: 'badge--cancelled',
     };
     return map[state] ?? '';
   }
 
-  // ── HU 9.8 / 9.9 ──────────────────────────────────────────────────────────
   loadConsent(): void {
     this.consentForm.get('identification')!.markAsTouched();
     const id = this.consentForm.value.identification;
@@ -156,10 +179,7 @@ export class MaintenanceTrackingComponent implements OnInit {
     this.service.getConsent(id).subscribe({
       next: (data) => {
         this.consent = data;
-        this.consentForm.patchValue({
-          authorized: data.authorized,
-          channel:    data.channel ?? 'Email',
-        });
+        this.consentForm.patchValue({ authorized: data.authorized, channel: data.channel ?? 'Email' });
         this.loadingConsent  = false;
         this.consentSearched = true;
       },
@@ -176,11 +196,7 @@ export class MaintenanceTrackingComponent implements OnInit {
     if (this.consentForm.invalid) return;
     this.savingConsent = true;
     const { identification, authorized, channel } = this.consentForm.value;
-    this.service.saveConsent({
-      identification,
-      authorized,
-      channel: authorized ? channel : null,
-    }).subscribe({
+    this.service.saveConsent({ identification, authorized, channel: authorized ? channel : null }).subscribe({
       next: (data) => {
         this.consent       = data;
         this.savingConsent = false;
