@@ -138,11 +138,11 @@ export interface WorkEvidence {
   evidenceType: 'IMAGEN' | 'VIDEO' | 'DOCUMENTO';
   mimeType: string;
   filePath: string;
+  fileUrl?: string;
   fileSizeBytes: number;
   description: string;
   uploadedBy: string;
   uploadedAt: string;
-  fileUrl?: string;  
 }
 
 // ── Service ─────────────────────────────────────────────────────────────────
