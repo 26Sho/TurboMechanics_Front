@@ -91,7 +91,7 @@ export class MechanicMaintenanceComponent implements OnInit {
 
   // ── Cargar todas las órdenes ───────────────────────────────────────────────
   private getHeaders(): HttpHeaders {
-    const token = localStorage.getItem('token') || '';
+    const token = sessionStorage.getItem('token') || '';
     return new HttpHeaders({ Authorization: `Bearer ${token}` });
   }
 

@@ -66,7 +66,7 @@ export class CatalogoServiciosComponent implements OnInit {
   }
 
   private getHeaders(): { headers: HttpHeaders } {
-    const token = localStorage.getItem('token');
+    const token = sessionStorage.getItem('token');
     return { headers: new HttpHeaders({ Authorization: `Bearer ${token}` }) };
   }
 

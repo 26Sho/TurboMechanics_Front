@@ -107,11 +107,15 @@ throw new Error('Method not implemented.');
     });
   }
 
-  isAdmin(): boolean {
-    const token = localStorage.getItem('token');
+  get esAdmin(): boolean {
+    const token = sessionStorage.getItem('token');  // ← cambiar por sessionStorage
     if (!token) return false;
-    const payload = JSON.parse(atob(token.split('.')[1]));
-    return payload.rolId === 3;
+    try {
+      const payload = JSON.parse(atob(token.split('.')[1]));
+      return Number(payload.rolId) === 3;
+    } catch {
+      return false;
+    }
   }
 
   cerrarModales(): void {
