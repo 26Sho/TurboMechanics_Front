@@ -323,3 +323,8 @@ $border:       rgba(244, 93, 1, 0.25);
 
   &:disabled { opacity: 0.45; cursor: not-allowed; }
 }
+
+.export-buttons {
+  display: flex;
+  gap: 10px;
+}
