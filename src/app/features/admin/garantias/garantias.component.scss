@@ -527,3 +527,138 @@ textarea.form-input { resize: vertical; }
 }
 
 .modal-desc { font-size: 0.88rem; color: $gray-light; margin-bottom: 16px; }
+
+// ── Evidence preview (antes de subir) ─────────────────────────────────────────
+.evidence-preview {
+  margin-top: 8px;
+  border: 1px solid $border-dim;
+  border-radius: 8px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  background: rgba($white, 0.03);
+
+  &__img {
+    width: 100%;
+    max-height: 180px;
+    object-fit: contain;
+    padding: 8px;
+  }
+
+  &__name {
+    font-size: 0.75rem;
+    color: $gray-mid;
+    padding: 6px 10px;
+    border-top: 1px solid $border-dim;
+    width: 100%;
+    text-align: center;
+    word-break: break-all;
+    box-sizing: border-box;
+  }
+
+  &--file {
+    flex-direction: row;
+    padding: 10px 14px;
+    gap: 8px;
+    justify-content: flex-start;
+  }
+
+  &__icon { font-size: 1.2rem; }
+}
+
+// ── Evidence thumbnail en tarjeta ─────────────────────────────────────────────
+.evidence-thumb {
+  width: 100%;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid $border-dim;
+
+  &__img {
+    width: 100%;
+    max-height: 140px;
+    object-fit: cover;
+    display: block;
+    cursor: pointer;
+    transition: opacity 0.2s;
+
+    &:hover { opacity: 0.82; }
+  }
+}
+
+// ── Modal imagen ampliada ─────────────────────────────────────────────────────
+.image-modal-overlay {
+  z-index: 2000;
+  background: rgba(0, 0, 0, 0.92);
+}
+
+.image-modal {
+  position: relative;
+  max-width: 90vw;
+  max-height: 90vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &__close {
+    position: absolute;
+    top: -36px;
+    right: 0;
+    background: none;
+    border: none;
+    color: $white;
+    font-size: 1.4rem;
+    cursor: pointer;
+    line-height: 1;
+    opacity: 0.8;
+    &:hover { opacity: 1; }
+  }
+
+  &__img {
+    max-width: 90vw;
+    max-height: 85vh;
+    object-fit: contain;
+    border-radius: 8px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+  }
+}
+
+// ── Modal de confirmación (eliminar) ──────────────────────────────────────────
+.modal--confirm {
+  .modal-header {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 28px 24px 16px;
+    gap: 10px;
+    border-bottom: none;
+  }
+
+  .modal-footer {
+    justify-content: center;
+    gap: 12px;
+    padding-top: 8px;
+  }
+}
+
+.confirm-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  &--danger {
+    background: rgba(#DC2626, 0.12);
+    border: 2px solid rgba(#DC2626, 0.4);
+    color: #DC2626;
+  }
+}
+
+.modal-subtitle {
+  font-size: 0.82rem;
+  color: #6E6E6E;
+  margin: 0;
+}

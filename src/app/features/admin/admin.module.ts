@@ -21,6 +21,7 @@ import { CashierComponent } from './cashier/cashier.component';
 import { EstimatesComponent } from './estimates/estimates.component';
 import { AppointmentsComponent } from './appointments/appointments.component';
 import { GarantiasComponent } from './garantias/Garantias_component';
+import { ResenasAdminComponent } from './resenas/resenas.component';
 
 @NgModule({
   declarations: [
@@ -40,6 +41,7 @@ import { GarantiasComponent } from './garantias/Garantias_component';
     EstimatesComponent,
     AppointmentsComponent,
     GarantiasComponent,
+    ResenasAdminComponent,
   ],
   imports: [
     CommonModule,

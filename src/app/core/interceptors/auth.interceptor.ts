@@ -17,30 +17,41 @@ export const authInterceptor: HttpInterceptorFn = (req: HttpRequest<unknown>, ne
   return next(clonedReq).pipe(
     catchError((error: HttpErrorResponse) => {
 
-      // Si no es 401 o es la misma petición de refresh, dejamos pasar el error
+      // No es 401 o es el mismo endpoint de refresh → propagar sin más
       if (error.status !== 401 || req.url.includes('/auth/refresh')) {
         return throwError(() => error);
       }
 
-      // Intentamos renovar el token
+      // El usuario cerró sesión voluntariamente → NO mostrar modal
+      if (authService.intentionalLogout) {
+        return throwError(() => error);
+      }
+
+      // No hay token en sesión (usuario no logueado) → no mostrar modal
+      if (!sessionStorage.getItem('token')) {
+        return throwError(() => error);
+      }
+
+      // Hay token activo → intentar renovarlo
       return authService.refreshToken().pipe(
         switchMap(res => {
           if (res?.jwt) {
-            // Token renovado: repetir la petición original con el nuevo token
             const retryReq = req.clone({
               setHeaders: { Authorization: `Bearer ${res.jwt}` }
             });
             return next(retryReq);
           }
-          // No llegó token nuevo → sesión expirada
+          // Refresh no devolvió token → sesión realmente expirada
           authService.logout();
           sessionExpiredService.show();
           return throwError(() => error);
         }),
         catchError(() => {
-          // El refresh también falló → sesión expirada
-          authService.logout();
-          sessionExpiredService.show();
+          // Refresh falló → mostrar modal solo si fue expiración real
+          if (!authService.intentionalLogout) {
+            authService.logout();
+            sessionExpiredService.show();
+          }
           return throwError(() => error);
         })
       );

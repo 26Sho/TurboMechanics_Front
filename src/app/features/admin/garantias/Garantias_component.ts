@@ -6,9 +6,11 @@ import {
 import { ToastService } from '../../../shared/services/toast.service';
 
 type TabType = 'garantias' | 'talleres' | 'calidad' | 'evidencias';
-
-// Tipo reutilizable para errores HTTP de Angular/Spring
 type HttpErr = { error?: { message?: string } };
+
+interface WorkEvidenceWithPreview extends WorkEvidence {
+  previewUrl?: string;
+}
 
 @Component({
   selector: 'app-garantias',
@@ -20,7 +22,6 @@ export class GarantiasComponent implements OnInit {
   activeTab: TabType = 'garantias';
 
   // ── GARANTÍAS ─────────────────────────────────────────────────────────────
-
   warrantyForm!: FormGroup;
   closeForm!: FormGroup;
   historyForm!: FormGroup;
@@ -48,7 +49,6 @@ export class GarantiasComponent implements OnInit {
   showValidationsModal = false;
 
   // ── TALLERES ──────────────────────────────────────────────────────────────
-
   workshopForm!: FormGroup;
   workshops: Workshop[] = [];
   loadingWorkshops = false;
@@ -59,7 +59,6 @@ export class GarantiasComponent implements OnInit {
   deletingWorkshopId: number | null = null;
 
   // ── CONTROL DE CALIDAD ────────────────────────────────────────────────────
-
   qualitySearchForm!: FormGroup;
   qualityCheck: QualityCheck | null = null;
   loadingQuality = false;
@@ -71,15 +70,26 @@ export class GarantiasComponent implements OnInit {
   showRejectModal = false;
 
   // ── EVIDENCIAS ────────────────────────────────────────────────────────────
-
   evidenceSearchForm!: FormGroup;
-  evidences: WorkEvidence[] = [];
+  evidences: WorkEvidenceWithPreview[] = [];
   loadingEvidences = false;
   uploadingEvidence = false;
   selectedFile: File | null = null;
+  previewUrl: string | null = null;
+  imageModalUrl: string | null = null;
   evidenceDescription = '';
   evidenceTipo = '';
   deletingEvidenceId: number | null = null;
+
+  // Modal confirmar eliminar evidencia
+  showDeleteEvidenceModal = false;
+  pendingDeleteEvidenceId: number | null = null;
+
+  // Modal confirmar eliminar taller
+  showDeleteWorkshopModal = false;
+  pendingDeleteWorkshopId: number | null = null;
+
+  private previewCache: Map<number, string> = new Map();
 
   constructor(
     private fb: FormBuilder,
@@ -102,20 +112,16 @@ export class GarantiasComponent implements OnInit {
       endDate:      ['', Validators.required],
       observations: ['']
     });
-
     this.closeForm = this.fb.group({
       closureReason: ['', Validators.required]
     });
-
     this.historyForm = this.fb.group({
       tipo:  ['cliente'],
       valor: ['', Validators.required]
     });
-
     this.validateForm = this.fb.group({
       warrantyId: [null, [Validators.required, Validators.min(1)]]
     });
-
     this.workshopForm = this.fb.group({
       name:      ['', Validators.required],
       address:   ['', Validators.required],
@@ -128,11 +134,9 @@ export class GarantiasComponent implements OnInit {
       schedule:  [''],
       active:    [true]
     });
-
     this.qualitySearchForm = this.fb.group({
       ordenId: [null, [Validators.required, Validators.min(1)]]
     });
-
     this.evidenceSearchForm = this.fb.group({
       ordenId: [null, [Validators.required, Validators.min(1)]]
     });
@@ -188,11 +192,9 @@ export class GarantiasComponent implements OnInit {
     }
     if (this.warrantyForm.invalid) return;
     this.savingWarranty = true;
-
     const req$ = this.editingWarranty
       ? this.svc.updateWarranty(this.editingWarranty.id, v)
       : this.svc.registerWarranty(v);
-
     req$.subscribe({
       next: (_res: Warranty) => {
         this.toast.success(this.editingWarranty ? 'Garantía actualizada' : 'Garantía registrada');
@@ -302,11 +304,7 @@ export class GarantiasComponent implements OnInit {
 
   openWorkshopForm(w?: Workshop): void {
     this.editingWorkshop = w || null;
-    if (w) {
-      this.workshopForm.patchValue(w);
-    } else {
-      this.workshopForm.reset({ active: true });
-    }
+    if (w) { this.workshopForm.patchValue(w); } else { this.workshopForm.reset({ active: true }); }
     this.showWorkshopForm = true;
   }
 
@@ -320,11 +318,9 @@ export class GarantiasComponent implements OnInit {
     this.workshopForm.markAllAsTouched();
     if (this.workshopForm.invalid) return;
     this.savingWorkshop = true;
-
     const req$ = this.editingWorkshop
       ? this.svc.updateWorkshop(this.editingWorkshop.id, this.workshopForm.value)
       : this.svc.registerWorkshop(this.workshopForm.value);
-
     req$.subscribe({
       next: (_res: Workshop) => {
         this.toast.success(this.editingWorkshop ? 'Taller actualizado' : 'Taller registrado');
@@ -339,9 +335,23 @@ export class GarantiasComponent implements OnInit {
     });
   }
 
-  deleteWorkshop(id: number): void {
-    if (!confirm('¿Confirma eliminar este taller?')) return;
+  // Abre el modal de confirmación para eliminar taller
+  confirmDeleteWorkshop(id: number): void {
+    this.pendingDeleteWorkshopId = id;
+    this.showDeleteWorkshopModal = true;
+  }
+
+  cancelDeleteWorkshop(): void {
+    this.pendingDeleteWorkshopId = null;
+    this.showDeleteWorkshopModal = false;
+  }
+
+  deleteWorkshop(): void {
+    if (this.pendingDeleteWorkshopId === null) return;
+    const id = this.pendingDeleteWorkshopId;
     this.deletingWorkshopId = id;
+    this.showDeleteWorkshopModal = false;
+    this.pendingDeleteWorkshopId = null;
     this.svc.deleteWorkshop(id).subscribe({
       next: (_res: unknown) => {
         this.toast.success('Taller eliminado');
@@ -469,7 +479,13 @@ export class GarantiasComponent implements OnInit {
     this.loadingEvidences = true;
     this.evidences = [];
     this.svc.getEvidences(this.evidenceSearchForm.value.ordenId, this.evidenceTipo || undefined).subscribe({
-      next: (data: WorkEvidence[]) => { this.evidences = data; this.loadingEvidences = false; },
+      next: (data: WorkEvidence[]) => {
+        this.evidences = data.map(e => ({
+          ...e,
+          previewUrl: this.previewCache.get(e.id)
+        }));
+        this.loadingEvidences = false;
+      },
       error: (_err: unknown) => { this.loadingEvidences = false; this.toast.error('Error al cargar evidencias'); }
     });
   }
@@ -477,6 +493,12 @@ export class GarantiasComponent implements OnInit {
   onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
     this.selectedFile = input.files?.[0] || null;
+    this.previewUrl = null;
+    if (this.selectedFile && this.selectedFile.type.startsWith('image/')) {
+      const reader = new FileReader();
+      reader.onload = (e) => { this.previewUrl = e.target?.result as string; };
+      reader.readAsDataURL(this.selectedFile);
+    }
   }
 
   uploadEvidence(): void {
@@ -486,12 +508,17 @@ export class GarantiasComponent implements OnInit {
       return;
     }
     this.uploadingEvidence = true;
+    const savedPreview = this.previewUrl;
     this.svc.uploadEvidence(this.evidenceSearchForm.value.ordenId, this.selectedFile, this.evidenceDescription).subscribe({
-      next: (_res: WorkEvidence) => {
+      next: (res: WorkEvidence) => {
         this.toast.success('Evidencia adjuntada');
         this.uploadingEvidence = false;
         this.selectedFile = null;
+        this.previewUrl = null;
         this.evidenceDescription = '';
+        if (savedPreview && res.id) {
+          this.previewCache.set(res.id, savedPreview);
+        }
         this.loadEvidences();
       },
       error: (err: HttpErr) => {
@@ -501,12 +528,27 @@ export class GarantiasComponent implements OnInit {
     });
   }
 
-  deleteEvidence(id: number): void {
-    if (!confirm('¿Eliminar esta evidencia?')) return;
+  // Abre el modal de confirmación para eliminar evidencia
+  confirmDeleteEvidence(id: number): void {
+    this.pendingDeleteEvidenceId = id;
+    this.showDeleteEvidenceModal = true;
+  }
+
+  cancelDeleteEvidence(): void {
+    this.pendingDeleteEvidenceId = null;
+    this.showDeleteEvidenceModal = false;
+  }
+
+  deleteEvidence(): void {
+    if (this.pendingDeleteEvidenceId === null) return;
+    const id = this.pendingDeleteEvidenceId;
     this.deletingEvidenceId = id;
+    this.showDeleteEvidenceModal = false;
+    this.pendingDeleteEvidenceId = null;
     this.svc.deleteEvidence(id).subscribe({
       next: (_res: unknown) => {
         this.toast.success('Evidencia eliminada');
+        this.previewCache.delete(id);
         this.deletingEvidenceId = null;
         this.loadEvidences();
       },
@@ -516,6 +558,9 @@ export class GarantiasComponent implements OnInit {
       }
     });
   }
+
+  openImageModal(url: string): void { this.imageModalUrl = url; }
+  closeImageModal(): void { this.imageModalUrl = null; }
 
   fileSizeLabel(bytes: number): string {
     if (bytes < 1024) return bytes + ' B';
@@ -529,14 +574,9 @@ export class GarantiasComponent implements OnInit {
 
   statusClass(status: string): string {
     const map: Record<string, string> = {
-      ACTIVA: 'badge--active',
-      VENCIDA: 'badge--expired',
-      CERRADA: 'badge--closed',
-      VIGENTE: 'badge--active',
-      EN_PROCESO: 'badge--process',
-      COMPLETADO: 'badge--completed',
-      APROBADO: 'badge--active',
-      RECHAZADO: 'badge--expired'
+      ACTIVA: 'badge--active', VENCIDA: 'badge--expired', CERRADA: 'badge--closed',
+      VIGENTE: 'badge--active', EN_PROCESO: 'badge--process',
+      COMPLETADO: 'badge--completed', APROBADO: 'badge--active', RECHAZADO: 'badge--expired'
     };
     return map[status] ?? '';
   }

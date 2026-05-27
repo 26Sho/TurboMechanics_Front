@@ -142,6 +142,7 @@ export interface WorkEvidence {
   description: string;
   uploadedBy: string;
   uploadedAt: string;
+  fileUrl?: string;  
 }
 
 // ── Service ─────────────────────────────────────────────────────────────────
