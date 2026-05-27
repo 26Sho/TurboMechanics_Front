@@ -115,6 +115,12 @@ export class SidebarComponent {
       route: '/admin/garantias',
       badge: 0,
       icon: `<i class="fas fa-shield-alt"></i>`
+    },
+    {
+      label: 'Reseñas',
+      route: '/admin/resenas',
+      badge: 0,
+      icon: `<i class="fas fa-star"></i>`
     }
   ];
 }

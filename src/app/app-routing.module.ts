@@ -32,6 +32,7 @@ import { AppointmentsComponent } from './features/admin/appointments/appointment
 import { clientGuard } from './core/guards/client.guard';
 import { AppointmentsComponent as ClientAppointmentsComponent } from './features/auth/pages/appointments/appointments.component';
 import { GarantiasComponent } from './features/admin/garantias/Garantias_component';
+import { ResenasAdminComponent } from './features/admin/resenas/resenas.component';
 import { MaintenanceTrackingComponent } from './features/auth/pages/maintenance-tracking/maintenance-tracking.component';
 import { MechanicMaintenanceComponent } from './features/auth/pages/mechanic-maintenance/mechanic-maintenance.component';
 
@@ -115,6 +116,9 @@ const routes: Routes = [
 
       // ── Módulo 8 ────────────────────────────────────────────────────────
       { path: 'garantias', component: GarantiasComponent },
+
+      // ── Módulo 10 – Reseñas ──────────────────────────────────────────────
+      { path: 'resenas', component: ResenasAdminComponent },
     ]
   },
 

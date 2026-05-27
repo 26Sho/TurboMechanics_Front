@@ -15,6 +15,11 @@ export class AuthService {
   private authState$ = new BehaviorSubject<boolean>(this.isLoggedIn());
   authChanged = this.authState$.asObservable();
 
+  /** Marca si el logout fue voluntario (clic en "Cerrar sesión").
+   *  El interceptor lo consulta para no mostrar el modal de sesión expirada. */
+  private _intentionalLogout = false;
+  get intentionalLogout(): boolean { return this._intentionalLogout; }
+
   constructor(private http: HttpClient) {}
 
   register(data: RegisterRequest): Observable<MessageResponse> {
@@ -25,6 +30,7 @@ export class AuthService {
     return this.http.post<LoginResponse>(`${this.apiUrl}/login`, data).pipe(
       tap(res => {
         if (res.jwt) {
+          this._intentionalLogout = false;          // reset al entrar
           sessionStorage.setItem('token', res.jwt);
           sessionStorage.setItem('username', data.email);
           sessionStorage.setItem('rolId', String(res.rolId));
@@ -34,13 +40,8 @@ export class AuthService {
     );
   }
 
-  getUsername(): string {
-    return sessionStorage.getItem('username') || '';
-  }
-
-  getRolId(): number {
-    return Number(sessionStorage.getItem('rolId'));
-  }
+  getUsername(): string { return sessionStorage.getItem('username') || ''; }
+  getRolId(): number    { return Number(sessionStorage.getItem('rolId')); }
 
   refreshToken(): Observable<RefreshTokenResponse> {
     return this.http.get<RefreshTokenResponse>(`${this.apiUrl}/refresh`).pipe(
@@ -49,9 +50,11 @@ export class AuthService {
   }
 
   getToken(): string | null { return sessionStorage.getItem('token'); }
-  isLoggedIn(): boolean { return !!this.getToken(); }
+  isLoggedIn(): boolean     { return !!this.getToken(); }
 
-  logout() {
+  /** Cierre de sesión voluntario — limpia todo sin mostrar modal de expiración. */
+  logout(): void {
+    this._intentionalLogout = true;               // ← marcar ANTES de limpiar
     sessionStorage.removeItem('token');
     sessionStorage.removeItem('username');
     sessionStorage.removeItem('rolId');

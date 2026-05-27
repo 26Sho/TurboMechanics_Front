@@ -26,13 +26,6 @@
 
     <!-- ══ TAB: GARANTÍAS ═══════════════════════════════════════════════════ -->
     <ng-container *ngIf="activeTab === 'garantias'">
-
-      <!-- Sub-tabs internos -->
-      <div class="sub-tabs">
-        <ng-template #subTabLabel let-id="id" let-label="label"></ng-template>
-      </div>
-
-      <!-- Buscador + botón registrar -->
       <div class="gar-card">
         <div class="card-toolbar">
           <h2 class="section-title">Listado de Garantías</h2>
@@ -43,15 +36,8 @@
             <button class="btn btn-primary" (click)="openWarrantyForm()">+ Registrar</button>
           </div>
         </div>
-
-        <div class="spinner-wrap" *ngIf="loadingWarranties">
-          <span class="spinner"></span>
-        </div>
-
-        <div class="empty-state" *ngIf="!loadingWarranties && warranties.length === 0">
-          No se encontraron garantías.
-        </div>
-
+        <div class="spinner-wrap" *ngIf="loadingWarranties"><span class="spinner"></span></div>
+        <div class="empty-state" *ngIf="!loadingWarranties && warranties.length === 0">No se encontraron garantías.</div>
         <div class="table-wrap" *ngIf="!loadingWarranties && warranties.length > 0">
           <table class="gar-table">
             <thead>
@@ -71,15 +57,13 @@
                 <td>{{ w.endDate | date:'dd/MM/yyyy' }}</td>
                 <td><span class="badge" [class]="statusClass(w.status)">{{ statusLabel(w.status) }}</span></td>
                 <td class="actions-cell">
-                  <button class="icon-btn" title="Editar" (click)="openWarrantyForm(w)"
-                          [disabled]="w.status === 'CERRADA'">
+                  <button class="icon-btn" title="Editar" (click)="openWarrantyForm(w)" [disabled]="w.status === 'CERRADA'">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                       <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
                       <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
                     </svg>
                   </button>
-                  <button class="icon-btn icon-btn--danger" title="Cerrar garantía" (click)="openCloseModal(w)"
-                          [disabled]="w.status === 'CERRADA'">
+                  <button class="icon-btn icon-btn--danger" title="Cerrar garantía" (click)="openCloseModal(w)" [disabled]="w.status === 'CERRADA'">
                     <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                       <circle cx="12" cy="12" r="10"/><line x1="15" y1="9" x2="9" y2="15"/><line x1="9" y1="9" x2="15" y2="15"/>
                     </svg>
@@ -103,10 +87,8 @@
         </div>
       </div>
 
-      <!-- Historial + Validar -->
       <div class="row-cards">
-
-        <!-- Historial HU 8.8 -->
+        <!-- Historial -->
         <div class="gar-card flex-1">
           <h2 class="section-title">Historial de Garantías</h2>
           <form [formGroup]="historyForm" (ngSubmit)="searchHistory()" novalidate>
@@ -131,13 +113,8 @@
               </button>
             </div>
           </form>
-
           <div class="spinner-wrap" *ngIf="loadingHistory"><span class="spinner"></span></div>
-
-          <div class="empty-state" *ngIf="!loadingHistory && historyList.length === 0 && historyForm.touched">
-            Sin resultados en el historial.
-          </div>
-
+          <div class="empty-state" *ngIf="!loadingHistory && historyList.length === 0 && historyForm.touched">Sin resultados en el historial.</div>
           <div class="mini-list" *ngIf="historyList.length > 0">
             <div class="mini-item" *ngFor="let h of historyList">
               <div class="mini-item__main">
@@ -149,7 +126,7 @@
           </div>
         </div>
 
-        <!-- Validar vigencia HU 8.9 -->
+        <!-- Validar vigencia -->
         <div class="gar-card flex-1">
           <h2 class="section-title">Validar Vigencia</h2>
           <form [formGroup]="validateForm" (ngSubmit)="validateWarranty()" novalidate>
@@ -167,28 +144,12 @@
               </button>
             </div>
           </form>
-
           <div class="validation-result" *ngIf="lastValidation">
-            <div class="val-row">
-              <span class="val-label">Resultado</span>
-              <span class="badge" [class]="statusClass(lastValidation.result)">{{ statusLabel(lastValidation.result) }}</span>
-            </div>
-            <div class="val-row">
-              <span class="val-label">Cobertura</span>
-              <span>{{ lastValidation.coverageDescription }}</span>
-            </div>
-            <div class="val-row">
-              <span class="val-label">Cliente</span>
-              <span>{{ lastValidation.clientName }}</span>
-            </div>
-            <div class="val-row">
-              <span class="val-label">Vehículo</span>
-              <span>{{ lastValidation.vehiclePlate }}</span>
-            </div>
-            <div class="val-row">
-              <span class="val-label">Vigencia</span>
-              <span>{{ lastValidation.startDate | date:'dd/MM/yyyy' }} – {{ lastValidation.endDate | date:'dd/MM/yyyy' }}</span>
-            </div>
+            <div class="val-row"><span class="val-label">Resultado</span><span class="badge" [class]="statusClass(lastValidation.result)">{{ statusLabel(lastValidation.result) }}</span></div>
+            <div class="val-row"><span class="val-label">Cobertura</span><span>{{ lastValidation.coverageDescription }}</span></div>
+            <div class="val-row"><span class="val-label">Cliente</span><span>{{ lastValidation.clientName }}</span></div>
+            <div class="val-row"><span class="val-label">Vehículo</span><span>{{ lastValidation.vehiclePlate }}</span></div>
+            <div class="val-row"><span class="val-label">Vigencia</span><span>{{ lastValidation.startDate | date:'dd/MM/yyyy' }} – {{ lastValidation.endDate | date:'dd/MM/yyyy' }}</span></div>
             <div class="val-row">
               <span class="val-label">Aprobada</span>
               <span [class.text-green]="lastValidation.coverageApproved" [class.text-red]="!lastValidation.coverageApproved">
@@ -198,7 +159,6 @@
             <p class="val-msg">{{ lastValidation.message }}</p>
           </div>
         </div>
-
       </div>
     </ng-container>
 
@@ -214,13 +174,8 @@
             <button class="btn btn-primary" (click)="openWorkshopForm()">+ Registrar</button>
           </div>
         </div>
-
         <div class="spinner-wrap" *ngIf="loadingWorkshops"><span class="spinner"></span></div>
-
-        <div class="empty-state" *ngIf="!loadingWorkshops && workshops.length === 0">
-          No hay talleres registrados.
-        </div>
-
+        <div class="empty-state" *ngIf="!loadingWorkshops && workshops.length === 0">No hay talleres registrados.</div>
         <div class="workshop-grid" *ngIf="!loadingWorkshops && workshops.length > 0">
           <div class="workshop-card" *ngFor="let w of workshops">
             <div class="workshop-card__header">
@@ -251,8 +206,7 @@
             </div>
             <div class="workshop-card__actions">
               <button class="btn btn-sm btn-secondary" (click)="openWorkshopForm(w)">Editar</button>
-              <button class="btn btn-sm btn-danger" (click)="deleteWorkshop(w.id)"
-                      [disabled]="deletingWorkshopId === w.id">Eliminar</button>
+              <button class="btn btn-sm btn-danger" (click)="confirmDeleteWorkshop(w.id)" [disabled]="deletingWorkshopId === w.id">Eliminar</button>
             </div>
           </div>
         </div>
@@ -283,7 +237,6 @@
           </div>
         </form>
       </div>
-
       <ng-container *ngIf="qualityCheck">
         <div class="gar-card">
           <div class="quality-header">
@@ -293,23 +246,16 @@
             </div>
             <div class="quality-progress">
               <span class="progress-label">{{ qualityCheck.verifiedItems }}/{{ qualityCheck.totalItems }} verificados</span>
-              <div class="progress-bar">
-                <div class="progress-fill" [style.width.%]="qualityProgress()"></div>
-              </div>
+              <div class="progress-bar"><div class="progress-fill" [style.width.%]="qualityProgress()"></div></div>
             </div>
           </div>
-
-          <!-- Observaciones -->
           <div class="form-group" style="margin-top: 1rem;">
             <label class="form-label">Observaciones generales</label>
             <textarea class="form-input" rows="2" [(ngModel)]="qualityCheck.observations"
                       [disabled]="qualityCheck.status === 'APROBADO' || qualityCheck.status === 'RECHAZADO'"></textarea>
           </div>
-
-          <!-- Ítems -->
           <div class="quality-items">
-            <div class="quality-item" *ngFor="let item of qualityCheck.items"
-                 [class.quality-item--verified]="item.verified">
+            <div class="quality-item" *ngFor="let item of qualityCheck.items" [class.quality-item--verified]="item.verified">
               <label class="item-check">
                 <input type="checkbox" [(ngModel)]="item.verified"
                        [disabled]="qualityCheck.status === 'APROBADO' || qualityCheck.status === 'RECHAZADO'" />
@@ -317,13 +263,9 @@
               </label>
               <input type="text" class="form-input item-obs" placeholder="Observación..." [(ngModel)]="item.observation"
                      [disabled]="qualityCheck.status === 'APROBADO' || qualityCheck.status === 'RECHAZADO'" />
-              <span class="item-verifier" *ngIf="item.verifiedBy">
-                ✓ {{ item.verifiedBy }} · {{ item.verifiedAt | date:'dd/MM HH:mm' }}
-              </span>
+              <span class="item-verifier" *ngIf="item.verifiedBy">✓ {{ item.verifiedBy }} · {{ item.verifiedAt | date:'dd/MM HH:mm' }}</span>
             </div>
           </div>
-
-          <!-- Acciones -->
           <div class="quality-actions" *ngIf="qualityCheck.status !== 'APROBADO' && qualityCheck.status !== 'RECHAZADO'">
             <button class="btn btn-secondary" (click)="saveQualityItems()" [disabled]="savingQuality">
               <span *ngIf="!savingQuality">Guardar ítems</span>
@@ -335,12 +277,9 @@
             </button>
             <button class="btn btn-danger" (click)="openRejectModal()">Rechazar</button>
           </div>
-
           <div class="quality-result" *ngIf="qualityCheck.status === 'APROBADO' || qualityCheck.status === 'RECHAZADO'">
-            <p>
-              <strong>{{ qualityCheck.status === 'APROBADO' ? 'Aprobado' : 'Rechazado' }} por:</strong>
-              {{ qualityCheck.approvedBy }} · {{ qualityCheck.approvedAt | date:'dd/MM/yyyy HH:mm' }}
-            </p>
+            <p><strong>{{ qualityCheck.status === 'APROBADO' ? 'Aprobado' : 'Rechazado' }} por:</strong>
+              {{ qualityCheck.approvedBy }} · {{ qualityCheck.approvedAt | date:'dd/MM/yyyy HH:mm' }}</p>
           </div>
         </div>
       </ng-container>
@@ -376,10 +315,24 @@
         <div class="evidence-upload">
           <h3 class="sub-section-title">Adjuntar evidencia</h3>
           <div class="form-row">
+
             <div class="form-group flex-1">
               <label class="form-label">Archivo</label>
-              <input type="file" class="form-input" (change)="onFileSelected($event)" />
+              <input type="file" class="form-input" (change)="onFileSelected($event)" accept="image/*,video/*,.pdf" />
+
+              <!-- Preview si es imagen -->
+              <div class="evidence-preview" *ngIf="previewUrl">
+                <img [src]="previewUrl" alt="Vista previa" class="evidence-preview__img" />
+                <span class="evidence-preview__name">{{ selectedFile?.name }}</span>
+              </div>
+
+              <!-- Nombre del archivo si no es imagen -->
+              <div class="evidence-preview evidence-preview--file" *ngIf="selectedFile && !previewUrl">
+                <span class="evidence-preview__icon">📄</span>
+                <span class="evidence-preview__name">{{ selectedFile.name }}</span>
+              </div>
             </div>
+
             <div class="form-group flex-1">
               <label class="form-label">Descripción (opcional)</label>
               <input type="text" class="form-input" [(ngModel)]="evidenceDescription" placeholder="Descripción..." />
@@ -416,14 +369,29 @@
             </svg>
             <span class="badge badge--process">{{ e.evidenceType }}</span>
           </div>
+
+          <!-- Thumbnail si es imagen y tiene URL -->
+          <div class="evidence-thumb" *ngIf="e.evidenceType === 'IMAGEN' && e.previewUrl">
+            <img [src]="e.previewUrl" [alt]="e.fileName" class="evidence-thumb__img"
+                 (click)="openImageModal(e.previewUrl!)" title="Clic para ampliar" />
+          </div>
+
           <p class="evidence-name">{{ e.fileName }}</p>
           <p class="evidence-meta" *ngIf="e.description">{{ e.description }}</p>
           <p class="evidence-meta">{{ fileSizeLabel(e.fileSizeBytes) }} · {{ e.uploadedBy }} · {{ e.uploadedAt | date:'dd/MM/yyyy HH:mm' }}</p>
-          <button class="btn btn-sm btn-danger" (click)="deleteEvidence(e.id)" [disabled]="deletingEvidenceId === e.id">Eliminar</button>
+          <button class="btn btn-sm btn-danger" (click)="confirmDeleteEvidence(e.id)" [disabled]="deletingEvidenceId === e.id">Eliminar</button>
         </div>
       </div>
     </ng-container>
 
+  </div>
+</div>
+
+<!-- ══ MODAL: Ver imagen ampliada ════════════════════════════════════════════ -->
+<div class="modal-overlay image-modal-overlay" *ngIf="imageModalUrl" (click)="closeImageModal()">
+  <div class="image-modal" (click)="$event.stopPropagation()">
+    <button class="image-modal__close" (click)="closeImageModal()">✕</button>
+    <img [src]="imageModalUrl" alt="Evidencia" class="image-modal__img" />
   </div>
 </div>
 
@@ -633,6 +601,54 @@
       <button class="btn btn-danger" (click)="confirmReject()" [disabled]="rejectingQuality">
         <span *ngIf="!rejectingQuality">Confirmar rechazo</span>
         <span *ngIf="rejectingQuality" class="spinner-sm"></span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL: Confirmar eliminar evidencia ═══════════════════════════════════ -->
+<div class="modal-overlay" *ngIf="showDeleteEvidenceModal" (click)="cancelDeleteEvidence()">
+  <div class="modal modal--sm modal--confirm" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <div class="confirm-icon confirm-icon--danger">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+          <path d="M10 11v6"/><path d="M14 11v6"/>
+          <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+        </svg>
+      </div>
+      <h2>Eliminar evidencia</h2>
+      <p class="modal-subtitle">Esta acción no se puede deshacer</p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" (click)="cancelDeleteEvidence()">Cancelar</button>
+      <button class="btn btn-danger" (click)="deleteEvidence()" [disabled]="deletingEvidenceId !== null">
+        <span *ngIf="deletingEvidenceId === null">Eliminar</span>
+        <span *ngIf="deletingEvidenceId !== null" class="spinner-sm"></span>
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MODAL: Confirmar eliminar taller ══════════════════════════════════════ -->
+<div class="modal-overlay" *ngIf="showDeleteWorkshopModal" (click)="cancelDeleteWorkshop()">
+  <div class="modal modal--sm modal--confirm" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <div class="confirm-icon confirm-icon--danger">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+          <path d="M10 11v6"/><path d="M14 11v6"/>
+          <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/>
+        </svg>
+      </div>
+      <h2>Eliminar taller</h2>
+      <p class="modal-subtitle">Esta acción no se puede deshacer</p>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" (click)="cancelDeleteWorkshop()">Cancelar</button>
+      <button class="btn btn-danger" (click)="deleteWorkshop()" [disabled]="deletingWorkshopId !== null">
+        <span *ngIf="deletingWorkshopId === null">Eliminar</span>
+        <span *ngIf="deletingWorkshopId !== null" class="spinner-sm"></span>
       </button>
     </div>
   </div>
