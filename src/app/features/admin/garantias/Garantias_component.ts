@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import {
   GarantiasService, Warranty, WarrantyValidation, Workshop, QualityCheck, QualityCheckItem, WorkEvidence
@@ -9,7 +10,8 @@ type TabType = 'garantias' | 'talleres' | 'calidad' | 'evidencias';
 type HttpErr = { error?: { message?: string } };
 
 interface WorkEvidenceWithPreview extends WorkEvidence {
-  previewUrl?: string;
+  previewUrl?: SafeUrl;
+  rawUrl?: string;
 }
 
 @Component({
@@ -75,8 +77,8 @@ export class GarantiasComponent implements OnInit {
   loadingEvidences = false;
   uploadingEvidence = false;
   selectedFile: File | null = null;
-  previewUrl: string | null = null;
-  imageModalUrl: string | null = null;
+  previewUrl: SafeUrl | null = null;
+  imageModalUrl: SafeUrl | null = null;
   evidenceDescription = '';
   evidenceTipo = '';
   deletingEvidenceId: number | null = null;
@@ -89,12 +91,13 @@ export class GarantiasComponent implements OnInit {
   showDeleteWorkshopModal = false;
   pendingDeleteWorkshopId: number | null = null;
 
-  private previewCache: Map<number, string> = new Map();
+  private previewCache: Map<number, SafeUrl> = new Map();
 
   constructor(
     private fb: FormBuilder,
     private svc: GarantiasService,
-    private toast: ToastService
+    private toast: ToastService,
+    private sanitizer: DomSanitizer
   ) {}
 
   ngOnInit(): void {
@@ -482,7 +485,8 @@ export class GarantiasComponent implements OnInit {
       next: (data: WorkEvidence[]) => {
         this.evidences = data.map(e => ({
           ...e,
-          previewUrl: this.previewCache.get(e.id)
+          previewUrl: e.fileUrl ? this.sanitizer.bypassSecurityTrustUrl(e.fileUrl) : this.previewCache.get(e.id),
+          rawUrl: e.fileUrl
         }));
         this.loadingEvidences = false;
       },
@@ -496,7 +500,7 @@ export class GarantiasComponent implements OnInit {
     this.previewUrl = null;
     if (this.selectedFile && this.selectedFile.type.startsWith('image/')) {
       const reader = new FileReader();
-      reader.onload = (e) => { this.previewUrl = e.target?.result as string; };
+      reader.onload = (e) => { this.previewUrl = this.sanitizer.bypassSecurityTrustUrl(e.target?.result as string); };
       reader.readAsDataURL(this.selectedFile);
     }
   }
@@ -519,6 +523,7 @@ export class GarantiasComponent implements OnInit {
         if (savedPreview && res.id) {
           this.previewCache.set(res.id, savedPreview);
         }
+        // Clear cache for this id so fresh URL from server is used on reload
         this.loadEvidences();
       },
       error: (err: HttpErr) => {
@@ -559,7 +564,9 @@ export class GarantiasComponent implements OnInit {
     });
   }
 
-  openImageModal(url: string): void { this.imageModalUrl = url; }
+  openImageModal(url: string | SafeUrl): void {
+    this.imageModalUrl = typeof url === 'string' ? this.sanitizer.bypassSecurityTrustUrl(url) : url;
+  }
   closeImageModal(): void { this.imageModalUrl = null; }
 
   fileSizeLabel(bytes: number): string {
