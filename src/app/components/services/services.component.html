@@ -6,19 +6,31 @@
       <p class="services__subtitle">Atendemos los servicios más demandados con procesos claros y técnicos certificados.</p>
     </div>
 
-    <div class="services__grid">
-      <div class="service-card" *ngFor="let service of services">
+    <!-- Loading -->
+    <div *ngIf="loading" style="text-align:center; padding: 40px; color: #6E6E6E;">
+      Cargando servicios...
+    </div>
+
+    <!-- Sin servicios -->
+    <div *ngIf="!loading && services.length === 0" style="text-align:center; padding: 40px; color: #6E6E6E;">
+      No hay servicios disponibles en este momento.
+    </div>
+
+    <!-- Grid dinámico -->
+    <div class="services__grid" *ngIf="!loading && services.length > 0">
+      <div class="service-card" *ngFor="let service of services; let i = index">
         <div class="service-card__icon">
-          <i [class]="service.icon"></i>
+          <i [class]="getIcon(service.name)"></i>
         </div>
-        <div class="service-card__number">{{ service.number }}</div>
-        <h3>{{ service.title }}</h3>
+        <div class="service-card__number">{{ getNumber(i) }}</div>
+        <h3>{{ service.name }}</h3>
         <p>{{ service.description }}</p>
-        <a [href]="'https://wa.me/573000000000?text=' + service.waText"
+        <a [href]="'https://wa.me/573000000000?text=' + getWaText(service.name)"
            class="service-card__link" target="_blank">
           Cotizar <i class="fas fa-arrow-right"></i>
         </a>
       </div>
     </div>
+
   </div>
 </section>
