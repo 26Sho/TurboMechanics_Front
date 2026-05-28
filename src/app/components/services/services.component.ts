@@ -1,11 +1,34 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 
-export interface Service {
-  number: string;
-  icon: string;
-  title: string;
+export interface ServiceResponseDTO {
+  id:          number;
+  name:        string;
   description: string;
-  waText: string;
+  price:       number;
+  active:      boolean;
+}
+
+// Iconos por defecto según palabras clave en el nombre del servicio
+const ICON_MAP: { keywords: string[]; icon: string }[] = [
+  { keywords: ['aceite'],                     icon: 'fas fa-oil-can' },
+  { keywords: ['freno', 'frenos'],            icon: 'fas fa-circle-notch' },
+  { keywords: ['suspension', 'suspensión'],   icon: 'fas fa-car' },
+  { keywords: ['electri'],                    icon: 'fas fa-bolt' },
+  { keywords: ['sincroniz'],                  icon: 'fas fa-tachometer-alt' },
+  { keywords: ['preventivo', 'mantenimiento'],icon: 'fas fa-cog' },
+  { keywords: ['llanta', 'neumatico'],        icon: 'fas fa-circle' },
+  { keywords: ['aire', 'acondicionado'],      icon: 'fas fa-wind' },
+  { keywords: ['lavado', 'limpieza'],         icon: 'fas fa-tint' },
+  { keywords: ['diagnostico', 'diagnóstico'], icon: 'fas fa-search' },
+];
+
+function getIcon(name: string): string {
+  const lower = name.toLowerCase();
+  for (const entry of ICON_MAP) {
+    if (entry.keywords.some(k => lower.includes(k))) return entry.icon;
+  }
+  return 'fas fa-wrench'; // icono por defecto
 }
 
 @Component({
@@ -14,49 +37,36 @@ export interface Service {
   templateUrl: './services.component.html',
   styleUrls: ['./services.component.scss']
 })
-export class ServicesComponent {
-  services: Service[] = [
-    {
-      number: '01',
-      icon: 'fas fa-oil-can',
-      title: 'Cambio de aceite',
-      description: 'Cambio de aceite y filtro según especificaciones del fabricante para proteger el motor en uso diario.',
-      waText: 'Quiero%20cotizar%20cambio%20de%20aceite'
-    },
-    {
-      number: '02',
-      icon: 'fas fa-cog',
-      title: 'Mantenimiento preventivo',
-      description: 'Revisión completa para anticipar fallas, reducir costos y extender la vida útil de tu vehículo.',
-      waText: 'Quiero%20cotizar%20mantenimiento%20preventivo'
-    },
-    {
-      number: '03',
-      icon: 'fas fa-tachometer-alt',
-      title: 'Sincronización',
-      description: 'Ajuste preciso del motor para mejorar rendimiento, estabilizar el encendido y reducir consumo de combustible.',
-      waText: 'Quiero%20cotizar%20sincronizaci%C3%B3n'
-    },
-    {
-      number: '04',
-      icon: 'fas fa-circle-notch',
-      title: 'Frenos',
-      description: 'Inspección, cambio de pastillas y rectificación de discos. Frena con total seguridad en cualquier condición.',
-      waText: 'Quiero%20cotizar%20frenos'
-    },
-    {
-      number: '05',
-      icon: 'fas fa-car',
-      title: 'Suspensión',
-      description: 'Revisión de amortiguadores, muelles y terminales para mejorar estabilidad, confort y seguridad al manejar.',
-      waText: 'Quiero%20cotizar%20suspensi%C3%B3n'
-    },
-    {
-      number: '06',
-      icon: 'fas fa-bolt',
-      title: 'Sistema eléctrico',
-      description: 'Diagnóstico y reparación de fallas eléctricas, batería, alternador, luces y sistemas electrónicos del vehículo.',
-      waText: 'Quiero%20cotizar%20sistema%20el%C3%A9ctrico'
-    }
-  ];
+export class ServicesComponent implements OnInit {
+
+  services: ServiceResponseDTO[] = [];
+  loading = false;
+
+private readonly apiUrl = 'http://localhost:9090/admin/catalogo/public/servicios';
+
+  constructor(private http: HttpClient) {}
+
+  ngOnInit(): void {
+    this.loading = true;
+    this.http.get<ServiceResponseDTO[]>(this.apiUrl).subscribe({
+      next: (data) => {
+        // Mostrar solo servicios activos
+        this.services = (data ?? []).filter(s => s.active);
+        this.loading  = false;
+      },
+      error: () => { this.loading = false; }
+    });
+  }
+
+  getIcon(name: string): string {
+    return getIcon(name);
+  }
+
+  getNumber(index: number): string {
+    return String(index + 1).padStart(2, '0');
+  }
+
+  getWaText(name: string): string {
+    return encodeURIComponent(`Quiero cotizar ${name}`);
+  }
 }
