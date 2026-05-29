@@ -33,6 +33,7 @@ import { clientGuard } from './core/guards/client.guard';
 import { AppointmentsComponent as ClientAppointmentsComponent } from './features/auth/pages/appointments/appointments.component';
 import { GarantiasComponent } from './features/admin/garantias/Garantias_component';
 import { MaintenanceTrackingComponent } from './features/auth/pages/maintenance-tracking/maintenance-tracking.component';
+import { MechanicMaintenanceComponent } from './features/auth/pages/mechanic-maintenance/mechanic-maintenance.component';
 const routes: Routes = [
   // 🔹 Redirección inicial
   { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -127,18 +128,17 @@ const routes: Routes = [
     canActivate: [clientGuard]
   },
 
-  // 🔹 Citas del mecánico (HU 7.2 agenda + HU 7.6 recordatorios)
-{
-  path: 'mechanic',
-
-  loadChildren: () =>
-    import('./features/mechanic/mechanic.module')
-      .then(m => m.MechanicModule),
-
+  // 🔹 Citas del mecánico (HU 7.2 agenda + HU 7.6 recordatorios
+  {
+  path: 'mechanic/appointments',
+  component: AppointmentsComponent,
   canActivate: [mechanicGuard]
 },
-  // 🔹 Comodín
-  { path: '**', redirectTo: 'home' }
+{
+  path: 'mechanic/maintenance',
+  component: MechanicMaintenanceComponent,
+  canActivate: [mechanicGuard]
+},
 ];
 
 @NgModule({

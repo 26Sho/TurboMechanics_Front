@@ -1,66 +1,48 @@
-<aside class="sidebar" [class.collapsed]="sidebarService.collapsed()">
+<aside class="sidebar">
 
-  <div class="sidebar__logo">
-    <img src="assets/Logo.png" alt="Turbo Mechanics" class="logo-img" />
-    <div class="logo-text" *ngIf="!sidebarService.collapsed()">
-      <span class="logo-brand">TURBO</span>
-      <span class="logo-sub">MECHANICS</span>
-    </div>
+  <div class="logo">
+    <h1>TURBO</h1>
+    <span>MECHANICS</span>
   </div>
 
-   <div class="sidebar__divider"></div>
+  <div class="menu-title">
+    MECÁNICO
+  </div>
 
-  <nav class="sidebar__nav">
+  <nav>
 
-    <span
-      class="nav-section-label"
-      *ngIf="!sidebarService.collapsed()">
-
-      MECÁNICO
-
-    </span>
-
-    <a
-      *ngFor="let item of navItems"
-      [routerLink]="item.route"
-      routerLinkActive="active"
-      class="nav-item"
-      [title]="item.label">
-
-      <span
-        class="nav-icon"
-        [innerHTML]="item.icon">
-
-      </span>
-
-
-      <span
-        class="nav-label"
-        *ngIf="!sidebarService.collapsed()">
-
-        {{ item.label }}
-
-      </span>
-
-
-      <span
-        class="nav-badge"
-        *ngIf="item.badge && !sidebarService.collapsed()">
-
-        {{ item.badge }}
-
-      </span>
-
+    <a class="active">
+       Dashboard
     </a>
+
+    <a> Órdenes</a>
+
+    <a> Vehículos</a>
+
+    <a> Reparaciones</a>
+
+    <a> Clientes</a>
+
+    <a> Historial</a>
+
+    <a> Inventario</a>
+
+    <a> Reportes</a>
+
+    <a> Configuración</a>
 
   </nav>
 
+  <div class="profile">
 
-  <div
-    class="user-avatar-sm"
-    *ngIf="sidebarService.collapsed()">
+    <div class="avatar">
+      
+    </div>
 
-    JM
+    <div>
+      <strong>Mecánico</strong>
+      <p>Taller Central</p>
+    </div>
 
   </div>
 

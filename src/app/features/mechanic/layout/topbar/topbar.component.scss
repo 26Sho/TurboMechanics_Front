@@ -1,15 +1,15 @@
-$sidebar-width: 240px;
-$sidebar-collapsed: 64px;
-$topbar-height: 60px;
-$gris-osc: #141414;
-$gris-med: #6E6E6E;
-$blanco: #FFFFFF;
-$naranja: #F45D01;
-$negro: #0D0D0D;
-$color-border: #2A2A2A;
-$color-success: #2ECC71;
-$border-radius: 8px;
-$font-mono: 'JetBrains Mono', monospace;
+$black:         #0D0D0D;
+$gray-dark:     #2B2B2B;
+$gray-mid:      #6E6E6E;
+$gray-light:    #CFCFCF;
+$red:           #D62828;
+$orange:        #F45D01;
+$orange-light:  #FF8C00;
+$yellow:        #FFD60A;
+$white:         #FFFFFF;
+
+$font-body: 'Poppins', sans-serif;
+$font-heading: 'Montserrat', sans-serif;
 
 .topbar {
   position: fixed;
