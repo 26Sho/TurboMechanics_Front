@@ -1,0 +1,33 @@
+<div class="ec-wrapper">
+
+  <!-- Loading -->
+  <div class="ec-center" *ngIf="loading">
+    <div class="spinner-lg"></div>
+    <p class="ec-sub">Procesando tu respuesta...</p>
+  </div>
+
+  <!-- Éxito — Rechazado -->
+  <div class="ec-card ec-card--reject" *ngIf="!loading && success">
+    <div class="ec-icon ec-icon--reject">✕</div>
+    <h1 class="ec-title">Presupuesto Rechazado</h1>
+    <p class="ec-sub">Hemos recibido tu rechazo correctamente.<br>Por favor contáctanos si deseas más información.</p>
+    <div class="ec-footer">TurboMechanics — Taller Especializado</div>
+  </div>
+
+  <!-- Ya respondido -->
+  <div class="ec-card ec-card--warn" *ngIf="!loading && alreadyResponded">
+    <div class="ec-icon ec-icon--warn">!</div>
+    <h1 class="ec-title">Ya respondiste este presupuesto</h1>
+    <p class="ec-sub">Este presupuesto ya fue respondido anteriormente.<br>Si tienes dudas, contáctanos directamente.</p>
+    <div class="ec-footer">TurboMechanics — Taller Especializado</div>
+  </div>
+
+  <!-- Error -->
+  <div class="ec-card ec-card--error" *ngIf="!loading && error">
+    <div class="ec-icon ec-icon--error">✕</div>
+    <h1 class="ec-title">Enlace inválido</h1>
+    <p class="ec-sub">El enlace no es válido o ha expirado.<br>Por favor contacta al taller.</p>
+    <div class="ec-footer">TurboMechanics — Taller Especializado</div>
+  </div>
+
+</div>

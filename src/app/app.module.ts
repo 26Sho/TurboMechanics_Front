@@ -20,6 +20,7 @@ import { ToastComponent } from './shared/components/toast/toast.component';
 import { AdminModule } from './features/admin/admin.module';
 import { authInterceptor } from './core/interceptors/auth.interceptor';
 import { SessionExpiredComponent } from './shared/components/sesion_expired/session.expired.component';
+import { EstimateResponseComponent } from './features/auth/pages/estimate-response/estimate-response.component';
 @NgModule({
   declarations: [
     AppComponent,
@@ -33,7 +34,8 @@ import { SessionExpiredComponent } from './shared/components/sesion_expired/sess
     HomeComponent,
     ToastComponent,
     SatisfactionSurveyComponent,
-    SessionExpiredComponent          // ← nuevo
+    SessionExpiredComponent,          // ← nuevo
+    EstimateResponseComponent, // ← nuevo
   ],
   imports: [
     BrowserModule,
