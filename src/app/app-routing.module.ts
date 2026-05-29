@@ -35,6 +35,8 @@ import { GarantiasComponent } from './features/admin/garantias/Garantias_compone
 import { ResenasAdminComponent } from './features/admin/resenas/resenas.component';
 import { MaintenanceTrackingComponent } from './features/auth/pages/maintenance-tracking/maintenance-tracking.component';
 import { MechanicMaintenanceComponent } from './features/auth/pages/mechanic-maintenance/mechanic-maintenance.component';
+import { EstimateApproveComponent } from './features/auth/pages/estimate-approve/estimate-approve.component';
+import { EstimateRejectComponent } from './features/auth/pages/estimate-reject/estimate-reject.component';
 
 const routes: Routes = [
   // 🔹 Redirección inicial
@@ -42,6 +44,10 @@ const routes: Routes = [
 
   // 🔹 Públicas
   { path: 'home', component: HomeComponent },
+
+    // 🔹 Confirmación de presupuesto — públicas, sin guard
+  { path: 'estima-confirmation/:token/aprobar',  component: EstimateApproveComponent },
+  { path: 'estima-confirmation/:token/rechazar', component: EstimateRejectComponent },
 
   // 🔹 Solo NO autenticados
   {
