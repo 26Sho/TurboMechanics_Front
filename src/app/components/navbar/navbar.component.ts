@@ -51,6 +51,9 @@ export class NavbarComponent implements OnInit, OnDestroy {
     if (loggedIn && rolId === 3) {
       this.router.navigate(['/admin/dashboard']);
     }
+    if (loggedIn && rolId === 2) {        // ← agregar
+      this.router.navigate(['/mechanic/dashboard']); // ← agregar
+    }
   }
 
   // ─── Navegación ──────────────────────────────────────────────
