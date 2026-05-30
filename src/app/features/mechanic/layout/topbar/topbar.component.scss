@@ -1,0 +1,136 @@
+$orange:  #F45D01;
+$dark:    #0D0D0D;
+$card:    #1A1A1A;
+$border:  rgba(244, 93, 1, 0.25);
+$text:    #FFFFFF;
+$muted:   #6E6E6E;
+$green:   #22C55E;
+
+.topbar {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: 240px;
+  height: 60px;
+  background: rgba($card, 0.95);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid $border;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  z-index: 90;
+  transition: left 0.3s ease;
+
+  &.expanded { left: 240px; }
+}
+
+.topbar__left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.topbar__right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.btn-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: rgba($text, 0.05);
+  border: 1px solid $border;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: $muted;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    background: rgba($orange, 0.08);
+    border-color: rgba($orange, 0.3);
+    color: $orange;
+  }
+}
+
+.topbar-home-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 14px;
+  border-radius: 8px;
+  background: rgba($orange, 0.1);
+  border: 1px solid rgba($orange, 0.25);
+  color: $orange;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    background: rgba($orange, 0.2);
+    border-color: $orange;
+    transform: translateY(-1px);
+  }
+}
+
+.status-pill {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding: 6px 12px;
+  background: rgba($green, 0.1);
+  border: 1px solid rgba($green, 0.2);
+  border-radius: 20px;
+  font-size: 12px;
+  font-weight: 500;
+  color: $green;
+}
+
+.status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: $green;
+}
+
+.topbar-action {
+  position: relative;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: rgba($text, 0.05);
+  border: 1px solid $border;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: $muted;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    background: rgba($orange, 0.08);
+    border-color: rgba($orange, 0.3);
+    color: $orange;
+  }
+}
+
+.action-dot {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: $orange;
+  color: $dark;
+  font-size: 9px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

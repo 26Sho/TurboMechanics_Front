@@ -1,0 +1,22 @@
+<div class="dashboard page">
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Dashboard</h1>
+      <p class="page-sub">Resumen operativo — <span class="text-accent"></span></p>
+    </div>
+  </div>
+
+  <div class="stats-grid">
+    <div class="stat-card card" *ngFor="let stat of stats; let i = index">
+      <div class="stat-icon" [style.background]="stat.accent + '22'" [style.color]="stat.accent" [innerHTML]="stat.icon"></div>
+      <div class="stat-body">
+        <p class="stat-label">{{ stat.label }}</p>
+        <p class="stat-value">{{ stat.value }}</p>
+        <p class="stat-sub">{{ stat.sub }} 
+          <span [class]="stat.change >= 0 ? 'stat-change up' : 'stat-change down'">
+            {{ stat.change >= 0 ? '↑' : '↓' }} {{ Math.abs(stat.change) }}%
+          </span>
+        </p>
+      </div>
+    </div>
+  </div>
