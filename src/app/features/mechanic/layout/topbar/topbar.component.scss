@@ -4,13 +4,15 @@ $card:    #1A1A1A;
 $border:  rgba(244, 93, 1, 0.25);
 $text:    #FFFFFF;
 $muted:   #6E6E6E;
-$green:   #22C55E;
+
+$sidebar-collapsed: 64px;
+$sidebar-width:     240px;
 
 .topbar {
   position: fixed;
   top: 0;
   right: 0;
-  left: 240px;
+  left: $sidebar-collapsed;
   height: 60px;
   background: rgba($card, 0.95);
   backdrop-filter: blur(12px);
@@ -20,9 +22,9 @@ $green:   #22C55E;
   justify-content: space-between;
   padding: 0 24px;
   z-index: 90;
-  transition: left 0.3s ease;
+  transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
-  &.expanded { left: 240px; }
+  &.expanded { left: $sidebar-width; }
 }
 
 .topbar__left {
@@ -76,61 +78,4 @@ $green:   #22C55E;
     border-color: $orange;
     transform: translateY(-1px);
   }
-}
-
-.status-pill {
-  display: flex;
-  align-items: center;
-  gap: 7px;
-  padding: 6px 12px;
-  background: rgba($green, 0.1);
-  border: 1px solid rgba($green, 0.2);
-  border-radius: 20px;
-  font-size: 12px;
-  font-weight: 500;
-  color: $green;
-}
-
-.status-dot {
-  width: 7px;
-  height: 7px;
-  border-radius: 50%;
-  background: $green;
-}
-
-.topbar-action {
-  position: relative;
-  width: 36px;
-  height: 36px;
-  border-radius: 8px;
-  background: rgba($text, 0.05);
-  border: 1px solid $border;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: $muted;
-  cursor: pointer;
-  transition: all 0.2s;
-
-  &:hover {
-    background: rgba($orange, 0.08);
-    border-color: rgba($orange, 0.3);
-    color: $orange;
-  }
-}
-
-.action-dot {
-  position: absolute;
-  top: -4px;
-  right: -4px;
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  background: $orange;
-  color: $dark;
-  font-size: 9px;
-  font-weight: 700;
-  display: flex;
-  align-items: center;
-  justify-content: center;
 }
