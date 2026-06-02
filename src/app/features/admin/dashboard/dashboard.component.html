@@ -1,22 +1,29 @@
-<div class="dashboard page">
-  <div class="page-header">
-    <div>
-      <h1 class="page-title">Dashboard</h1>
-      <p class="page-sub">Resumen operativo — <span class="text-accent"></span></p>
-    </div>
+<div class="dashboard-fullscreen">
+
+  <div class="hero-bg">
+    <div class="glow-left"></div>
+    <div class="glow-right"></div>
+    <div class="glow-center"></div>
+    <div class="grid-lines"></div>
+    <div class="scanline"></div>
   </div>
 
-  <div class="stats-grid">
-    <div class="stat-card card" *ngFor="let stat of stats; let i = index">
-      <div class="stat-icon" [style.background]="stat.accent + '22'" [style.color]="stat.accent" [innerHTML]="stat.icon"></div>
-      <div class="stat-body">
-        <p class="stat-label">{{ stat.label }}</p>
-        <p class="stat-value">{{ stat.value }}</p>
-        <p class="stat-sub">{{ stat.sub }} 
-          <span [class]="stat.change >= 0 ? 'stat-change up' : 'stat-change down'">
-            {{ stat.change >= 0 ? '↑' : '↓' }} {{ Math.abs(stat.change) }}%
-          </span>
-        </p>
+  <div class="hero-inner">
+    <div class="hero-top">
+    </div>
+
+    <div class="hero-center">
+      <img src="assets/Logo-removebg.png" alt="TurboMechanics" class="hero-logo" />
+      <div class="hero-text">
+        <p class="hero-eyebrow">Panel de control</p>
+        <h1 class="hero-title">
+          Bienvenido,<br>
+          <span class="hero-highlight">Admin</span>
+        </h1>
+        <p class="hero-sub">Gestiona tu taller desde un solo lugar</p>
+        <div class="hero-line"></div>
       </div>
     </div>
   </div>
+
+</div>
