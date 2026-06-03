@@ -121,6 +121,13 @@ export class SidebarComponent {
       route: '/admin/resenas',
       badge: 0,
       icon: `<i class="fas fa-star"></i>`
+    },
+
+    {
+      label: 'WhatsApp',
+      route: '/admin/whatsapp',
+      badge: 0,
+      icon: `<i class="fab fa-whatsapp"></i>`
     }
   ];
 }

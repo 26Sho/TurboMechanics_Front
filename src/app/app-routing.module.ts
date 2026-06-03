@@ -35,25 +35,26 @@ import { ResenasAdminComponent } from './features/admin/resenas/resenas.componen
 import { MaintenanceTrackingComponent } from './features/auth/pages/maintenance-tracking/maintenance-tracking.component';
 import { EstimateApproveComponent } from './features/auth/pages/estimate-approve/estimate-approve.component';
 import { EstimateRejectComponent } from './features/auth/pages/estimate-reject/estimate-reject.component';
+import { WhatsappComponent } from './features/admin/whatsapp/whatsapp.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
   { path: 'home', component: HomeComponent },
 
   // 🔹 Confirmación de presupuesto — públicas
-  { path: 'estima-confirmation/:token/aprobar',  component: EstimateApproveComponent },
+  { path: 'estima-confirmation/:token/aprobar', component: EstimateApproveComponent },
   { path: 'estima-confirmation/:token/rechazar', component: EstimateRejectComponent },
 
   // 🔹 Solo NO autenticados
-  { path: 'login',            component: AuthComponent,            canActivate: [noAuthGuard] },
+  { path: 'login', component: AuthComponent, canActivate: [noAuthGuard] },
   { path: 'recover-password', component: RecoverPasswordComponent, canActivate: [noAuthGuard] },
 
   // 🔹 Usuarios autenticados
-  { path: 'work-order',      component: WorkOrderComponent,          canActivate: [authGuard] },
-  { path: 'vehicles',        component: VehicleComponent,            canActivate: [authGuard] },
-  { path: 'vehicle-history', component: VehicleHistoryComponent,     canActivate: [authGuard] },
-  { path: 'diagnosis',       component: TechnicalDiagnosisComponent, canActivate: [mechanicGuard] },
-  { path: 'movements',       component: MovementsComponent,          canActivate: [mechanicGuard] },
+  { path: 'work-order', component: WorkOrderComponent, canActivate: [authGuard] },
+  { path: 'vehicles', component: VehicleComponent, canActivate: [authGuard] },
+  { path: 'vehicle-history', component: VehicleHistoryComponent, canActivate: [authGuard] },
+  { path: 'diagnosis', component: TechnicalDiagnosisComponent, canActivate: [mechanicGuard] },
+  { path: 'movements', component: MovementsComponent, canActivate: [mechanicGuard] },
 
   // 🔹 Panel ADMIN
   {
@@ -62,31 +63,32 @@ const routes: Routes = [
     canActivate: [adminGuard],
     canActivateChild: [adminGuard],
     children: [
-      { path: '',             redirectTo: 'dashboard', pathMatch: 'full' },
-      { path: 'dashboard',    component: DashboardComponent },
-      { path: 'clients',      component: ClientsComponent },
-      { path: 'work-order',   component: WorkOrderComponent },
+      { path: '', redirectTo: 'dashboard', pathMatch: 'full' },
+      { path: 'dashboard', component: DashboardComponent },
+      { path: 'clients', component: ClientsComponent },
+      { path: 'work-order', component: WorkOrderComponent },
       { path: 'vehicle-assign', component: VehicleComponent },
       { path: 'vehicle-history', component: VehicleHistoryComponent },
-      { path: 'diagnosis',    component: TechnicalDiagnosisComponent },
-      { path: 'servicios',    component: CatalogoServiciosComponent },
-      { path: 'repuestos',    component: InventarioRepuestosComponent },
-      { path: 'reportes',     component: ReportesComponent },
-      { path: 'mecanicos',    component: MecanicosComponent },
+      { path: 'diagnosis', component: TechnicalDiagnosisComponent },
+      { path: 'servicios', component: CatalogoServiciosComponent },
+      { path: 'repuestos', component: InventarioRepuestosComponent },
+      { path: 'reportes', component: ReportesComponent },
+      { path: 'mecanicos', component: MecanicosComponent },
       { path: 'payment-methods', component: PaymentMethodsComponent },
-      { path: 'movements',    component: MovementsComponent },
-      { path: 'billing',      component: BillingComponent },
-      { path: 'cashier',      component: CashierComponent },
-      { path: 'estimates',    component: EstimatesComponent },
+      { path: 'movements', component: MovementsComponent },
+      { path: 'billing', component: BillingComponent },
+      { path: 'cashier', component: CashierComponent },
+      { path: 'estimates', component: EstimatesComponent },
       { path: 'appointments', component: AppointmentsComponent },
-      { path: 'garantias',    component: GarantiasComponent },
-      { path: 'resenas',      component: ResenasAdminComponent },
+      { path: 'garantias', component: GarantiasComponent },
+      { path: 'resenas', component: ResenasAdminComponent },
+      { path: 'whatsapp', component: WhatsappComponent },
     ]
   },
 
   // 🔹 Cliente
   { path: 'appointments', component: ClientAppointmentsComponent, canActivate: [clientGuard] },
-  { path: 'maintenance',  component: MaintenanceTrackingComponent, canActivate: [clientGuard] },
+  { path: 'maintenance', component: MaintenanceTrackingComponent, canActivate: [clientGuard] },
 
   // 🔹 Panel MECÁNICO — lazy loading con layout propio
   {
