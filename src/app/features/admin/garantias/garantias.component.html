@@ -132,9 +132,16 @@
           <form [formGroup]="validateForm" (ngSubmit)="validateWarranty()" novalidate>
             <div class="form-row">
               <div class="form-group flex-1">
-                <label class="form-label required">ID de Garantía</label>
-                <input type="number" class="form-input" formControlName="warrantyId" placeholder="ID..." />
-                <span class="error-msg" *ngIf="isInvalid(validateForm, 'warrantyId')">Ingresa un ID válido</span>
+                <label class="form-label required">Garantía</label>
+                <select class="form-input" formControlName="warrantyId">
+                  <option [ngValue]="null" disabled>
+                    {{ loadingWarranties ? 'Cargando garantías...' : 'Seleccionar garantía...' }}
+                  </option>
+                  <option *ngFor="let w of warranties" [ngValue]="w.id">
+                    {{ w.voucherNumber || '#'+w.id }} — {{ w.clientName }} ({{ w.vehiclePlate }})
+                  </option>
+                </select>
+                <span class="error-msg" *ngIf="isInvalid(validateForm, 'warrantyId')">Campo requerido</span>
               </div>
             </div>
             <div class="form-actions">
@@ -220,8 +227,15 @@
         <form [formGroup]="qualitySearchForm" novalidate>
           <div class="form-row">
             <div class="form-group">
-              <label class="form-label required">ID Orden de Trabajo</label>
-              <input type="number" class="form-input" formControlName="ordenId" placeholder="ID de la orden..." />
+              <label class="form-label required">Orden de Trabajo</label>
+              <select class="form-input" formControlName="ordenId">
+                <option [ngValue]="null" disabled>
+                  {{ loadingWorkOrders ? 'Cargando órdenes...' : 'Seleccionar orden...' }}
+                </option>
+                <option *ngFor="let o of workOrders" [ngValue]="o.id">
+                  {{ o.numberorder }} — {{ o.clientname }} ({{ o.vehicleplate }})
+                </option>
+              </select>
               <span class="error-msg" *ngIf="isInvalid(qualitySearchForm, 'ordenId')">Campo requerido</span>
             </div>
             <div class="form-group form-actions-inline">
@@ -292,8 +306,15 @@
         <form [formGroup]="evidenceSearchForm" novalidate>
           <div class="form-row">
             <div class="form-group">
-              <label class="form-label required">ID Orden de Trabajo</label>
-              <input type="number" class="form-input" formControlName="ordenId" placeholder="ID de la orden..." />
+              <label class="form-label required">Orden de Trabajo</label>
+              <select class="form-input" formControlName="ordenId">
+                <option [ngValue]="null" disabled>
+                  {{ loadingWorkOrders ? 'Cargando órdenes...' : 'Seleccionar orden...' }}
+                </option>
+                <option *ngFor="let o of workOrders" [ngValue]="o.id">
+                  {{ o.numberorder }} — {{ o.clientname }} ({{ o.vehicleplate }})
+                </option>
+              </select>
               <span class="error-msg" *ngIf="isInvalid(evidenceSearchForm, 'ordenId')">Campo requerido</span>
             </div>
             <div class="form-group form-group--sm">
@@ -406,19 +427,40 @@
       <form [formGroup]="warrantyForm" novalidate>
         <div class="form-row">
           <div class="form-group flex-1">
-            <label class="form-label required">ID Orden de trabajo</label>
-            <input type="number" class="form-input" formControlName="workOrderId" placeholder="ID..." />
+            <label class="form-label required">Orden de trabajo</label>
+            <select class="form-input" formControlName="workOrderId">
+              <option [ngValue]="null" disabled>
+                {{ loadingWorkOrders ? 'Cargando órdenes...' : 'Seleccionar orden...' }}
+              </option>
+              <option *ngFor="let o of workOrders" [ngValue]="o.id">
+                {{ o.numberorder }} — {{ o.clientname }} ({{ o.vehicleplate }})
+              </option>
+            </select>
             <span class="error-msg" *ngIf="isInvalid(warrantyForm, 'workOrderId')">Campo requerido</span>
           </div>
         </div>
         <div class="form-row">
           <div class="form-group flex-1">
-            <label class="form-label">ID Servicio (opcional)</label>
-            <input type="number" class="form-input" formControlName="serviceId" placeholder="ID servicio..." />
+            <label class="form-label">Servicio (opcional)</label>
+            <select class="form-input" formControlName="serviceId">
+              <option [ngValue]="null">
+                {{ loadingServiceCatalog ? 'Cargando servicios...' : '— Ninguno —' }}
+              </option>
+              <option *ngFor="let s of serviceCatalog" [ngValue]="s.id">
+                {{ s.name }}
+              </option>
+            </select>
           </div>
           <div class="form-group flex-1">
-            <label class="form-label">ID Repuesto (opcional)</label>
-            <input type="number" class="form-input" formControlName="sparePartId" placeholder="ID repuesto..." />
+            <label class="form-label">Repuesto (opcional)</label>
+            <select class="form-input" formControlName="sparePartId">
+              <option [ngValue]="null">
+                {{ loadingSpareParts ? 'Cargando repuestos...' : '— Ninguno —' }}
+              </option>
+              <option *ngFor="let p of spareParts" [ngValue]="p.id">
+                {{ p.name }}{{ p.reference ? ' (' + p.reference + ')' : '' }}
+              </option>
+            </select>
           </div>
         </div>
         <p class="hint">Debe especificar al menos un servicio o repuesto.</p>
