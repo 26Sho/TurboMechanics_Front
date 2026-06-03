@@ -1,0 +1,54 @@
+<div class="dashboard-fullscreen">
+
+  <div class="hero-bg">
+    <div class="glow-left"></div>
+    <div class="glow-right"></div>
+    <div class="glow-center"></div>
+    <div class="grid-lines"></div>
+    <div class="scanline"></div>
+  </div>
+
+  <div class="hero-inner">
+
+    <div class="hero-top">
+      <div class="hero-badge">
+        <span class="badge-dot"></span>
+        Sesión activa
+      </div>
+    </div>
+
+    <div class="hero-center">
+      <img src="assets/logo-removebg.png" alt="TurboMechanics" class="hero-logo" />
+      <div class="hero-text">
+        <p class="hero-eyebrow">Bienvenido a TurboMechanics</p>
+        <h1 class="hero-title">
+          Hola,<br>
+          <span class="hero-highlight">{{ username }}</span>
+        </h1>
+        <p class="hero-sub">¿Qué deseas hacer hoy?</p>
+        <div class="hero-line"></div>
+      </div>
+
+      <div class="hero-actions">
+        <button class="action-btn primary" (click)="goToAppointments()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>
+          </svg>
+          Agendar Cita
+        </button>
+        <button class="action-btn secondary" (click)="goToMaintenance()">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="3"/><path d="M19.07 4.93l-1.41 1.41M4.93 4.93l1.41 1.41M19.07 19.07l-1.41-1.41M4.93 19.07l1.41-1.41M12 2v2M12 20v2M2 12h2M20 12h2"/>
+          </svg>
+          Mi Mantenimiento
+        </button>
+      </div>
+    </div>
+
+    <div class="hero-bottom">
+      <span class="hint-icon">↓</span>
+      <span class="hint-text">Explora tu panel</span>
+    </div>
+
+  </div>
+</div>
