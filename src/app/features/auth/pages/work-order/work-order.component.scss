@@ -1001,3 +1001,110 @@ $muted:   #888888;   // color de texto secundario/apagado (labels, hints)
 
   &--full { color: #F87171; font-weight: 600; }
 }
+
+// ── Contenedor más grande ─────────────────────────────────────────────────
+.wo-container--full {
+  max-width: 100% !important;
+  width: 100% !important;
+  padding: 0 1.5rem 2rem !important;
+}
+
+// ── Modal cambiar estado ──────────────────────────────────────────────────
+.modal-card--state {
+  max-width: 480px;
+}
+
+.state-current {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1.5rem;
+  background: rgba(255,255,255,0.03);
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+
+  &__label {
+    font-size: 0.82rem;
+    color: #6E6E6E;
+  }
+}
+
+.state-options {
+  padding: 1.25rem 1.5rem;
+
+  &__label {
+    font-size: 0.85rem;
+    color: #CFCFCF;
+    margin-bottom: 1rem;
+  }
+
+  &__grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0.75rem;
+  }
+}
+
+.state-option-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.75rem 1rem;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.08);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: #CFCFCF;
+  font-size: 0.88rem;
+  position: relative;
+
+  &__icon { font-size: 1.1rem; }
+  &__label { flex: 1; text-align: left; }
+  &__check { color: #F45D01; font-weight: 700; font-size: 0.9rem; }
+
+  &:hover {
+    border-color: rgba(244,93,1,0.4);
+    background: rgba(244,93,1,0.06);
+    color: #EDEDED;
+  }
+
+  &--selected {
+    border-color: #F45D01 !important;
+    background: rgba(244,93,1,0.1) !important;
+    color: #EDEDED;
+  }
+
+  &--current {
+    border-color: rgba(255,255,255,0.2);
+    background: rgba(255,255,255,0.06);
+  }
+}
+
+// ── Botón ✓ cambiar estado en tabla ──────────────────────────────────────
+.btn-state {
+  background: rgba(34, 197, 94, 0.12);
+  border: 1px solid rgba(34, 197, 94, 0.3);
+  color: #4ADE80;
+  font-weight: 700;
+  font-size: 0.9rem;
+  &:hover { background: rgba(34, 197, 94, 0.22); }
+}
+
+// ── Botón cambiar estado en modal detalle ─────────────────────────────────
+.btn-state-change {
+  padding: 0.5rem 1rem;
+  background: rgba(34, 197, 94, 0.1);
+  border: 1px solid rgba(34, 197, 94, 0.3);
+  border-radius: 8px;
+  color: #4ADE80;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  &:hover { background: rgba(34, 197, 94, 0.2); }
+}
+
+// ── Ampliar columna acciones ──────────────────────────────────────────────
+.col-actions {
+  width: 180px !important;
+}

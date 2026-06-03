@@ -16,8 +16,6 @@ export class WorkOrderService {
   }
 
   create(data: WorkOrderRequest): Observable<WorkOrderResponse> {
-    console.log('🚀 WorkOrderService.create llamado', data);  // ← AGREGAR
-
     return this.http.post<WorkOrderResponse>(this.apiUrl, data, { headers: this.getHeaders() });
   }
 
@@ -44,15 +42,25 @@ export class WorkOrderService {
   listByState(state: StateOrder): Observable<WorkOrderResponse[]> {
     return this.http.get<WorkOrderResponse[]>(`${this.apiUrl}/state/${state}`, { headers: this.getHeaders() });
   }
+
   update(id: number, data: WorkOrderUpdateRequest): Observable<{ message: string; order: WorkOrderResponse }> {
     return this.http.put<{ message: string; order: WorkOrderResponse }>(`${this.apiUrl}/${id}`, data, { headers: this.getHeaders() });
   }
+
   cancel(id: number, cancellationreason: string): Observable<{ message: string; order: WorkOrderResponse }> {
-    return this.http.patch<{ message: string; order: WorkOrderResponse }>(`${this.apiUrl}/${id}/cancel`,{ cancellationreason },{ headers: this.getHeaders() });
+    return this.http.patch<{ message: string; order: WorkOrderResponse }>(`${this.apiUrl}/${id}/cancel`, { cancellationreason }, { headers: this.getHeaders() });
+  }
+
+  // ── Cambiar estado ────────────────────────────────────────────────────────
+  changeState(id: number, state: StateOrder): Observable<{ message: string; order: WorkOrderResponse }> {
+    return this.http.patch<{ message: string; order: WorkOrderResponse }>(
+      `${this.apiUrl}/${id}/state`,
+      { state },
+      { headers: this.getHeaders() }
+    );
   }
 
   // ── HU 6.7 — Asignación de mecánicos ─────────────────────────────────────
-
   getMechanicAvailability(): Observable<MechanicAvailabilityDTO[]> {
     return this.http.get<MechanicAvailabilityDTO[]>(
       'http://localhost:9090/mecanicos/disponibilidad',
