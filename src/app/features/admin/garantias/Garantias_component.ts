@@ -2,7 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import {
-  GarantiasService, Warranty, WarrantyValidation, Workshop, QualityCheck, QualityCheckItem, WorkEvidence
+  GarantiasService, Warranty, WarrantyValidation, Workshop, QualityCheck, QualityCheckItem, WorkEvidence,
+  WorkOrderOption, ServiceOption, SparePartOption
 } from '../service/garantias.service';
 import { ToastService } from '../../../shared/services/toast.service';
 
@@ -49,6 +50,14 @@ export class GarantiasComponent implements OnInit {
   showCloseModal = false;
   showValidateModal = false;
   showValidationsModal = false;
+
+  // ── DROPDOWNS ─────────────────────────────────────────────────────────────
+  workOrders: WorkOrderOption[] = [];
+  serviceCatalog: ServiceOption[] = [];
+  spareParts: SparePartOption[] = [];
+  loadingWorkOrders = false;
+  loadingServiceCatalog = false;
+  loadingSpareParts = false;
 
   // ── TALLERES ──────────────────────────────────────────────────────────────
   workshopForm!: FormGroup;
@@ -104,11 +113,33 @@ export class GarantiasComponent implements OnInit {
     this.buildForms();
     this.loadWarranties();
     this.loadWorkshops();
+    this.loadDropdownData();
+  }
+
+  /** Carga en paralelo las listas para los dropdowns */
+  private loadDropdownData(): void {
+    this.loadingWorkOrders = true;
+    this.svc.getWorkOrders().subscribe({
+      next: (data: WorkOrderOption[]) => { this.workOrders = data; this.loadingWorkOrders = false; },
+      error: () => { this.loadingWorkOrders = false; }
+    });
+
+    this.loadingServiceCatalog = true;
+    this.svc.getServiceCatalog().subscribe({
+      next: (data: ServiceOption[]) => { this.serviceCatalog = data; this.loadingServiceCatalog = false; },
+      error: () => { this.loadingServiceCatalog = false; }
+    });
+
+    this.loadingSpareParts = true;
+    this.svc.getSpareParts().subscribe({
+      next: (data: SparePartOption[]) => { this.spareParts = data; this.loadingSpareParts = false; },
+      error: () => { this.loadingSpareParts = false; }
+    });
   }
 
   private buildForms(): void {
     this.warrantyForm = this.fb.group({
-      workOrderId:  [null, [Validators.required, Validators.min(1)]],
+      workOrderId:  [null, [Validators.required]],
       serviceId:    [null],
       sparePartId:  [null],
       startDate:    ['', Validators.required],
@@ -123,7 +154,7 @@ export class GarantiasComponent implements OnInit {
       valor: ['', Validators.required]
     });
     this.validateForm = this.fb.group({
-      warrantyId: [null, [Validators.required, Validators.min(1)]]
+      warrantyId: [null, [Validators.required]]
     });
     this.workshopForm = this.fb.group({
       name:      ['', Validators.required],
@@ -138,10 +169,10 @@ export class GarantiasComponent implements OnInit {
       active:    [true]
     });
     this.qualitySearchForm = this.fb.group({
-      ordenId: [null, [Validators.required, Validators.min(1)]]
+      ordenId: [null, [Validators.required]]
     });
     this.evidenceSearchForm = this.fb.group({
-      ordenId: [null, [Validators.required, Validators.min(1)]]
+      ordenId: [null, [Validators.required]]
     });
   }
 
@@ -338,7 +369,6 @@ export class GarantiasComponent implements OnInit {
     });
   }
 
-  // Abre el modal de confirmación para eliminar taller
   confirmDeleteWorkshop(id: number): void {
     this.pendingDeleteWorkshopId = id;
     this.showDeleteWorkshopModal = true;
@@ -523,7 +553,6 @@ export class GarantiasComponent implements OnInit {
         if (savedPreview && res.id) {
           this.previewCache.set(res.id, savedPreview);
         }
-        // Clear cache for this id so fresh URL from server is used on reload
         this.loadEvidences();
       },
       error: (err: HttpErr) => {
@@ -533,7 +562,6 @@ export class GarantiasComponent implements OnInit {
     });
   }
 
-  // Abre el modal de confirmación para eliminar evidencia
   confirmDeleteEvidence(id: number): void {
     this.pendingDeleteEvidenceId = id;
     this.showDeleteEvidenceModal = true;

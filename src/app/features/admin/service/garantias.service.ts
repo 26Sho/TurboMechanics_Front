@@ -145,6 +145,27 @@ export interface WorkEvidence {
   uploadedAt: string;
 }
 
+// ── Nuevas interfaces para dropdowns ────────────────────────────────────────
+
+export interface WorkOrderOption {
+  id: number;
+  numberorder: string;
+  clientname: string;
+  vehicleplate: string;
+}
+
+export interface ServiceOption {
+  id: number;
+  name: string;
+  status?: string;
+}
+
+export interface SparePartOption {
+  id: number;
+  name: string;
+  reference?: string;
+}
+
 // ── Service ─────────────────────────────────────────────────────────────────
 
 @Injectable({ providedIn: 'root' })
@@ -281,5 +302,22 @@ export class GarantiasService {
 
   deleteEvidence(id: number): Observable<{ message: string }> {
     return this.http.delete<{ message: string }>(`${this.BASE}/evidencias/${id}`, { headers: this.headers() });
+  }
+
+  // ── Dropdowns: Órdenes, Servicios, Repuestos ──────────────────────────────
+
+  /** Trae todas las órdenes de trabajo para el dropdown */
+  getWorkOrders(): Observable<WorkOrderOption[]> {
+    return this.http.get<WorkOrderOption[]>(`${this.BASE}/orders`, { headers: this.headers() });
+  }
+
+  /** Trae el catálogo de servicios para el dropdown */
+  getServiceCatalog(): Observable<ServiceOption[]> {
+    return this.http.get<ServiceOption[]>(`${this.BASE}/admin/catalogo`, { headers: this.headers() });
+  }
+
+  /** Trae el inventario de repuestos para el dropdown */
+  getSpareParts(): Observable<SparePartOption[]> {
+    return this.http.get<SparePartOption[]>(`${this.BASE}/admin/inventario`, { headers: this.headers() });
   }
 }
