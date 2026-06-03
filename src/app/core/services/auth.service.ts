@@ -32,7 +32,11 @@ export class AuthService {
         if (res.jwt) {
           this._intentionalLogout = false;          // reset al entrar
           sessionStorage.setItem('token', res.jwt);
-          sessionStorage.setItem('username', data.email);
+          // Extraer el nombre real del JWT (campo sub) en vez del email
+          try {
+            const payload = JSON.parse(atob(res.jwt.split('.')[1]));
+            sessionStorage.setItem('username', payload.sub || data.email);
+          } catch { sessionStorage.setItem('username', data.email); }
           sessionStorage.setItem('rolId', String(res.rolId));
           this.authState$.next(true);
         }

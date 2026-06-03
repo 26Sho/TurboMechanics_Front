@@ -22,6 +22,7 @@ import { EstimatesComponent } from './estimates/estimates.component';
 import { AppointmentsComponent } from './appointments/appointments.component';
 import { GarantiasComponent } from './garantias/Garantias_component';
 import { ResenasAdminComponent } from './resenas/resenas.component';
+import { WhatsappComponent } from './whatsapp/whatsapp.component';
 
 @NgModule({
   declarations: [
@@ -42,6 +43,7 @@ import { ResenasAdminComponent } from './resenas/resenas.component';
     AppointmentsComponent,
     GarantiasComponent,
     ResenasAdminComponent,
+    WhatsappComponent,
   ],
   imports: [
     CommonModule,

@@ -2,14 +2,13 @@
 
   <app-sidebar></app-sidebar>
 
-  <div class="content">
+  <app-topbar></app-topbar>
 
-    <app-topbar></app-topbar>
-
-    <div class="page-content">
-      <router-outlet></router-outlet>
-    </div>
-
-  </div>
+  <main
+    class="main-content"
+    [class.expanded]="!sidebarService.collapsed()"
+  >
+    <router-outlet></router-outlet>
+  </main>
 
 </div>

@@ -1,0 +1,122 @@
+<div class="wa-page">
+
+  <div class="wa-header">
+    <div class="wa-header__icon">
+      <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+        <path d="M12 0C5.373 0 0 5.373 0 12c0 2.104.544 4.078 1.494 5.797L.057 23.492a.5.5 0 00.606.63l5.882-1.543A11.94 11.94 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.907 0-3.693-.513-5.228-1.4l-.374-.214-3.889 1.02 1.04-3.794-.228-.37A9.944 9.944 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/>
+      </svg>
+    </div>
+    <div>
+      <h1 class="wa-header__title">WhatsApp</h1>
+      <span class="wa-header__sub">Vincula el número del taller para enviar notificaciones a clientes</span>
+    </div>
+    <div class="wa-header__badge" [ngClass]="'wa-badge--' + statusClass">
+      <span class="wa-dot"></span>
+      {{ statusLabel }}
+    </div>
+  </div>
+
+  <div class="wa-body">
+
+    <!-- Error -->
+    <div class="wa-alert" *ngIf="errorMsg">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+        <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+      </svg>
+      {{ errorMsg }}
+    </div>
+
+    <!-- Estado: Desconectado / QR / Conectando -->
+    <div class="wa-card wa-card--connect" *ngIf="status !== 'open'">
+
+      <div class="wa-card__icon wa-card__icon--grey">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor" opacity="0.3">
+          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+          <path d="M12 0C5.373 0 0 5.373 0 12c0 2.104.544 4.078 1.494 5.797L.057 23.492a.5.5 0 00.606.63l5.882-1.543A11.94 11.94 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.907 0-3.693-.513-5.228-1.4l-.374-.214-3.889 1.02 1.04-3.794-.228-.37A9.944 9.944 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/>
+        </svg>
+      </div>
+
+      <!-- QR listo para escanear -->
+      <ng-container *ngIf="qrImage && status === 'qr_pending'">
+        <p class="wa-card__label">Escanea este código con WhatsApp en tu teléfono:</p>
+        <div class="wa-qr-wrap">
+          <img [src]="qrImage" alt="QR WhatsApp" class="wa-qr" />
+          <div class="wa-qr-corners">
+            <span></span><span></span><span></span><span></span>
+          </div>
+        </div>
+        <div class="wa-steps">
+          <div class="wa-step">
+            <span class="wa-step__num">1</span>
+            <span>Abre WhatsApp en tu teléfono</span>
+          </div>
+          <div class="wa-step">
+            <span class="wa-step__num">2</span>
+            <span>Ve a <strong>Dispositivos vinculados</strong></span>
+          </div>
+          <div class="wa-step">
+            <span class="wa-step__num">3</span>
+            <span>Toca <strong>Vincular dispositivo</strong> y escanea</span>
+          </div>
+        </div>
+      </ng-container>
+
+      <!-- Conectando sin QR todavía -->
+      <ng-container *ngIf="status === 'connecting'">
+        <div class="wa-loading">
+          <div class="wa-spinner"></div>
+          <p>Iniciando sesión de WhatsApp...</p>
+        </div>
+      </ng-container>
+
+      <!-- Sin sesión -->
+      <ng-container *ngIf="status === 'disconnected' || status === 'closed' || status === 'not_found'">
+        <h3 class="wa-card__title">WhatsApp no conectado</h3>
+        <p class="wa-card__desc">
+          Conecta el número del taller para enviar automáticamente:<br>
+          comprobantes, presupuestos, recordatorios de citas y notificaciones de órdenes.
+        </p>
+        <div class="wa-features">
+          <div class="wa-feature"><span>📄</span><span>Comprobantes de factura</span></div>
+          <div class="wa-feature"><span>💰</span><span>Presupuestos y cotizaciones</span></div>
+          <div class="wa-feature"><span>📅</span><span>Recordatorios de citas</span></div>
+          <div class="wa-feature"><span>🔧</span><span>Notificaciones de órdenes</span></div>
+        </div>
+      </ng-container>
+
+      <button class="wa-btn wa-btn--connect"
+              [disabled]="loading || status === 'connecting' || status === 'qr_pending'"
+              (click)="connect()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+          <path d="M12 0C5.373 0 0 5.373 0 12c0 2.104.544 4.078 1.494 5.797L.057 23.492a.5.5 0 00.606.63l5.882-1.543A11.94 11.94 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.907 0-3.693-.513-5.228-1.4l-.374-.214-3.889 1.02 1.04-3.794-.228-.37A9.944 9.944 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/>
+        </svg>
+        {{ loading ? 'Iniciando...' : (status === 'qr_pending' ? 'Actualizando QR...' : 'Conectar WhatsApp') }}
+      </button>
+    </div>
+
+    <!-- Estado: Conectado -->
+    <div class="wa-card wa-card--connected" *ngIf="status === 'open'">
+      <div class="wa-card__icon wa-card__icon--green">
+        <svg width="40" height="40" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/>
+          <path d="M12 0C5.373 0 0 5.373 0 12c0 2.104.544 4.078 1.494 5.797L.057 23.492a.5.5 0 00.606.63l5.882-1.543A11.94 11.94 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 22c-1.907 0-3.693-.513-5.228-1.4l-.374-.214-3.889 1.02 1.04-3.794-.228-.37A9.944 9.944 0 012 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10z"/>
+        </svg>
+      </div>
+      <h3 class="wa-card__title">¡WhatsApp conectado!</h3>
+      <p class="wa-card__desc">
+        El taller está listo para enviar notificaciones automáticas.<br>
+        Los mensajes se enviarán al número vinculado.
+      </p>
+      <div class="wa-active-features">
+        <div class="wa-active-feature"><span class="wa-check">✓</span><span>Comprobantes de factura activos</span></div>
+        <div class="wa-active-feature"><span class="wa-check">✓</span><span>Presupuestos activos</span></div>
+        <div class="wa-active-feature"><span class="wa-check">✓</span><span>Recordatorios de citas activos</span></div>
+        <div class="wa-active-feature"><span class="wa-check">✓</span><span>Notificaciones de órdenes activas</span></div>
+      </div>
+    </div>
+
+  </div>
+</div>
