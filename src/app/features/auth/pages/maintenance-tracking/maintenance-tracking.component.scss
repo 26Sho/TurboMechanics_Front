@@ -330,3 +330,29 @@ $border:  rgba(244, 93, 1, 0.25);
     &:hover { opacity: 1; }
   }
 }
+.back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 14px;
+  border-radius: 8px;
+  background: rgba(244,93,1,0.08);
+  border: 1px solid rgba(244,93,1,0.25);
+  color: #F45D01;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  margin-bottom: 16px;
+  align-self: flex-start;
+
+  svg { flex-shrink: 0; transition: transform 0.2s; }
+
+  &:hover {
+    background: rgba(244,93,1,0.16);
+    border-color: #F45D01;
+    transform: translateX(-2px);
+    svg { transform: translateX(-3px); }
+  }
+}
+
