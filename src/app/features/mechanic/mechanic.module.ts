@@ -21,6 +21,7 @@ import { VehicleHistoryComponent } from '../auth/pages/vehicle-history/vehicle-h
 import { TechnicalDiagnosisComponent } from '../auth/pages/technical-diagnosis/technical-diagnosis.component';
 import { MovementsComponent } from '../admin/movements/movements.component';
 import { VehicleComponent } from '../auth/pages/vehicle/vehicle.component';
+import { WhatsappComponent } from './whatsapp/whatsapp.component';
 
 const routes: Routes = [
   {
@@ -41,6 +42,7 @@ const routes: Routes = [
       { path: 'diagnosis',    component: TechnicalDiagnosisComponent },
       { path: 'movements',    component: MovementsComponent },
       { path: 'vehicles', component: VehicleComponent },
+      { path: 'whatsapp', component: WhatsappComponent },
     ]
   }
 ];
@@ -56,6 +58,7 @@ const routes: Routes = [
     HistoryComponent,
     InventoryComponent,
     ClientsComponent,
+    WhatsappComponent,
   ],
   imports: [
     CommonModule,
