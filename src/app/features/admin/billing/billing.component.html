@@ -155,6 +155,14 @@
             <span *ngIf="downloadingId !== generatedBill.id">⬇ Descargar PDF</span>
             <span *ngIf="downloadingId === generatedBill.id" class="spinner-sm"></span>
           </button>
+          <!-- Botón Mercado Pago -->
+          <button class="btn btn-mp"
+                  *ngIf="canPay(generatedBill.status)"
+                  (click)="openPayModal(generatedBill)"
+                  [disabled]="payingId === generatedBill.id">
+            <ng-container *ngIf="payingId !== generatedBill.id">💳 Pagar con Mercado Pago</ng-container>
+            <span *ngIf="payingId === generatedBill.id" class="spinner-sm"></span>
+          </button>
         </div>
       </div>
 
@@ -221,13 +229,22 @@
                   </span>
                 </td>
                 <td class="bill-actions-col">
-                  <button class="btn-action btn-download" (click)="downloadPdf(b)"
+                  <button class="btn-action btn-download" (click)="downloadPdf(b, $event)"
                           [disabled]="downloadingId === b.id" title="Descargar PDF">
                     <span *ngIf="downloadingId !== b.id">⬇</span>
                     <span *ngIf="downloadingId === b.id" class="spinner-xs"></span>
                   </button>
                   <button class="btn-action btn-send" (click)="openSend(b)" title="Enviar comprobante">📨</button>
                   <button class="btn-action btn-assign" (click)="openAssign(b)" title="Asignar cliente">👤</button>
+                  <!-- Botón MP solo para facturas pendientes -->
+                  <button class="btn-action btn-mp-sm"
+                          *ngIf="canPay(b.status)"
+                          (click)="openPayModal(b, $event)"
+                          [disabled]="payingId === b.id"
+                          title="Pagar con Mercado Pago">
+                    <span *ngIf="payingId !== b.id">💳</span>
+                    <span *ngIf="payingId === b.id" class="spinner-xs"></span>
+                  </button>
                 </td>
               </tr>
             </tbody>
@@ -240,7 +257,7 @@
   </div>
 </div>
 
-<!-- Modal: Asignar cliente -->
+<!-- ══ Modal: Asignar cliente ════════════════════════════════════════════════ -->
 <div class="modal-overlay" *ngIf="showAssignModal" (click)="closeAssign()">
   <div class="modal-card" (click)="$event.stopPropagation()">
     <div class="modal-header">
@@ -274,7 +291,7 @@
   </div>
 </div>
 
-<!-- Modal: Enviar comprobante -->
+<!-- ══ Modal: Enviar comprobante ════════════════════════════════════════════ -->
 <div class="modal-overlay" *ngIf="showSendModal" (click)="closeSend()">
   <div class="modal-card" (click)="$event.stopPropagation()">
     <div class="modal-header">
@@ -303,5 +320,92 @@
         </button>
       </div>
     </div>
+  </div>
+</div>
+
+<!-- ══ Modal: Pagar con Mercado Pago ════════════════════════════════════════ -->
+<div class="modal-overlay" *ngIf="showPayModal" (click)="closePayModal()">
+  <div class="modal-card modal-card--wide" (click)="$event.stopPropagation()">
+
+    <div class="modal-header">
+      <div class="modal-icon">💳</div>
+      <h2 class="modal-title">Pagar con Mercado Pago</h2>
+      <p class="modal-sub">
+        Factura {{ payBill?.numBill }} —
+        <strong style="color:#009ee3">${{ payBill?.total | number:'1.2-2' }}</strong>
+      </p>
+    </div>
+
+    <form [formGroup]="payForm" (ngSubmit)="submitPay()" novalidate class="modal-body">
+
+      <!-- Email del pagador -->
+      <div class="form-group">
+        <label class="form-label required">Correo del pagador</label>
+        <input type="email" class="form-input" formControlName="payerEmail"
+               placeholder="cliente@email.com"
+               [class.input-error]="isInvalid(payForm, 'payerEmail')" />
+        <span class="field-error" *ngIf="isInvalid(payForm, 'payerEmail')">
+          Correo válido requerido
+        </span>
+      </div>
+
+      <!-- Nombre y Apellido -->
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Nombre</label>
+          <input type="text" class="form-input" formControlName="payerFirstName"
+                 placeholder="Juan" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Apellido</label>
+          <input type="text" class="form-input" formControlName="payerLastName"
+                 placeholder="Pérez" />
+        </div>
+      </div>
+
+      <!-- Tipo y número de identificación -->
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Tipo de identificación</label>
+          <select class="form-input" formControlName="payerIdentificationType">
+            <option value="">Selecciona...</option>
+            <option value="CC">CC — Cédula de ciudadanía</option>
+            <option value="CE">CE — Cédula de extranjería</option>
+            <option value="NIT">NIT</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Número de identificación</label>
+          <input type="text" class="form-input" formControlName="payerIdentificationNumber"
+                 placeholder="123456789" />
+        </div>
+      </div>
+
+      <!-- Método de pago -->
+      <div class="form-group">
+        <label class="form-label">Método de pago preferido</label>
+        <div class="pay-methods-grid">
+          <label class="pay-method-option"
+                 *ngFor="let m of payMethodOptions"
+                 [class.selected]="payForm.get('paymentMethod')?.value === m.value"
+                 (click)="payForm.get('paymentMethod')?.setValue(m.value)">
+            <span class="pay-method-icon">{{ m.icon }}</span>
+            <span class="pay-method-label">{{ m.label }}</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn btn-ghost"
+                (click)="closePayModal()" [disabled]="payingId !== null">
+          Cancelar
+        </button>
+        <button type="submit" class="btn btn-mp" [disabled]="payingId !== null">
+          <ng-container *ngIf="payingId === null">💳 Ir a pagar</ng-container>
+          <span *ngIf="payingId !== null" class="spinner-sm"></span>
+        </button>
+      </div>
+
+    </form>
   </div>
 </div>

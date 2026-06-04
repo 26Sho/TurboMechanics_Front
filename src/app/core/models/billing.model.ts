@@ -63,3 +63,29 @@ export interface CashierResponse {
   outputs: number;
   balance: number;
 }
+
+export interface CreatePaymentRequest {
+  billId:                    number;
+  paymentMethod?:            string;   // credit_card | debit_card | pse | efecty | bank_transfer
+  payerEmail:                string;
+  payerFirstName?:           string;
+  payerLastName?:            string;
+  payerIdentificationNumber?: string;
+  payerIdentificationType?:  string;   // CC | NIT | CE
+}
+
+export interface CreatePaymentResponse {
+  paymentId:         number;
+  externalReference: string;
+  initPoint:         string;
+  preferenceId:      string;
+  status:            string;
+  publicKey:         string;
+}
+
+export interface Payment {
+  id:          number;
+  mpPaymentId: string | null;
+  status:      string;
+  billId:      number;
+}
