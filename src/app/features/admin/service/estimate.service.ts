@@ -7,7 +7,7 @@ export interface Estimate {
   workOrder: { id: number; numberorder: string };
   users: { id: number; username: string; identification: number };
   vehicle: { plate: string };
-  detailJson: string;
+  description: string;
   totalEstimate: number;
   statusEstimate: 'SENT' | 'APPROVED' | 'REJECTED';
   dateSent: string;
@@ -18,7 +18,7 @@ export interface SentEstimateRequest {
   workOrderId: number;
   identification: number;
   plate: string;
-  detailJson: string;
+  description: string;
   totalEstimate: number;
   canal: string;
 }
@@ -31,7 +31,7 @@ export class EstimateService {
   constructor(private http: HttpClient) {}
 
   private getHeaders(): HttpHeaders {
-    const token = localStorage.getItem('token') || '';
+    const token = sessionStorage.getItem('token') || '';
     return new HttpHeaders({ Authorization: `Bearer ${token}` });
   }
 
@@ -41,7 +41,7 @@ export class EstimateService {
 
   response(id: number, approved: boolean): Observable<Estimate> {
     const params = new HttpParams().set('approved', approved);
-    return this.http.patch<Estimate>(`${this.apiUrl}/${id}/respuesta`, {}, { headers: this.getHeaders(), params });
+    return this.http.patch<Estimate>(`${this.apiUrl}/${id}/response`, {}, { headers: this.getHeaders(), params });
   }
 
   list(identification: number, plate?: string): Observable<Estimate[]> {
@@ -49,4 +49,12 @@ export class EstimateService {
     if (plate) params = params.set('plate', plate);
     return this.http.get<Estimate[]>(this.apiUrl, { headers: this.getHeaders(), params });
   }
+
+  responseByToken(token: string, approved: boolean) {
+
+  return this.http.put(
+    `${this.apiUrl}/estimates/response/${token}?approved=${approved}`,
+    {}
+  );
+}
 }

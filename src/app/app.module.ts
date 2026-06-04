@@ -19,7 +19,9 @@ import { HomeComponent } from './components/home/home.component';
 import { ToastComponent } from './shared/components/toast/toast.component';
 import { AdminModule } from './features/admin/admin.module';
 import { authInterceptor } from './core/interceptors/auth.interceptor';
-import { SatisfactionSurveyComponent } from './components/satisfaction-survey/satisfaction-survey.component';
+import { SessionExpiredComponent } from './shared/components/sesion_expired/session.expired.component';
+import { EstimateResponseComponent } from './features/auth/pages/estimate-response/estimate-response.component';
+import { TurboBotComponent } from './shared/components/turbo-bot/turbo-bot.component';
 
 @NgModule({
   declarations: [
@@ -33,7 +35,10 @@ import { SatisfactionSurveyComponent } from './components/satisfaction-survey/sa
     FooterComponent,
     HomeComponent,
     ToastComponent,
-    SatisfactionSurveyComponent
+    SatisfactionSurveyComponent,
+    SessionExpiredComponent,          
+    EstimateResponseComponent, 
+    TurboBotComponent
   ],
   imports: [
     BrowserModule,

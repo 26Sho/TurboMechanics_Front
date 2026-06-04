@@ -47,7 +47,7 @@ export class EstimatesComponent implements OnInit {
       workOrderId:    [null, Validators.required],
       identification: [null, [Validators.required, Validators.min(1)]],
       plate:          ['',   Validators.required],
-      detailJson:     ['',   Validators.required],
+      description:     ['',   Validators.required],
       totalEstimate:  [null, [Validators.required, Validators.min(1)]],
       canal:          ['EMAIL', Validators.required],
     });
@@ -82,7 +82,7 @@ export class EstimatesComponent implements OnInit {
       workOrderId:    v.workOrderId,
       identification: v.identification,
       plate:          v.plate.toUpperCase(),
-      detailJson:     v.detailJson,
+      description:    v.description,
       totalEstimate:  v.totalEstimate,
       canal:          v.canal,
     };

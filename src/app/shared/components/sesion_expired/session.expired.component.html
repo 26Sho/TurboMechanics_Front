@@ -1,0 +1,19 @@
+<div class="session-overlay" *ngIf="visible">
+  <div class="session-modal">
+    <div class="session-modal__icon">
+      <i class="uil uil-clock-eight"></i>
+    </div>
+
+    <h2 class="session-modal__title">Sesión expirada</h2>
+
+    <p class="session-modal__message">
+      Tu sesión ha expirado por inactividad.<br>
+      Por favor, inicia sesión nuevamente para continuar.
+    </p>
+
+    <button class="session-modal__btn" (click)="goToLogin()">
+      <i class="uil uil-sign-in-alt"></i>
+      Iniciar sesión
+    </button>
+  </div>
+</div>

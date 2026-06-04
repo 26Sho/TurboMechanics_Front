@@ -13,34 +13,26 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
   @Output() loginClick = new EventEmitter<void>();
 
-  isScrolled        = false;
-  isMobileOpen      = false;
-  activeSection     = 'inicio';
-  isLoggedIn        = false;
-  username          = '';
+  isScrolled = false;
+  isMobileOpen = false;
+  dropdownOpen = false;
+  activeSection = 'inicio';
+  isLoggedIn = false;
+  username = '';
   isMecanicoOrAdmin = false;
-  isSoloMecanico    = false;
-  isAdmin           = false;  // ← agregado
+  isSoloMecanico = false;
+  isAdmin = false;
+  isCliente = false;
 
   private authSub!: Subscription;
 
   constructor(private router: Router, private authService: AuthService) { }
 
   ngOnInit(): void {
-    // Lee el estado actual directamente sin esperar evento
     this.actualizarEstado(this.authService.isLoggedIn());
-    this.isLoggedIn = this.authService.isLoggedIn();
-    this.username = this.authService.getUsername();
-    this.isMecanicoOrAdmin = [2, 3].includes(this.authService.getRolId());
-    this.isSoloMecanico = this.authService.getRolId() === 2; //Nuevo
 
-    // Escucha cambios futuros (login / logout)
     this.authSub = this.authService.authChanged.subscribe(loggedIn => {
       this.actualizarEstado(loggedIn);
-      this.isLoggedIn = loggedIn;
-      this.username = loggedIn ? this.authService.getUsername() : '';
-      this.isMecanicoOrAdmin = loggedIn ? [2, 3].includes(this.authService.getRolId()) : false;
-      this.isSoloMecanico = loggedIn ? this.authService.getRolId() === 2 : false; //Nuevo
     });
   }
 
@@ -48,14 +40,24 @@ export class NavbarComponent implements OnInit, OnDestroy {
     this.authSub?.unsubscribe();
   }
 
-  // Centraliza la lectura del estado para no duplicar lógica
   private actualizarEstado(loggedIn: boolean): void {
-    this.isLoggedIn        = loggedIn;
-    this.username          = loggedIn ? this.authService.getUsername() : '';
-    const rolId            = loggedIn ? this.authService.getRolId() : 0;
+    this.isLoggedIn = loggedIn;
+    this.username = loggedIn ? this.authService.getUsername() : '';
+    const rolId = loggedIn ? this.authService.getRolId() : 0;
     this.isMecanicoOrAdmin = [2, 3].includes(rolId);
-    this.isSoloMecanico    = rolId === 2;
-    this.isAdmin           = rolId === 3;  // ← se evalúa siempre al cargar
+    this.isSoloMecanico = rolId === 2;
+    this.isAdmin = rolId === 3;
+    this.isCliente = rolId === 1;
+
+    if (loggedIn && rolId === 3) {
+      this.router.navigate(['/admin/dashboard']);
+    }
+    if (loggedIn && rolId === 2) {
+      this.router.navigate(['/mechanic/dashboard']);
+    }
+    if (loggedIn && rolId === 1) {
+      this.router.navigate(['/client/dashboard']);
+    }
   }
 
   // ─── Navegación ──────────────────────────────────────────────
@@ -81,7 +83,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
     this.router.navigate(['/vehicle-history']);
   }
 
-  goToAdmin(): void {  // ← agregado
+  goToAdmin(): void {
     this.closeMobile();
     this.router.navigate(['/admin/dashboard']);
   }
@@ -89,6 +91,26 @@ export class NavbarComponent implements OnInit, OnDestroy {
   goToDiagnosis(): void {
     this.closeMobile();
     this.router.navigate(['/diagnosis']);
+  }
+
+  goToAppointments(): void {
+    this.closeMobile();
+    this.router.navigate(['/appointments']);
+  }
+
+  goToMechanicAppointments(): void {
+    this.closeMobile();
+    this.router.navigate(['/mechanic/appointments']);
+  }
+
+  goToMaintenance(): void {
+    this.closeMobile();
+    this.router.navigate(['/maintenance']);
+  }
+
+  goToMechanicMaintenance(): void {
+    this.closeMobile();
+    this.router.navigate(['/mechanic/maintenance']);
   }
 
   // ─── Scroll ──────────────────────────────────────────────────
@@ -104,7 +126,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   }
 
   private updateActiveSection(): void {
-    const sections = ['inicio', 'nosotros', 'servicios', 'ubicacion', 'contacto'];
+    const sections = ['inicio', 'nosotros', 'servicios', 'ubicacion', 'contacto', 'resenas'];
     for (const id of [...sections].reverse()) {
       const el = document.getElementById(id);
       if (el && window.scrollY >= el.offsetTop - 100) {

@@ -31,7 +31,7 @@ $border-radius: 8px;
   &.collapsed {
     width: $sidebar-collapsed;
     
-    .logo-img { width: 36px; height: 36px; }
+    .logo-img { width: 80px; height: 80px; }
     .nav-item  { justify-content: center; padding: 12px 0; }
     .user-avatar-sm { margin: 4px auto; }
   }
@@ -48,8 +48,8 @@ $border-radius: 8px;
 }
 
 .logo-img {
-  width: 42px; 
-  height: 42px; 
+  width: 80px; 
+  height: 80px; 
   object-fit: contain;
   filter: drop-shadow(0 0 8px rgba($naranja, 0.5));
   flex-shrink: 0; 
@@ -147,13 +147,14 @@ $border-radius: 8px;
   }
 }
 
-.nav-icon { 
-  width: 18px; 
-  height: 18px; 
-  display: flex; 
-  align-items: center; 
-  justify-content: center; 
-  flex-shrink: 0; 
+.nav-icon {
+  width: 22px;
+  min-width: 22px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 12px;
+  font-size: 16px;
 }
 
 .nav-label { flex: 1; }

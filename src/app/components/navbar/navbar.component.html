@@ -2,30 +2,85 @@
   <div class="navbar__container">
 
     <a href="#inicio" class="navbar__logo" (click)="scrollTo('inicio'); $event.preventDefault()">
-      <img src="assets/Logo_turbo_final.webp" alt="TurboMechanics Logo" class="navbar__logo-img" />
+      <img src="assets/Logo.png" alt="TurboMechanics Logo" class="navbar__logo-img" />
     </a>
 
     <ul class="navbar__links">
-      <li>
-        <a class="navbar__link" [class.active]="activeSection === 'inicio'"
-          (click)="scrollTo('inicio'); $event.preventDefault()" href="#inicio">Inicio</a>
-      </li>
-      <li>
-        <a class="navbar__link" [class.active]="activeSection === 'nosotros'"
-          (click)="scrollTo('nosotros'); $event.preventDefault()" href="#nosotros">Nosotros</a>
-      </li>
-      <li>
-        <a class="navbar__link" [class.active]="activeSection === 'servicios'"
-          (click)="scrollTo('servicios'); $event.preventDefault()" href="#servicios">Servicios</a>
-      </li>
-      <li>
-        <a class="navbar__link" [class.active]="activeSection === 'ubicacion'"
-          (click)="scrollTo('ubicacion'); $event.preventDefault()" href="#ubicacion">Ubicación</a>
-      </li>
-      <li>
-        <a class="navbar__link" [class.active]="activeSection === 'contacto'"
-          (click)="scrollTo('contacto'); $event.preventDefault()" href="#contacto">Contacto</a>
-      </li>
+
+      <!-- ── SIN LOGIN: links normales ── -->
+      <ng-container *ngIf="!isCliente">
+        <li>
+          <a class="navbar__link" [class.active]="activeSection==='inicio'"
+            (click)="scrollTo('inicio'); $event.preventDefault()" href="#inicio">Inicio</a>
+        </li>
+        <li>
+          <a class="navbar__link" [class.active]="activeSection==='nosotros'"
+            (click)="scrollTo('nosotros'); $event.preventDefault()" href="#nosotros">Nosotros</a>
+        </li>
+        <li>
+          <a class="navbar__link" [class.active]="activeSection==='servicios'"
+            (click)="scrollTo('servicios'); $event.preventDefault()" href="#servicios">Servicios</a>
+        </li>
+        <li>
+          <a class="navbar__link" [class.active]="activeSection==='ubicacion'"
+            (click)="scrollTo('ubicacion'); $event.preventDefault()" href="#ubicacion">Ubicación</a>
+        </li>
+        <li>
+          <a class="navbar__link" [class.active]="activeSection==='contacto'"
+            (click)="scrollTo('contacto'); $event.preventDefault()" href="#contacto">Contacto</a>
+        </li>
+        <li>
+          <a class="navbar__link" [class.active]="activeSection==='resenas'"
+            (click)="scrollTo('resenas'); $event.preventDefault()" href="#resenas">Reseñas</a>
+        </li>
+        <li>
+          <a class="navbar__link" (click)="onLoginClick($event)" href="#" style="cursor:pointer">Agendar Cita</a>
+        </li>
+      </ng-container>
+
+      <!-- ── CON LOGIN CLIENTE: Inicio con dropdown ── -->
+      <ng-container *ngIf="isCliente">
+        <li class="has-dropdown" (mouseenter)="dropdownOpen=true" (mouseleave)="dropdownOpen=false">
+          <a class="navbar__link" [class.active]="activeSection==='inicio' || activeSection==='nosotros' || activeSection==='ubicacion' || activeSection==='contacto'"
+            (click)="scrollTo('inicio'); $event.preventDefault()" href="#inicio">
+            Inicio
+            <svg class="dropdown-arrow" [class.open]="dropdownOpen" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="6 9 12 15 18 9"/></svg>
+          </a>
+          <div class="dropdown-menu" [class.open]="dropdownOpen">
+            <a class="dropdown-item" [class.active]="activeSection==='nosotros'"
+              (click)="scrollTo('nosotros'); $event.preventDefault(); dropdownOpen=false" href="#nosotros">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>
+              Nosotros
+            </a>
+            <a class="dropdown-item" [class.active]="activeSection==='ubicacion'"
+              (click)="scrollTo('ubicacion'); $event.preventDefault(); dropdownOpen=false" href="#ubicacion">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              Ubicación
+            </a>
+            <a class="dropdown-item" [class.active]="activeSection==='contacto'"
+              (click)="scrollTo('contacto'); $event.preventDefault(); dropdownOpen=false" href="#contacto">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a19.79 19.79 0 01-3.07-8.68A2 2 0 012 .9h3a2 2 0 012 1.72 12.84 12.84 0 00.7 2.81 2 2 0 01-.45 2.11L6.09 8.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45 12.84 12.84 0 002.81.7A2 2 0 0122 16z"/></svg>
+              Contacto
+            </a>
+            <a class="dropdown-item" [class.active]="activeSection==='resenas'"
+              (click)="scrollTo('resenas'); $event.preventDefault(); dropdownOpen=false" href="#resenas">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+              Reseñas
+            </a>
+          </div>
+        </li>
+        <li>
+          <a class="navbar__link" [class.active]="activeSection==='servicios'"
+            (click)="scrollTo('servicios'); $event.preventDefault()" href="#servicios">Servicios</a>
+        </li>
+        <li>
+          <a class="navbar__link" (click)="goToAppointments(); $event.preventDefault()" href="#" style="cursor:pointer">Agendar Cita</a>
+        </li>
+        <li>
+          <a class="navbar__link" (click)="goToMaintenance(); $event.preventDefault()" href="#" style="cursor:pointer">Mi Mantenimiento</a>
+        </li>
+      </ng-container>
+
     </ul>
 
     <div class="navbar__auth">
@@ -37,41 +92,17 @@
 
       <!-- Logueado -->
       <div *ngIf="isLoggedIn" class="navbar__user">
-        <i class="fas fa-user-circle"></i>
-        <span class="navbar__username">{{ username }}</span>
-
-        <!-- Botones solo para mecánico -->
-        <button *ngIf="isSoloMecanico" class="navbar__workorder-btn" (click)="goToWorkOrder()">
-          <i class="fas fa-clipboard-list"></i>
-          <span>Órdenes</span>
-        </button>
-        <button *ngIf="isSoloMecanico" class="navbar__workorder-btn" (click)="goToVehicles()">
-          <i class="fas fa-car"></i>
-          <span>Vehículos</span>
-        </button>
-        <button *ngIf="isSoloMecanico" class="navbar__workorder-btn" (click)="goToVehicleHistory()">
-          <i class="fas fa-history"></i>
-          <span>Historial</span>
-        </button>
-        <button *ngIf="isSoloMecanico" class="navbar__workorder-btn" (click)="goToDiagnosis()">
-          <i class="fas fa-wrench"></i>
-          <span>Diagnóstico</span>
-        </button>
-        <button *ngIf="isSoloMecanico" class="navbar__workorder-btn" (click)="goToMovements()">
-          <i class="fas fa-dollar-sign"></i>
-          <span>Movimientos</span>
-        </button>
-
-        <!-- Botón Admin — solo visible para administradores -->
-        <button *ngIf="isAdmin" class="navbar__admin-btn" (click)="goToAdmin()">
-          <i class="fas fa-shield-alt"></i>
-          <span>Admin</span>
-        </button>
-
-        <!-- Cerrar sesión — siempre visible -->
+        <div class="navbar__user-info">
+          <i class="fas fa-user-circle"></i>
+          <span class="navbar__username">{{ username }}</span>
+        </div>
         <button class="navbar__logout-btn" (click)="onLogout()">
-          <i class="fas fa-sign-out-alt"></i>
-          <span>Cerrar sesión</span>
+          <svg xmlns="http://www.w3.org/2000/svg" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/>
+            <polyline points="16 17 21 12 16 7"/>
+            <line x1="21" y1="12" x2="9" y2="12"/>
+          </svg>
+          <span>Cerrar Sesión</span>
         </button>
       </div>
     </div>
@@ -89,40 +120,15 @@
       <li><a (click)="scrollTo('servicios'); $event.preventDefault()" href="#servicios">Servicios</a></li>
       <li><a (click)="scrollTo('ubicacion'); $event.preventDefault()" href="#ubicacion">Ubicación</a></li>
       <li><a (click)="scrollTo('contacto'); $event.preventDefault()" href="#contacto">Contacto</a></li>
-
+      <li><a href="#" (click)="goToAppointments(); $event.preventDefault()">Agendar Cita</a></li>
+      <li *ngIf="isCliente">
+        <a href="#" (click)="goToMaintenance(); $event.preventDefault()">Mi Mantenimiento</a>
+      </li>
       <li *ngIf="!isLoggedIn">
         <a href="#" class="mobile-login" (click)="onLoginClick($event)">Iniciar sesión</a>
       </li>
-
       <li *ngIf="isLoggedIn" class="mobile-user">
         <span class="mobile-username"><i class="fas fa-user-circle"></i> {{ username }}</span>
-
-        <a *ngIf="isSoloMecanico" href="#" class="mobile-workorder"
-          (click)="goToWorkOrder(); $event.preventDefault()">
-          <i class="fas fa-clipboard-list"></i> Órdenes de trabajo
-        </a>
-        <a *ngIf="isSoloMecanico" href="#" class="mobile-workorder"
-          (click)="goToVehicles(); $event.preventDefault()">
-          <i class="fas fa-car"></i> Vehículos
-        </a>
-        <a *ngIf="isSoloMecanico" href="#" class="mobile-workorder"
-          (click)="goToVehicleHistory(); $event.preventDefault()">
-          <i class="fas fa-history"></i> Historial de servicios
-        </a>
-        <a *ngIf="isSoloMecanico" href="#" class="mobile-workorder"
-          (click)="goToDiagnosis(); $event.preventDefault()">
-          <i class="fas fa-wrench"></i> Diagnóstico
-        </a>
-
-        <!-- Admin en mobile -->
-        <a *ngIf="isAdmin" href="#" class="mobile-admin"
-          (click)="goToAdmin(); $event.preventDefault()">
-          <i class="fas fa-shield-alt"></i> Panel Admin
-        </a>
-
-        <a *ngIf="isSoloMecanico" href="#" class="mobile-workorder" (click)="goToMovements(); $event.preventDefault()">
-          <i class="fas fa-dollar-sign"></i> Movimientos
-        </a>
         <a href="#" class="mobile-logout" (click)="onLogout(); $event.preventDefault()">
           <i class="fas fa-sign-out-alt"></i> Cerrar sesión
         </a>

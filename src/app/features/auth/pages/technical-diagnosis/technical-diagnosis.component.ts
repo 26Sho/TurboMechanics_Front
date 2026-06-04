@@ -61,7 +61,7 @@ export class TechnicalDiagnosisComponent implements OnInit {
   ngOnInit(): void {
     const idParam = this.route.snapshot.queryParamMap.get('orderId');
     if (idParam) { this.searchOrderId = idParam; this.buscarOrden(); }
-    this.form.registeredby = localStorage.getItem('username') || '';
+    this.form.registeredby = sessionStorage.getItem('username') || '';
   }
 
   buscarOrden(): void {
@@ -180,7 +180,7 @@ export class TechnicalDiagnosisComponent implements OnInit {
     this.generatingOrder    = true;
     this.generatedOrderInfo = null;
     this.formError          = '';
-    const user = localStorage.getItem('username') || undefined;
+    const user = sessionStorage.getItem('username') || undefined;
 
     this.diagnosisService.generateWorkOrder(d.id, user).subscribe({
       next: (res) => {

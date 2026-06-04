@@ -15,6 +15,11 @@ export class AuthService {
   private authState$ = new BehaviorSubject<boolean>(this.isLoggedIn());
   authChanged = this.authState$.asObservable();
 
+  /** Marca si el logout fue voluntario (clic en "Cerrar sesión").
+   *  El interceptor lo consulta para no mostrar el modal de sesión expirada. */
+  private _intentionalLogout = false;
+  get intentionalLogout(): boolean { return this._intentionalLogout; }
+
   constructor(private http: HttpClient) {}
 
   register(data: RegisterRequest): Observable<MessageResponse> {
@@ -25,36 +30,38 @@ export class AuthService {
     return this.http.post<LoginResponse>(`${this.apiUrl}/login`, data).pipe(
       tap(res => {
         if (res.jwt) {
-          localStorage.setItem('token', res.jwt);
-          localStorage.setItem('username', data.email);
-          localStorage.setItem('rolId', String(res.rolId));
+          this._intentionalLogout = false;          // reset al entrar
+          sessionStorage.setItem('token', res.jwt);
+          // Extraer el nombre real del JWT (campo sub) en vez del email
+          try {
+            const payload = JSON.parse(atob(res.jwt.split('.')[1]));
+            sessionStorage.setItem('username', payload.sub || data.email);
+          } catch { sessionStorage.setItem('username', data.email); }
+          sessionStorage.setItem('rolId', String(res.rolId));
           this.authState$.next(true);
         }
       })
     );
   }
 
-  getUsername(): string {
-    return localStorage.getItem('username') || '';
-  }
-
-  getRolId(): number {
-    return Number(localStorage.getItem('rolId'));
-  }
+  getUsername(): string { return sessionStorage.getItem('username') || ''; }
+  getRolId(): number    { return Number(sessionStorage.getItem('rolId')); }
 
   refreshToken(): Observable<RefreshTokenResponse> {
-    return this.http.get<RefreshTokenResponse>(`${this.apiUrl}/refreshToken`).pipe(
-      tap(res => { if (res.jwt) localStorage.setItem('token', res.jwt); })
+    return this.http.get<RefreshTokenResponse>(`${this.apiUrl}/refresh`).pipe(
+      tap(res => { if (res.jwt) sessionStorage.setItem('token', res.jwt); })
     );
   }
 
-  getToken(): string | null { return localStorage.getItem('token'); }
-  isLoggedIn(): boolean { return !!this.getToken(); }
+  getToken(): string | null { return sessionStorage.getItem('token'); }
+  isLoggedIn(): boolean     { return !!this.getToken(); }
 
-  logout() {
-    localStorage.removeItem('token');
-    localStorage.removeItem('username');
-    localStorage.removeItem('rolId');
+  /** Cierre de sesión voluntario — limpia todo sin mostrar modal de expiración. */
+  logout(): void {
+    this._intentionalLogout = true;               // ← marcar ANTES de limpiar
+    sessionStorage.removeItem('token');
+    sessionStorage.removeItem('username');
+    sessionStorage.removeItem('rolId');
     this.authState$.next(false);
   }
 
@@ -65,7 +72,7 @@ export class AuthService {
   }
 
   validateResetToken(data: ValidateResetTokenRequest): Observable<MessageResponse> {
-    return this.http.post<MessageResponse>(`${this.apiUrl}/validate-code`, data); // ← URL corregida
+    return this.http.post<MessageResponse>(`${this.apiUrl}/validate-code`, data);
   }
 
   resetPassword(data: ResetPasswordRequest): Observable<MessageResponse> {

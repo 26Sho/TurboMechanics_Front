@@ -62,11 +62,18 @@
             <div class="cashier-card" *ngIf="cashierSearched && cashierData">
                 <div class="result-header">
                     <h2 class="section-title">Resultado del Período</h2>
-                    <button class="btn-export-sm" (click)="exportExcel()" [disabled]="exportingExcel"
-                        title="Exportar Excel">
-                        <span *ngIf="!exportingExcel">📊 Excel</span>
-                        <span *ngIf="exportingExcel" class="spinner-xs"></span>
-                    </button>
+                    <div class="export-buttons">
+                        <button class="btn-export-sm" (click)="exportPdf()" [disabled]="exportingPdf"
+                            title="Exportar PDF">
+                            <span *ngIf="!exportingPdf">📄 Exportar en PDF</span>
+                            <span *ngIf="exportingPdf" class="spinner-xs"></span>
+                        </button>
+                        <button class="btn-export-sm" (click)="exportExcel()" [disabled]="exportingExcel"
+                            title="Exportar Excel">
+                            <span *ngIf="!exportingExcel">📊 Exportar en Excel</span>
+                            <span *ngIf="exportingExcel" class="spinner-xs"></span>
+                        </button>
+                    </div>
                 </div>
 
                 <div class="period-info">
@@ -180,8 +187,8 @@
                                     <tr *ngFor="let b of reportBills">
                                         <td class="bill-num">{{ b.numBill }}</td>
                                         <td>{{ b.date | date:'dd/MM/yyyy' }}</td>
-                                        <td>{{ b.users?.username || '—' }}</td>
-                                        <td>{{ b.vehicle?.plate || '—' }}</td>
+                                        <td>{{ b.users.username || '—' }}</td>
+                                        <td>{{ b.vehicle.plate || '—' }}</td>
                                         <td>${{ b.subtotal | number:'1.2-2' }}</td>
                                         <td>${{ b.taxes | number:'1.2-2' }}</td>
                                         <td class="bill-total">${{ b.total | number:'1.2-2' }}</td>
