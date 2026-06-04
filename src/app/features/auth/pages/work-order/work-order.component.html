@@ -233,25 +233,62 @@
     <ng-container *ngIf="activeTab === 'buscar'">
       <div class="wo-card">
         <div class="wo-card-title">Buscar orden</div>
+        <!-- Dropdown de criterio tipo tarjeta -->
+        <div class="wo-search-criteria">
+          <p class="wo-search-criteria__label">Buscar por:</p>
+          <div class="wo-criteria-grid">
+            <button type="button" class="wo-criteria-btn"
+              [class.wo-criteria-btn--active]="searchType === 'number'"
+              (click)="searchType = 'number'; onSearchTypeChange()">
+              <span class="wo-criteria-icon">🔢</span>
+              <span class="wo-criteria-text">N° Orden</span>
+            </button>
+            <button type="button" class="wo-criteria-btn"
+              [class.wo-criteria-btn--active]="searchType === 'plate'"
+              (click)="searchType = 'plate'; onSearchTypeChange()">
+              <span class="wo-criteria-icon">🚘</span>
+              <span class="wo-criteria-text">Placa</span>
+            </button>
+            <button type="button" class="wo-criteria-btn"
+              [class.wo-criteria-btn--active]="searchType === 'client'"
+              (click)="searchType = 'client'; onSearchTypeChange()">
+              <span class="wo-criteria-icon">🪪</span>
+              <span class="wo-criteria-text">Identificación</span>
+            </button>
+            <button type="button" class="wo-criteria-btn"
+              [class.wo-criteria-btn--active]="searchType === 'state'"
+              (click)="searchType = 'state'; onSearchTypeChange()">
+              <span class="wo-criteria-icon">📋</span>
+              <span class="wo-criteria-text">Estado</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Dropdown de valor según criterio -->
         <div class="wo-search-row">
-          <select class="form-style wo-select" [(ngModel)]="searchType" (ngModelChange)="onSearchTypeChange()">
-            <option value="number">Por N° orden</option>
-            <option value="plate">Por placa</option>
-            <option value="client">Por identificación</option>
-            <option value="state">Por estado</option>
-          </select>
-          <ng-container *ngIf="searchType === 'state'; else textSearchInput">
-            <select class="form-style wo-search-input" [(ngModel)]="searchValue">
+          <!-- Estado: opciones fijas -->
+          <ng-container *ngIf="searchType === 'state'">
+            <select class="form-style wo-search-input" [(ngModel)]="searchValue" (ngModelChange)="doSearch()">
               <option value="">Selecciona un estado...</option>
               <option *ngFor="let s of stateOrders" [value]="s.value">{{ s.label }}</option>
             </select>
           </ng-container>
-          <ng-template #textSearchInput>
-            <input type="text" class="form-style wo-search-input" placeholder="Ingresa el valor..."
-              [(ngModel)]="searchValue" (keyup.enter)="doSearch()" />
-          </ng-template>
-          <button class="btn-primary" (click)="doSearch()" [disabled]="isLoading">{{ isLoading ? '...' : 'Buscar'
-            }}</button>
+
+          <!-- Otros criterios: opciones cargadas del backend -->
+          <ng-container *ngIf="searchType !== 'state'">
+            <div class="wo-dropdown-wrap">
+              <select class="form-style wo-search-input"
+                [(ngModel)]="searchValue"
+                [disabled]="loadingSuggestions"
+                (ngModelChange)="doSearch()">
+                <option value="">
+                  {{ loadingSuggestions ? 'Cargando...' : dropdownPlaceholder() }}
+                </option>
+                <option *ngFor="let s of suggestions" [value]="s">{{ s }}</option>
+              </select>
+              <span class="wo-dropdown-spinner" *ngIf="loadingSuggestions">⏳</span>
+            </div>
+          </ng-container>
         </div>
         <div *ngIf="!isLoading && !searchPerformed" class="wo-empty">Selecciona un criterio e ingresa un valor para
           buscar.</div>

@@ -41,6 +41,8 @@ export class WorkOrderComponent implements OnInit {
   searchResults:  WorkOrderResponse[] = [];
   searchType:     SearchType = 'number';
   searchValue     = '';
+  suggestions:       string[]  = [];
+  loadingSuggestions = false;
   searchPerformed = false;
 
   downloadingId: number | null = null;
@@ -147,6 +149,32 @@ export class WorkOrderComponent implements OnInit {
     }
   }
 
+  dropdownPlaceholder(): string {
+    if (this.searchType === 'number') return 'Selecciona un N° de orden...';
+    if (this.searchType === 'plate')  return 'Selecciona una placa...';
+    return 'Selecciona una identificación...';
+  }
+
+  _loadDropdownOptions(): void {
+    this.suggestions = [];
+    this.searchValue = '';
+    if (this.searchType === 'state') return;
+    this.loadingSuggestions = true;
+    this.workOrderService.list().subscribe({
+      next: (res) => {
+        if (this.searchType === 'number') {
+          this.suggestions = [...new Set(res.map(o => o.numberorder))];
+        } else if (this.searchType === 'plate') {
+          this.suggestions = [...new Set(res.map(o => o.vehicleplate))];
+        } else {
+          this.suggestions = [...new Set(res.map(o => o.clientidentification))];
+        }
+        this.loadingSuggestions = false;
+      },
+      error: () => { this.loadingSuggestions = false; }
+    });
+  }
+
   private _buildOrderForm(): void {
     this.orderForm = this.fb.group({
       clientidentification:    ['', Validators.required],
@@ -206,7 +234,8 @@ export class WorkOrderComponent implements OnInit {
 
   setTab(tab: Tab): void {
     this.activeTab = tab;
-    if (tab === 'lista') this.loadOrders();
+    if (tab === 'lista')  this.loadOrders();
+    if (tab === 'buscar') this._loadDropdownOptions();
   }
 
   onIdentificationBlur(): void {
@@ -422,6 +451,8 @@ export class WorkOrderComponent implements OnInit {
 
   onSearchTypeChange(): void {
     this.searchValue = ''; this.searchResults = []; this.searchPerformed = false;
+    this.suggestions = []; this.loadingSuggestions = false;
+    this._loadDropdownOptions();
   }
 
   doSearch(): void {

@@ -95,7 +95,11 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
   goToAppointments(): void {
     this.closeMobile();
-    this.router.navigate(['/appointments']);
+    if (!this.isLoggedIn) {
+      this.router.navigate(['/login']);
+    } else {
+      this.router.navigate(['/appointments']);
+    }
   }
 
   goToMechanicAppointments(): void {
