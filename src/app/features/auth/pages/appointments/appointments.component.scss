@@ -1,0 +1,358 @@
+$orange:  #F45D01;
+$black:   #0D0D0D;
+$gray-dark: #2B2B2B;
+$gray-mid:  #6E6E6E;
+$gray-light: #CFCFCF;
+$white:   #FFFFFF;
+$red:     #DC2626;
+$green:   #22C55E;
+$blue:    #3B82F6;
+$yellow:  #F59E0B;
+$border:  rgba(244, 93, 1, 0.25);
+
+.apt-wrapper {
+  min-height: 100vh;
+  background: $black;
+  padding: 32px 24px 64px;
+}
+
+.apt-page {
+  max-width: 960px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+// ── Header ────────────────────────────────────────────────────────────────────
+.apt-header {
+  display: flex;
+  align-items: center;
+  padding-bottom: 16px;
+  border-bottom: 1px solid $border;
+}
+
+.header-left { display: flex; align-items: center; gap: 14px; }
+
+.header-icon {
+  width: 52px; height: 52px;
+  border-radius: 12px;
+  background: rgba($orange, 0.12);
+  border: 1px solid $border;
+  display: flex; align-items: center; justify-content: center;
+  color: $orange; flex-shrink: 0;
+}
+
+.header-title {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 1.7rem; font-weight: 700;
+  color: $white; margin: 0;
+}
+
+.header-sub { font-size: 0.85rem; color: $gray-mid; display: block; margin-top: 2px; }
+
+// ── Tabs ──────────────────────────────────────────────────────────────────────
+.apt-tabs {
+  display: flex; gap: 4px; flex-wrap: wrap;
+  background: $gray-dark;
+  border-radius: 8px; padding: 4px;
+  width: fit-content;
+}
+
+.apt-tab {
+  padding: 8px 16px; border-radius: 6px;
+  border: none; background: transparent;
+  color: $gray-light; font-size: 0.82rem; font-weight: 600;
+  cursor: pointer; transition: all 0.2s;
+
+  &.active { background: $orange; color: $white; }
+  &:not(.active):hover { background: rgba($white, 0.06); color: $white; }
+}
+
+// ── Card ──────────────────────────────────────────────────────────────────────
+.apt-card {
+  background: $gray-dark;
+  border: 1px solid $border;
+  border-radius: 12px;
+  padding: 24px;
+}
+
+.section-title {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 1rem; font-weight: 700;
+  color: $white; text-transform: uppercase;
+  letter-spacing: 0.5px; margin-bottom: 20px;
+}
+
+// ── Agenda type ───────────────────────────────────────────────────────────────
+.agenda-type-row {
+  display: flex; gap: 8px; margin-bottom: 16px;
+}
+
+.type-btn {
+  padding: 6px 16px; border-radius: 6px;
+  border: 1px solid $border; background: transparent;
+  color: $gray-light; font-size: 0.82rem; font-weight: 600;
+  cursor: pointer; transition: all 0.2s;
+
+  &.active { background: rgba($orange, 0.15); color: $orange; border-color: $orange; }
+  &:hover:not(.active) { background: rgba($white, 0.06); }
+}
+
+// ── Form ──────────────────────────────────────────────────────────────────────
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px; margin-bottom: 16px;
+
+  @media (max-width: 600px) { grid-template-columns: 1fr; }
+}
+
+.form-group {
+  display: flex; flex-direction: column; gap: 6px;
+  margin-bottom: 16px;
+}
+
+.form-label {
+  font-size: 11px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.8px;
+  color: $gray-mid;
+
+  &.required::after { content: ' *'; color: $orange; }
+}
+
+.form-input {
+  background: $black;
+  border: 1px solid rgba($white, 0.08);
+  border-radius: 6px; color: $white;
+  font-size: 14px; padding: 10px 12px;
+  font-family: inherit; outline: none;
+  transition: border-color 0.2s;
+
+  &:focus        { border-color: $orange; }
+  &::placeholder { color: $gray-mid; }
+  &.input-error  { border-color: $red; }
+  option { background: $gray-dark; }
+}
+
+.form-textarea { resize: vertical; min-height: 80px; }
+.form-actions  { display: flex; justify-content: flex-end; }
+.field-error   { font-size: 11px; color: #F87171; }
+
+// ── Table ─────────────────────────────────────────────────────────────────────
+.apt-table-wrap { overflow-x: auto; }
+
+.apt-table {
+  width: 100%; border-collapse: collapse; font-size: 13px;
+
+  th {
+    text-align: left; padding: 10px 12px;
+    color: $gray-mid; font-size: 11px; font-weight: 600;
+    text-transform: uppercase; letter-spacing: 0.8px;
+    border-bottom: 1px solid rgba($white, 0.06);
+    white-space: nowrap;
+  }
+
+  td {
+    padding: 11px 12px;
+    border-bottom: 1px solid rgba($white, 0.04);
+    color: $gray-light; vertical-align: middle;
+  }
+
+  tr:last-child td { border-bottom: none; }
+}
+
+.apt-reason  { font-size: 12px; color: $gray-mid; max-width: 200px; }
+.apt-actions { text-align: center; white-space: nowrap; }
+.apt-no-action { color: $gray-mid; font-size: 12px; }
+
+// ── Availability ──────────────────────────────────────────────────────────────
+.availability-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+
+  @media (max-width: 600px) { grid-template-columns: 1fr; }
+}
+
+.avail-section { display: flex; flex-direction: column; gap: 10px; }
+
+.avail-title {
+  font-size: 11px; font-weight: 700;
+  text-transform: uppercase; letter-spacing: 0.8px;
+
+  &--available { color: $green; }
+  &--occupied  { color: $red; }
+}
+
+.avail-slots { display: flex; flex-wrap: wrap; gap: 8px; }
+
+.slot {
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 13px; font-weight: 600;
+
+  &--available { background: rgba($green, 0.12); color: $green; border: 1px solid rgba($green, 0.3); }
+  &--occupied  { background: rgba($red, 0.12);   color: $red;   border: 1px solid rgba($red, 0.3);   }
+}
+
+.slot-empty { font-size: 12px; color: $gray-mid; }
+
+// ── Badges ────────────────────────────────────────────────────────────────────
+.badge {
+  display: inline-block; padding: 3px 10px;
+  border-radius: 20px; font-size: 11px; font-weight: 600;
+
+  &--scheduled    { background: rgba($blue, 0.15);   color: #60A5FA; }
+  &--reprogrammed { background: rgba($yellow, 0.15); color: $yellow; }
+  &--cancelled    { background: rgba($red, 0.15);    color: $red;    }
+  &--completed    { background: rgba($green, 0.15);  color: $green;  }
+}
+
+// ── Action buttons ────────────────────────────────────────────────────────────
+.btn-action {
+  border: none; border-radius: 6px;
+  padding: 5px 9px; font-size: 0.85rem;
+  cursor: pointer; margin: 0 2px;
+  transition: opacity 0.15s, transform 0.1s;
+
+  &:hover { opacity: 0.8; transform: scale(1.08); }
+
+  &.btn-reschedule  { background: rgba($blue, 0.12);   color: #60A5FA; }
+  &.btn-cancel-apt  { background: rgba($red, 0.12);    color: $red;    }
+}
+
+// ── Empty ─────────────────────────────────────────────────────────────────────
+.empty-state {
+  text-align: center; padding: 40px;
+  color: $gray-mid; font-size: 0.9rem;
+}
+
+// ── Buttons ───────────────────────────────────────────────────────────────────
+.btn {
+  display: inline-flex; align-items: center; gap: 6px;
+  padding: 10px 22px; border-radius: 8px; border: none;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 0.95rem; font-weight: 700;
+  letter-spacing: 0.5px; cursor: pointer;
+  transition: all 0.2s; text-transform: uppercase;
+
+  &:disabled { opacity: 0.45; cursor: not-allowed; }
+}
+
+.btn-primary {
+  background: linear-gradient(90deg, $red, $orange);
+  color: $white;
+  &:hover:not(:disabled) { opacity: 0.9; transform: translateY(-1px); }
+}
+
+.btn-ghost {
+  background: transparent; color: $orange;
+  border: 1px solid $border;
+  &:hover:not(:disabled) { background: rgba($orange, 0.08); }
+}
+
+.btn-danger {
+  background: $red; color: $white;
+  &:hover:not(:disabled) { opacity: 0.9; }
+}
+
+// ── Modal ─────────────────────────────────────────────────────────────────────
+.modal-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.75);
+  backdrop-filter: blur(4px);
+  display: flex; align-items: center; justify-content: center;
+  z-index: 9999; padding: 1rem;
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+.modal-card {
+  background: #1a1a1a;
+  border: 1px solid $border;
+  border-radius: 14px;
+  width: 100%; max-width: 480px;
+  max-height: 90vh; overflow-y: auto;
+  animation: slideUp 0.25s ease;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+
+.modal-header {
+  text-align: center;
+  padding: 28px 28px 16px;
+  border-bottom: 1px solid rgba($white, 0.06);
+}
+
+.modal-icon  { font-size: 2rem; margin-bottom: 8px; display: block; }
+.modal-title {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 1.3rem; font-weight: 700;
+  color: $white; margin: 0 0 4px;
+}
+.modal-sub { font-size: 0.82rem; color: $gray-mid; margin: 0; }
+.modal-body { padding: 20px 28px 0; }
+
+.modal-actions {
+  display: flex; justify-content: flex-end; gap: 10px;
+  padding: 20px 28px 24px;
+  border-top: 1px solid rgba($white, 0.06);
+  margin-top: 20px;
+}
+
+// ── Spinner ───────────────────────────────────────────────────────────────────
+.spinner-sm {
+  width: 16px; height: 16px;
+  border: 2px solid rgba($white, 0.3);
+  border-top-color: $white;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  display: inline-block;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+// ── Date input ────────────────────────────────────────────────────────────────
+::ng-deep .form-input[type="date"] {
+  color-scheme: dark;
+
+  &::-webkit-calendar-picker-indicator {
+    background-color: $orange;
+    border-radius: 3px;
+    padding: 2px;
+    cursor: pointer;
+    opacity: 0.9;
+    &:hover { opacity: 1; }
+  }
+}
+.back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 14px;
+  border-radius: 8px;
+  background: rgba(244,93,1,0.08);
+  border: 1px solid rgba(244,93,1,0.25);
+  color: #F45D01;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  margin-bottom: 16px;
+  align-self: flex-start;
+
+  svg { flex-shrink: 0; transition: transform 0.2s; }
+
+  &:hover {
+    background: rgba(244,93,1,0.16);
+    border-color: #F45D01;
+    transform: translateX(-2px);
+    svg { transform: translateX(-3px); }
+  }
+}
+

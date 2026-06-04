@@ -1,23 +1,20 @@
 $black: #0D0D0D;
-$gray-dark: #2B2B2B;
+$gray-dark: #1A1A1A;
 $gray-mid: #6E6E6E;
 $gray-light: #CFCFCF;
 $orange: #F45D01;
 $orange-light: #FF8C00;
 $white: #FFFFFF;
-$red: #D62828;
 $font-heading: 'Rajdhani', sans-serif;
-$font-display: 'Bebas Neue', sans-serif;
 
 .navbar {
   position: fixed;
-  top: 0;
-  left: 0;
+  top: 0; left: 0;
   width: 100%;
   z-index: 1000;
   background: rgba($black, 0.92);
   backdrop-filter: blur(12px);
-  border-bottom: 1px solid rgba($gray-dark, 0.6);
+  border-bottom: 1px solid rgba(#2B2B2B, 0.6);
   transition: background 0.3s ease, box-shadow 0.3s ease;
 
   &.scrolled {
@@ -31,9 +28,9 @@ $font-display: 'Bebas Neue', sans-serif;
     margin: 0 auto;
     padding: 0 24px;
     height: 72px;
-    display: flex;
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
     align-items: center;
-    justify-content: space-between;
   }
 
   &__logo {
@@ -44,7 +41,7 @@ $font-display: 'Bebas Neue', sans-serif;
   }
 
   &__logo-img {
-    height: 56px;
+    height: 70px;
     width: auto;
     object-fit: contain;
     filter: drop-shadow(0 0 8px rgba($orange, 0.35));
@@ -53,10 +50,10 @@ $font-display: 'Bebas Neue', sans-serif;
   &__links {
     display: flex;
     align-items: center;
-    gap: 6px;
+    justify-content: center;
+    gap: 4px;
     list-style: none;
-    padding: 0;
-    margin: 0;
+    padding: 0; margin: 0;
     @media (max-width: 1024px) { display: none; }
   }
 
@@ -72,28 +69,30 @@ $font-display: 'Bebas Neue', sans-serif;
     transition: color 0.25s;
     position: relative;
     cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
 
     &::after {
       content: '';
       position: absolute;
-      bottom: 4px;
-      left: 50%;
+      bottom: 4px; left: 50%;
       transform: translateX(-50%) scaleX(0);
-      width: 20px;
-      height: 2px;
+      width: 20px; height: 2px;
       background: $orange;
       border-radius: 2px;
       transition: transform 0.25s ease;
     }
 
-    &:hover,
-    &.active {
+    &:hover, &.active {
       color: $white;
       &::after { transform: translateX(-50%) scaleX(1); }
     }
   }
 
   &__auth {
+    display: flex;
+    justify-content: flex-end;
     @media (max-width: 1024px) { display: none; }
   }
 
@@ -113,8 +112,6 @@ $font-display: 'Bebas Neue', sans-serif;
     transition: all 0.3s ease;
     cursor: pointer;
 
-    i { font-size: 1.1rem; }
-
     &:hover {
       background: rgba($orange, 0.12);
       border-color: $orange;
@@ -126,14 +123,17 @@ $font-display: 'Bebas Neue', sans-serif;
   &__user {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
+  }
+
+  &__user-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
     color: $gray-light;
     font-family: $font-heading;
 
-    i {
-      font-size: 1.1rem;
-      color: $orange;
-    }
+    i { font-size: 1.1rem; color: $orange; }
   }
 
   &__username {
@@ -141,110 +141,40 @@ $font-display: 'Bebas Neue', sans-serif;
     font-weight: 600;
     letter-spacing: 0.5px;
     color: $white;
-    max-width: 160px;
+    max-width: 150px;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
 
-  // ── Botón Órdenes de trabajo ──────────────────────────────
-  &__workorder-btn {
-    display: flex;
-    align-items: center;
-    gap: 6px;
-    padding: 8px 16px;
-    border: 1.5px solid rgba($orange, 0.6);
-    border-radius: 4px;
-    background: none;
-    font-family: $font-heading;
-    font-size: 0.85rem;
-    font-weight: 600;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    color: $orange;
-    cursor: pointer;
-    transition: all 0.3s ease;
-
-    i { font-size: 1rem; color: $orange; }
-
-    &:hover {
-      background: rgba($orange, 0.12);
-      border-color: $orange;
-      box-shadow: 0 0 16px rgba($orange, 0.25);
-      color: $orange-light;
-      i { color: $orange-light; }
-    }
-  }
-
-  // ── Botón Admin ───────────────────────────────────────────
-  &__admin-btn {
-    display: flex;
+  &__logout-btn {
+    display: inline-flex;
     align-items: center;
     gap: 7px;
-    padding: 8px 18px;
-    border: none;
-    border-radius: 4px;
-    background: linear-gradient(90deg, $red, $orange);
-    font-family: $font-heading;
-    font-size: 0.85rem;
-    font-weight: 700;
-    letter-spacing: 1.5px;
-    text-transform: uppercase;
-    color: $white;
-    cursor: pointer;
-    transition: all 0.3s ease;
-    position: relative;
-    overflow: hidden;
-
-    i { font-size: 0.95rem; }
-
-    &::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(90deg, $orange, $orange-light);
-      opacity: 0;
-      transition: opacity 0.3s ease;
-    }
-
-    &:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 6px 20px rgba($orange, 0.4);
-      &::before { opacity: 1; }
-      i, span { position: relative; z-index: 1; }
-    }
-
-    &:active {
-      transform: translateY(0);
-    }
-  }
-
-  // ── Botón Cerrar sesión ───────────────────────────────────
-  &__logout-btn {
-    display: flex;
-    align-items: center;
-    gap: 6px;
     padding: 8px 16px;
-    border: 1.5px solid rgba(#e74c3c, 0.6);
-    border-radius: 4px;
-    background: none;
+    border-radius: 8px;
+    background: rgba($orange, 0.1);
+    border: 1px solid rgba($orange, 0.25);
+    color: $orange;
     font-family: $font-heading;
     font-size: 0.85rem;
     font-weight: 600;
     letter-spacing: 1px;
     text-transform: uppercase;
-    color: #e74c3c;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.2s;
+
+    svg { flex-shrink: 0; }
 
     &:hover {
-      background: rgba(#e74c3c, 0.12);
-      border-color: #e74c3c;
-      box-shadow: 0 0 16px rgba(#e74c3c, 0.2);
+      background: rgba($orange, 0.2);
+      border-color: $orange;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 16px rgba($orange, 0.25);
     }
   }
 
-  // ── Hamburger ─────────────────────────────────────────────
+  // ── Hamburger ──────────────────────────────────────────────
   &__hamburger {
     display: none;
     flex-direction: column;
@@ -253,13 +183,11 @@ $font-display: 'Bebas Neue', sans-serif;
     border: none;
     cursor: pointer;
     padding: 4px;
-
     @media (max-width: 1024px) { display: flex; }
 
     span {
       display: block;
-      width: 26px;
-      height: 2px;
+      width: 26px; height: 2px;
       background: $gray-light;
       border-radius: 2px;
       transition: all 0.3s ease;
@@ -272,13 +200,12 @@ $font-display: 'Bebas Neue', sans-serif;
     }
   }
 
-  // ── Mobile Menu ───────────────────────────────────────────
+  // ── Mobile Menu ────────────────────────────────────────────
   &__mobile {
     display: none;
     background: rgba($gray-dark, 0.97);
     border-top: 1px solid rgba($orange, 0.2);
     padding: 16px 0;
-
     &.open { display: block; }
 
     ul { list-style: none; padding: 0; margin: 0; }
@@ -295,17 +222,8 @@ $font-display: 'Bebas Neue', sans-serif;
       transition: color 0.2s, background 0.2s;
       cursor: pointer;
 
-      &:hover {
-        color: $orange;
-        background: rgba($orange, 0.06);
-      }
-
-      &.mobile-login {
-        color: $orange;
-        border-top: 1px solid rgba($gray-mid, 0.3);
-        margin-top: 8px;
-        padding-top: 20px;
-      }
+      &:hover { color: $orange; background: rgba($orange, 0.06); }
+      &.mobile-login { color: $orange; border-top: 1px solid rgba($gray-mid, 0.3); margin-top: 8px; padding-top: 20px; }
     }
 
     .mobile-user {
@@ -321,33 +239,92 @@ $font-display: 'Bebas Neue', sans-serif;
       font-family: $font-heading;
       font-weight: 600;
       font-size: 0.9rem;
-
       i { color: $orange; margin-right: 6px; }
     }
 
-    .mobile-workorder {
-      color: $orange !important;
-      i { margin-right: 6px; }
-      &:hover {
-        color: $orange-light !important;
-        background: rgba($orange, 0.06);
-      }
-    }
+    .mobile-logout { color: $orange !important; }
+  }
+}
 
-    // ── Mobile Admin ──────────────────────────────────────
-    .mobile-admin {
-      color: $white !important;
-      background: linear-gradient(90deg, rgba($red, 0.15), rgba($orange, 0.15)) !important;
-      border-left: 3px solid $orange;
-      i { margin-right: 6px; color: $orange; }
-      &:hover {
-        background: linear-gradient(90deg, rgba($red, 0.25), rgba($orange, 0.25)) !important;
-        color: $orange-light !important;
-      }
-    }
+// ── Dropdown ───────────────────────────────────────────────────
+.has-dropdown {
+  position: relative;
+}
 
-    .mobile-logout {
-      color: #e74c3c !important;
-    }
+.dropdown-arrow {
+  transition: transform 0.25s ease;
+  color: $gray-mid;
+  &.open { transform: rotate(180deg); color: $orange; }
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  min-width: 200px;
+  background: rgba(#141414, 0.98);
+  border: 1px solid rgba($orange, 0.2);
+  border-radius: 10px;
+  padding: 6px;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateX(-50%) translateY(-6px);
+  transition: opacity 0.2s ease, transform 0.2s ease, visibility 0.2s;
+  box-shadow: 0 16px 40px rgba(0,0,0,0.6), 0 0 0 1px rgba($orange, 0.05);
+  backdrop-filter: blur(16px);
+  z-index: 200;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: -6px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 12px; height: 6px;
+    background: rgba(#141414, 0.98);
+    clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+    border-top: none;
+  }
+
+  &.open {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(-50%) translateY(0);
+  }
+}
+
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: 7px;
+  font-family: $font-heading;
+  font-size: 0.9rem;
+  font-weight: 600;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: $gray-light;
+  cursor: pointer;
+  transition: all 0.18s ease;
+  text-decoration: none;
+
+  svg { color: $gray-mid; transition: color 0.18s; flex-shrink: 0; }
+
+  &:hover {
+    background: rgba($orange, 0.1);
+    color: $white;
+    svg { color: $orange; }
+  }
+
+  &.active {
+    color: $orange;
+    background: rgba($orange, 0.08);
+    svg { color: $orange; }
+  }
+
+  & + & {
+    border-top: 1px solid rgba(255,255,255,0.04);
   }
 }

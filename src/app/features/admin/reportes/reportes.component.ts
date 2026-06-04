@@ -59,7 +59,7 @@ export class ReportesComponent implements OnInit {
   }
 
   private getHeaders(): { headers: HttpHeaders } {
-    const token = localStorage.getItem('token');
+    const token = sessionStorage.getItem('token');
     return { headers: new HttpHeaders({ Authorization: `Bearer ${token}` }) };
   }
 
@@ -274,7 +274,12 @@ export class ReportesComponent implements OnInit {
   // ── Exportar Excel (existentes) ───────────────────────────
 
   exportarStockExcel(): void {
-    const token = localStorage.getItem('token');
+    if (this.stockCritico.length === 0) {
+      this.toast.warning('No hay stock crítico para exportar.');
+      return;
+    }
+    
+    const token = sessionStorage.getItem('token');
     this.http.get(`${this.inventarioUrl}/reportes/stock-critico/excel`, {
       headers: new HttpHeaders({ Authorization: `Bearer ${token}` }),
       responseType: 'blob'
@@ -293,7 +298,13 @@ export class ReportesComponent implements OnInit {
   }
 
   exportarMasUsadosExcel(): void {
-    const token = localStorage.getItem('token');
+    if (this.repuestosMasUsados.length === 0) {
+      this.toast.warning('No hay datos para exportar.');
+      return;
+    }
+
+    const token = sessionStorage
+    .getItem('token');
     this.http.get(`${this.inventarioUrl}/reportes/mas-usados/excel`, {
       headers: new HttpHeaders({ Authorization: `Bearer ${token}` }),
       responseType: 'blob'
@@ -312,6 +323,10 @@ export class ReportesComponent implements OnInit {
   }
 
   exportarServiciosExcel(): void {
+    if(this.servicios.length === 0) {
+      this.toast.warning('No hay servicios para exportar.');
+      return;
+    }
     const filas = this.servicios.map((s, i) => ({
       '#': i + 1,
       'Nombre': s.name,

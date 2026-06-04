@@ -1,0 +1,267 @@
+<div class="apt-wrapper">
+  <div class="apt-page">
+
+    <!-- Header -->
+    <a class="back-btn" routerLink="/" title="Volver al inicio">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+      Volver al inicio
+    </a>
+
+    <div class="apt-header">
+      <div class="header-left">
+        <div class="header-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"/>
+            <line x1="16" y1="2" x2="16" y2="6"/>
+            <line x1="8" y1="2" x2="8" y2="6"/>
+            <line x1="3" y1="10" x2="21" y2="10"/>
+          </svg>
+        </div>
+        <div>
+          <h1 class="header-title">Mis Citas</h1>
+          <span class="header-sub">Gestiona tus citas en TurboMechanics</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="apt-tabs">
+      <button class="apt-tab" [class.active]="activeTab === 'register'" (click)="activeTab = 'register'">Agendar Cita</button>
+      <button class="apt-tab" [class.active]="activeTab === 'manage'" (click)="activeTab = 'manage'">Mis Citas</button>
+      <button class="apt-tab" [class.active]="activeTab === 'availability'" (click)="activeTab = 'availability'">Disponibilidad</button>
+    </div>
+
+    <!-- ══ TAB: REGISTRAR ════════════════════════════════════════════════════ -->
+    <ng-container *ngIf="activeTab === 'register'">
+      <div class="apt-card">
+        <h2 class="section-title">Agendar Nueva Cita</h2>
+        <form [formGroup]="registerForm" (ngSubmit)="submitRegister()" novalidate>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label required">Identificación</label>
+              <input type="number" class="form-input" formControlName="identification"
+                     placeholder="Cédula o NIT"
+                     [class.input-error]="isInvalid(registerForm, 'identification')" />
+              <span class="field-error" *ngIf="isInvalid(registerForm, 'identification')">Obligatorio</span>
+            </div>
+            <div class="form-group">
+              <label class="form-label required">Placa del vehículo</label>
+              <input type="text" class="form-input" formControlName="plate"
+                     placeholder="ABC-123" style="text-transform:uppercase"
+                     [class.input-error]="isInvalid(registerForm, 'plate')" />
+              <span class="field-error" *ngIf="isInvalid(registerForm, 'plate')">Obligatorio</span>
+            </div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label required">Fecha</label>
+              <input type="date" class="form-input" [min]="today" formControlName="date"
+                     [class.input-error]="isInvalid(registerForm, 'date')" />
+              <span class="field-error" *ngIf="isInvalid(registerForm, 'date')">Obligatorio</span>
+            </div>
+            <div class="form-group">
+              <label class="form-label required">Hora</label>
+              <select class="form-input" formControlName="time"
+                      [class.input-error]="isInvalid(registerForm, 'time')">
+                <option value="">Selecciona una hora...</option>
+                <option value="08:00:00">08:00 AM</option>
+                <option value="09:00:00">09:00 AM</option>
+                <option value="10:00:00">10:00 AM</option>
+                <option value="11:00:00">11:00 AM</option>
+                <option value="12:00:00">12:00 PM</option>
+                <option value="13:00:00">01:00 PM</option>
+                <option value="14:00:00">02:00 PM</option>
+                <option value="15:00:00">03:00 PM</option>
+                <option value="16:00:00">04:00 PM</option>
+                <option value="17:00:00">05:00 PM</option>
+              </select>
+              <span class="field-error" *ngIf="isInvalid(registerForm, 'time')">Obligatorio</span>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Motivo de la cita</label>
+            <textarea class="form-input form-textarea" formControlName="reason"
+                      placeholder="Describe el motivo de tu cita..." rows="3"></textarea>
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary" [disabled]="saving">
+              <span *ngIf="!saving">Agendar Cita</span>
+              <span *ngIf="saving" class="spinner-sm"></span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </ng-container>
+
+    <!-- ══ TAB: MIS CITAS ════════════════════════════════════════════════════ -->
+    <ng-container *ngIf="activeTab === 'manage'">
+      <div class="apt-card">
+        <h2 class="section-title">Mis Citas</h2>
+        <form [formGroup]="manageForm" (ngSubmit)="searchManage()" novalidate>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label required">Identificación</label>
+              <input type="number" class="form-input" formControlName="identification"
+                     placeholder="Cédula o NIT"
+                     [class.input-error]="isInvalid(manageForm, 'identification')" />
+              <span class="field-error" *ngIf="isInvalid(manageForm, 'identification')">Obligatorio</span>
+            </div>
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary" [disabled]="loadingManage">
+              <span *ngIf="!loadingManage">Buscar</span>
+              <span *ngIf="loadingManage" class="spinner-sm"></span>
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <ng-container *ngIf="manageSearched">
+        <div class="apt-card empty-state" *ngIf="manageAppointments.length === 0">
+          No tienes citas registradas.
+        </div>
+        <div class="apt-card" *ngIf="manageAppointments.length > 0">
+          <div class="apt-table-wrap">
+            <table class="apt-table">
+              <thead>
+                <tr><th>Fecha</th><th>Hora</th><th>Vehículo</th><th>Motivo</th><th>Estado</th><th>Acciones</th></tr>
+              </thead>
+              <tbody>
+                <tr *ngFor="let a of manageAppointments">
+                  <td>{{ a.date | date:'dd/MM/yyyy' }}</td>
+                  <td>{{ a.time }}</td>
+                  <td>{{ a.vehicle.plate || '—' }}</td>
+                  <td class="apt-reason">{{ a.reason || '—' }}</td>
+                  <td><span class="badge" [class]="statusClass(a.status)">{{ statusLabel(a.status) }}</span></td>
+                  <td class="apt-actions">
+                    <ng-container *ngIf="canManage(a)">
+                      <button class="btn-action btn-reschedule" (click)="openReschedule(a)" title="Reprogramar">📅</button>
+                      <button class="btn-action btn-cancel-apt" (click)="openCancel(a)" title="Cancelar">✕</button>
+                    </ng-container>
+                    <span *ngIf="!canManage(a)" class="apt-no-action">—</span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </ng-container>
+    </ng-container>
+
+    <!-- ══ TAB: DISPONIBILIDAD ═══════════════════════════════════════════════ -->
+    <ng-container *ngIf="activeTab === 'availability'">
+      <div class="apt-card">
+        <h2 class="section-title">Horarios Disponibles</h2>
+        <form [formGroup]="availabilityForm" (ngSubmit)="searchAvailability()" novalidate>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label required">Fecha</label>
+              <input type="date" class="form-input" [min]="today" formControlName="date"
+                     [class.input-error]="isInvalid(availabilityForm, 'date')" />
+              <span class="field-error" *ngIf="isInvalid(availabilityForm, 'date')">Obligatorio</span>
+            </div>
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary" [disabled]="loadingAvailability">
+              <span *ngIf="!loadingAvailability">Consultar</span>
+              <span *ngIf="loadingAvailability" class="spinner-sm"></span>
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <ng-container *ngIf="availabilitySearched && availability">
+        <div class="apt-card">
+          <div class="availability-grid">
+            <div class="avail-section">
+              <div class="avail-title avail-title--available">✓ Disponibles ({{ availability.availableSlots.length }})</div>
+              <div class="avail-slots">
+                <span class="slot slot--available" *ngFor="let s of availability.availableSlots">{{ s }}</span>
+                <span class="slot-empty" *ngIf="availability.availableSlots.length === 0">Sin horarios disponibles</span>
+              </div>
+            </div>
+            <div class="avail-section">
+              <div class="avail-title avail-title--occupied">✕ Ocupados ({{ availability.occupiedSlots.length }})</div>
+              <div class="avail-slots">
+                <span class="slot slot--occupied" *ngFor="let s of availability.occupiedSlots">{{ s }}</span>
+                <span class="slot-empty" *ngIf="availability.occupiedSlots.length === 0">Ninguno ocupado</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </ng-container>
+    </ng-container>
+
+  </div>
+</div>
+
+<!-- Modal: Reprogramar -->
+<div class="modal-overlay" *ngIf="showRescheduleModal" (click)="closeReschedule()">
+  <div class="modal-card" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <div class="modal-icon">📅</div>
+      <h2 class="modal-title">Reprogramar Cita</h2>
+      <p class="modal-sub">Selecciona la nueva fecha y hora</p>
+    </div>
+    <form [formGroup]="rescheduleForm" (ngSubmit)="submitReschedule()" novalidate class="modal-body">
+      <div class="form-group">
+        <label class="form-label required">Nueva fecha</label>
+        <input type="date" class="form-input" [min]="today" formControlName="newDate"
+               [class.input-error]="isInvalid(rescheduleForm, 'newDate')" />
+        <span class="field-error" *ngIf="isInvalid(rescheduleForm, 'newDate')">Obligatorio</span>
+      </div>
+      <div class="form-group">
+        <label class="form-label required">Nueva hora</label>
+        <select class="form-input" formControlName="newTime"
+                [class.input-error]="isInvalid(rescheduleForm, 'newTime')">
+          <option value="">Selecciona una hora...</option>
+          <option value="08:00:00">08:00 AM</option>
+          <option value="09:00:00">09:00 AM</option>
+          <option value="10:00:00">10:00 AM</option>
+          <option value="11:00:00">11:00 AM</option>
+          <option value="12:00:00">12:00 PM</option>
+          <option value="13:00:00">01:00 PM</option>
+          <option value="14:00:00">02:00 PM</option>
+          <option value="15:00:00">03:00 PM</option>
+          <option value="16:00:00">04:00 PM</option>
+          <option value="17:00:00">05:00 PM</option>
+        </select>
+        <span class="field-error" *ngIf="isInvalid(rescheduleForm, 'newTime')">Obligatorio</span>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-ghost" (click)="closeReschedule()" [disabled]="rescheduling">Cancelar</button>
+        <button type="submit" class="btn btn-primary" [disabled]="rescheduling">
+          <span *ngIf="!rescheduling">Reprogramar</span>
+          <span *ngIf="rescheduling" class="spinner-sm"></span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal: Cancelar -->
+<div class="modal-overlay" *ngIf="showCancelModal" (click)="closeCancel()">
+  <div class="modal-card" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <div class="modal-icon">⚠️</div>
+      <h2 class="modal-title">Cancelar Cita</h2>
+      <p class="modal-sub">Esta acción no se puede deshacer</p>
+    </div>
+    <form [formGroup]="cancelForm" (ngSubmit)="submitCancel()" novalidate class="modal-body">
+      <div class="form-group">
+        <label class="form-label required">Motivo de cancelación</label>
+        <textarea class="form-input form-textarea" formControlName="reason"
+                  placeholder="Describe el motivo de la cancelación..." rows="3"
+                  [class.input-error]="isInvalid(cancelForm, 'reason')"></textarea>
+        <span class="field-error" *ngIf="isInvalid(cancelForm, 'reason')">El motivo es obligatorio</span>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-ghost" (click)="closeCancel()" [disabled]="cancelling">Volver</button>
+        <button type="submit" class="btn btn-danger" [disabled]="cancelling">
+          <span *ngIf="!cancelling">Confirmar cancelación</span>
+          <span *ngIf="cancelling" class="spinner-sm"></span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>

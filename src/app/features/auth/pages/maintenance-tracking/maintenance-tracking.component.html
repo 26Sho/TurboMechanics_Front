@@ -1,0 +1,307 @@
+<div class="apt-wrapper">
+  <div class="apt-page">
+
+    <!-- Header -->
+    <a class="back-btn" routerLink="/" title="Volver al inicio">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+      Volver al inicio
+    </a>
+
+    <div class="apt-header">
+      <div class="header-left">
+        <div class="header-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/>
+          </svg>
+        </div>
+        <div>
+          <h1 class="header-title">Mi Mantenimiento</h1>
+          <span class="header-sub">Consulta el estado de tu vehículo</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="apt-tabs">
+      <button class="apt-tab" [class.active]="activeTab === 'status'" (click)="activeTab = 'status'">Estado del vehículo</button>
+      <button class="apt-tab" [class.active]="activeTab === 'consent'" (click)="activeTab = 'consent'">Notificaciones</button>
+    </div>
+
+    <!-- ══ TAB: ESTADO (HU 9.1, 9.2, 9.3) ════════════════════════════════════ -->
+    <ng-container *ngIf="activeTab === 'status'">
+      <div class="apt-card">
+        <h2 class="section-title">Consultar Estado del Mantenimiento</h2>
+        <form [formGroup]="statusForm" (ngSubmit)="searchStatus()" novalidate>
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label required">Placa del vehículo</label>
+              <input type="text" class="form-input" formControlName="plate"
+                     placeholder="ABC-123" style="text-transform:uppercase"
+                     [class.input-error]="isInvalid(statusForm, 'plate')" />
+              <span class="field-error" *ngIf="isInvalid(statusForm, 'plate')">Obligatorio</span>
+            </div>
+          </div>
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary" [disabled]="loadingStatus">
+              <span *ngIf="!loadingStatus">Consultar</span>
+              <span *ngIf="loadingStatus" class="spinner-sm"></span>
+            </button>
+          </div>
+        </form>
+      </div>
+
+      <ng-container *ngIf="statusSearched">
+        <div class="apt-card empty-state" *ngIf="!status">
+          No se encontró mantenimiento activo para esa placa.
+        </div>
+
+        <div class="apt-card" *ngIf="status">
+          <div class="section-title" style="margin-bottom:1rem;">
+            Orden: <strong>{{ status.numberOrder }}</strong>
+            &nbsp;
+            <span class="badge" [class]="stateClass(status.stateOrder)">
+              {{ stateLabel(status.stateOrder) }}
+            </span>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Mecánico asignado</label>
+              <input type="text" class="form-input" [value]="status.assignedMechanicName" readonly />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Servicio solicitado</label>
+              <input type="text" class="form-input" [value]="status.serviceDescription || '—'" readonly />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Vehículo</label>
+              <input type="text" class="form-input"
+                     [value]="status.vehicleBrand + ' ' + status.vehicleModel + ' — ' + status.vehiclePlate"
+                     readonly />
+            </div>
+            <div class="form-group">
+              <label class="form-label">Fecha de ingreso</label>
+              <input type="text" class="form-input" [value]="status.dateEntry | date:'dd/MM/yyyy HH:mm'" readonly />
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label">Fecha estimada de entrega</label>
+              <input type="text" class="form-input"
+                     [value]="status.estimatedDelivery ? (status.estimatedDelivery | date:'dd/MM/yyyy') : 'No disponible'"
+                     readonly />
+            </div>
+          </div>
+        </div>
+
+        <!-- ── Avances (HU 9.7.7) ─────────────────────────────────────────── -->
+        <div class="apt-card" *ngIf="status">
+          <h2 class="section-title">Avances del mantenimiento</h2>
+          <div *ngIf="loadingProgress" style="text-align:center;padding:1rem;">
+            <span class="spinner-sm"></span>
+          </div>
+          <ng-container *ngIf="!loadingProgress">
+            <div class="empty-state" *ngIf="progresses.length === 0">
+              Aún no hay avances registrados.
+            </div>
+            <div class="apt-table-wrap" *ngIf="progresses.length > 0">
+              <table class="apt-table">
+                <thead>
+                  <tr><th>Fecha</th><th>Descripción</th><th>Registrado por</th></tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let p of progresses">
+                    <td>{{ p.registeredAt | date:'dd/MM/yyyy HH:mm' }}</td>
+                    <td class="apt-reason">{{ p.description }}</td>
+                    <td>{{ p.registeredBy }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </ng-container>
+        </div>
+
+        <!-- ── Inconvenientes (HU 9.6.7) ─────────────────────────────────── -->
+        <div class="apt-card" *ngIf="status">
+          <h2 class="section-title">Inconvenientes reportados</h2>
+          <div *ngIf="loadingIssues" style="text-align:center;padding:1rem;">
+            <span class="spinner-sm"></span>
+          </div>
+          <ng-container *ngIf="!loadingIssues">
+            <div class="empty-state" *ngIf="issues.length === 0">
+              No hay inconvenientes registrados.
+            </div>
+            <div class="apt-table-wrap" *ngIf="issues.length > 0">
+              <table class="apt-table">
+                <thead>
+                  <tr><th>Fecha</th><th>Descripción</th><th>Estado</th></tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let i of issues">
+                    <td>{{ i.reportedAt | date:'dd/MM/yyyy HH:mm' }}</td>
+                    <td class="apt-reason">{{ i.description }}</td>
+                    <td>
+                      <span class="badge" [class]="issueClass(i.status)">
+                        {{ i.status === 'Open' ? 'Abierto' : 'Cerrado' }}
+                      </span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </ng-container>
+        </div>
+
+        <!-- ── Historial de servicios (ST-9.3.7) ─────────────────────────── -->
+        <div class="apt-card" *ngIf="status">
+          <h2 class="section-title">Historial de servicios anteriores</h2>
+          <div *ngIf="loadingHistory" style="text-align:center;padding:1rem;">
+            <span class="spinner-sm"></span>
+          </div>
+          <ng-container *ngIf="!loadingHistory">
+            <div class="empty-state" *ngIf="history.length === 0">
+              No hay servicios anteriores registrados.
+            </div>
+            <div class="apt-table-wrap" *ngIf="history.length > 0">
+              <table class="apt-table">
+                <thead>
+                  <tr><th>Orden</th><th>Fecha ingreso</th><th>Servicio</th><th>Estado</th></tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let h of history">
+                    <td>{{ h.numberOrder }}</td>
+                    <td>{{ h.dateEntry | date:'dd/MM/yyyy' }}</td>
+                    <td class="apt-reason">{{ h.serviceDescription || '—' }}</td>
+                    <td>
+                      <span class="badge" [class]="stateClass(h.stateOrder)">
+                        {{ stateLabel(h.stateOrder) }}
+                      </span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </ng-container>
+        </div>
+
+        <!-- ── Historial de notificaciones (ST-9.5.8) ────────────────────── -->
+        <div class="apt-card" *ngIf="status">
+          <h2 class="section-title">Historial de notificaciones</h2>
+          <div *ngIf="loadingNotifications" style="text-align:center;padding:1rem;">
+            <span class="spinner-sm"></span>
+          </div>
+          <ng-container *ngIf="!loadingNotifications">
+            <div class="empty-state" *ngIf="notifications.length === 0">
+              Aún no se han enviado notificaciones para esta orden.
+            </div>
+            <div class="apt-table-wrap" *ngIf="notifications.length > 0">
+              <table class="apt-table">
+                <thead>
+                  <tr><th>Fecha</th><th>Canal</th><th>Asunto</th></tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let n of notifications">
+                    <td>{{ n.fechaEnvio | date:'dd/MM/yyyy HH:mm' }}</td>
+                    <td>{{ n.canal }}</td>
+                    <td class="apt-reason">{{ n.asunto }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </ng-container>
+        </div>
+        <div class="apt-card" *ngIf="status">
+          <h2 class="section-title">Historial de servicios anteriores</h2>
+          <div *ngIf="loadingHistory" style="text-align:center;padding:1rem;">
+            <span class="spinner-sm"></span>
+          </div>
+          <ng-container *ngIf="!loadingHistory">
+            <div class="empty-state" *ngIf="history.length === 0">
+              No hay servicios anteriores registrados.
+            </div>
+            <div class="apt-table-wrap" *ngIf="history.length > 0">
+              <table class="apt-table">
+                <thead>
+                  <tr><th>Orden</th><th>Fecha ingreso</th><th>Servicio</th><th>Estado</th></tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let h of history">
+                    <td>{{ h.numberOrder }}</td>
+                    <td>{{ h.dateEntry | date:'dd/MM/yyyy' }}</td>
+                    <td class="apt-reason">{{ h.serviceDescription || '—' }}</td>
+                    <td>
+                      <span class="badge" [class]="stateClass(h.stateOrder)">
+                        {{ stateLabel(h.stateOrder) }}
+                      </span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </ng-container>
+        </div>
+
+      </ng-container>
+    </ng-container>
+
+    <!-- ══ TAB: CONSENTIMIENTO (HU 9.8, 9.9) ════════════════════════════════ -->
+    <ng-container *ngIf="activeTab === 'consent'">
+      <div class="apt-card">
+        <h2 class="section-title">Configurar Notificaciones</h2>
+        <form [formGroup]="consentForm" novalidate>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label required">Identificación</label>
+              <input type="number" class="form-input" formControlName="identification"
+                     placeholder="Cédula o NIT"
+                     [class.input-error]="isInvalid(consentForm, 'identification')" />
+              <span class="field-error" *ngIf="isInvalid(consentForm, 'identification')">Obligatorio</span>
+            </div>
+            <div class="form-group" style="display:flex;align-items:flex-end;">
+              <button type="button" class="btn btn-primary" (click)="loadConsent()" [disabled]="loadingConsent">
+                <span *ngIf="!loadingConsent">Cargar configuración</span>
+                <span *ngIf="loadingConsent" class="spinner-sm"></span>
+              </button>
+            </div>
+          </div>
+
+          <ng-container *ngIf="consentSearched">
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label required">¿Autoriza recibir notificaciones?</label>
+                <select class="form-input" formControlName="authorized">
+                  <option [ngValue]="true">Sí, autorizo</option>
+                  <option [ngValue]="false">No, autorizo</option>
+                </select>
+              </div>
+              <div class="form-group" *ngIf="showChannel">
+                <label class="form-label required">Canal de notificación</label>
+                <select class="form-input" formControlName="channel">
+                  <option *ngFor="let c of channels" [value]="c.value">{{ c.label }}</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-actions">
+              <button type="button" class="btn btn-primary" (click)="saveConsent()" [disabled]="savingConsent">
+                <span *ngIf="!savingConsent">Guardar</span>
+                <span *ngIf="savingConsent" class="spinner-sm"></span>
+              </button>
+            </div>
+          </ng-container>
+
+          <div class="apt-card empty-state" *ngIf="consentSearched && !consent" style="margin-top:1rem;">
+            No se encontró configuración previa. Completa el formulario para registrarla.
+          </div>
+
+        </form>
+      </div>
+    </ng-container>
+
+  </div>
+</div>

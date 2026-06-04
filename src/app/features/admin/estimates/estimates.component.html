@@ -86,12 +86,12 @@
 
           <div class="form-group">
             <label class="form-label required">Detalle del presupuesto</label>
-            <textarea class="form-input form-textarea" formControlName="detailJson"
+            <textarea class="form-input form-textarea" formControlName="description"
                       placeholder='Describe los repuestos, mano de obra y costos... Ej: {"repuestos": "Filtro de aceite $50.000", "manoObra": "Cambio de aceite $30.000"}'
                       rows="5"
-                      [class.input-error]="isInvalid(sendForm, 'detailJson')"></textarea>
+                      [class.input-error]="isInvalid(sendForm, 'description')"></textarea>
             <span class="field-hint">Puedes usar texto libre o formato JSON con el detalle</span>
-            <span class="field-error" *ngIf="isInvalid(sendForm, 'detailJson')">El detalle es obligatorio</span>
+            <span class="field-error" *ngIf="isInvalid(sendForm, 'description')">El detalle es obligatorio</span>
           </div>
 
           <div class="form-actions">
@@ -157,8 +157,8 @@
               </thead>
               <tbody>
                 <tr *ngFor="let e of estimates">
-                  <td class="est-order">{{ e.workOrder?.numberorder || '—' }}</td>
-                  <td>{{ e.vehicle?.plate || '—' }}</td>
+                  <td class="est-order">{{ e.workOrder.numberorder || '—' }}</td>
+                  <td>{{ e.vehicle.plate || '—' }}</td>
                   <td class="est-total">${{ e.totalEstimate | number:'1.2-2' }}</td>
                   <td>
                     <span class="badge" [class]="statusClass(e.statusEstimate)">

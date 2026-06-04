@@ -1,24 +1,19 @@
-<section class="survey-container">
+<section class="survey-container" id="resenas">
 
+  <!-- ═══════════════ TARJETA DEL FORMULARIO ═══════════════ -->
   <div class="survey-card">
 
-    <span class="survey-tag">
-      ● ENCUESTA DE SATISFACCIÓN
-    </span>
+    <span class="survey-tag">● ENCUESTA DE SATISFACCIÓN</span>
 
     <h2>
       ¿Cómo fue tu experiencia en
       <span>TurboMechanics</span>?
     </h2>
 
-    <p>
-      Tu opinión nos ayuda a mejorar nuestros servicios
-      y seguir creciendo.
-    </p>
+    <p>Tu opinión nos ayuda a mejorar nuestros servicios y seguir creciendo.</p>
 
- 
+    <!-- ESTRELLAS -->
     <div class="stars">
-
       <i
         *ngFor="let star of [1,2,3,4,5]"
         class="fa-solid fa-star"
@@ -26,26 +21,229 @@
         (mouseenter)="hoverRating = star"
         (mouseleave)="hoverRating = 0"
         (click)="setRating(star)"
+        [title]="ratingLabels[star]"
       ></i>
+    </div>
+    <div class="rating-label" *ngIf="rating > 0">{{ ratingLabels[rating] }}</div>
 
+    <!-- CÉDULA + SELECTOR DE ORDEN (solo si es cliente logueado) -->
+    <div class="form-group" *ngIf="isCliente">
+      <label class="form-label">Tu número de cédula *</label>
+      <div class="cedula-row">
+        <input
+          type="text"
+          class="cedula-input"
+          [(ngModel)]="clientIdentification"
+          placeholder="Ej: 1234567890"
+          [disabled]="loadingOrders"
+          (keydown.enter)="loadDeliveredOrders()"
+        />
+        <button
+          type="button"
+          class="btn-buscar"
+          (click)="loadDeliveredOrders()"
+          [disabled]="loadingOrders || !clientIdentification.trim()"
+        >
+          <span *ngIf="!loadingOrders">Buscar</span>
+          <span *ngIf="loadingOrders" class="btn-spinner"></span>
+        </button>
+      </div>
     </div>
 
+    <div class="form-group" *ngIf="isCliente && (deliveredOrders.length > 0 || loadingOrders)">
+      <label class="form-label">Orden de trabajo *</label>
+      <select
+        class="order-select"
+        [(ngModel)]="selectedWorkOrderId"
+        [disabled]="loadingOrders"
+      >
+        <option [ngValue]="null" disabled selected>
+          {{ loadingOrders ? 'Cargando órdenes...' : '— Selecciona tu orden entregada —' }}
+        </option>
+        <option *ngFor="let o of deliveredOrders" [ngValue]="o.id">
+          Orden #{{ o.numberorder }}
+        </option>
+      </select>
+    </div>
+    <p class="no-orders-hint"
+       *ngIf="isCliente && !loadingOrders && clientIdentification.trim() && deliveredOrders.length === 0">
+      No se encontraron órdenes entregadas para esa cédula.
+    </p>
 
+    <!-- TEXTAREA -->
     <textarea
       [(ngModel)]="comment"
       placeholder="Escribe aquí tu experiencia..."
+      [class.over-limit]="isOverLimit"
+      maxlength="1010"
     ></textarea>
+    <div class="char-counter" *ngIf="comment.length > 0">
+      <span [class.over]="isOverLimit">
+        {{ isOverLimit ? (charCount - 1000) + ' caracteres de más' : charRemaining + ' restantes' }}
+      </span>
+    </div>
 
+    <!-- ERROR -->
+    <div class="error-msg" *ngIf="errorMsg">
+      <i class="fa-solid fa-triangle-exclamation"></i> {{ errorMsg }}
+    </div>
 
-    <button (click)="submitSurvey()">
-      ENVIAR OPINIÓN
+    <!-- BOTÓN -->
+    <button
+      (click)="isLoggedIn && isCliente ? submitSurvey() : null"
+      [class.btn-disabled]="!isLoggedIn || !isCliente || loading"
+      [disabled]="loading"
+    >
+      <span *ngIf="!loading">ENVIAR OPINIÓN</span>
+      <span *ngIf="loading" class="btn-spinner"></span>
     </button>
 
+    <!-- Mensaje para no autenticados -->
+    <p class="login-hint" *ngIf="!isLoggedIn">
+      <i class="fa-solid fa-lock"></i>
+      <a routerLink="/login">Inicia sesión</a> para dejar tu reseña
+    </p>
+    <p class="login-hint" *ngIf="isLoggedIn && !isCliente && !isAdmin">
+      Solo los clientes pueden publicar reseñas.
+    </p>
 
+    <!-- ÉXITO -->
     <div class="success-message" *ngIf="submitted">
       ✅ ¡Gracias por calificarnos!
     </div>
 
+    <!-- BOTÓN VER RESEÑAS -->
+    <button class="btn-toggle-panel" (click)="togglePanel()">
+      <i class="fa-solid fa-comments"></i>
+      {{ panelOpen ? 'Ocultar reseñas' : 'Ver todas las reseñas (' + publicReviews.length + ')' }}
+      <i class="fa-solid" [class.fa-chevron-up]="panelOpen" [class.fa-chevron-down]="!panelOpen"></i>
+    </button>
+
   </div>
+
+  <!-- ═══════════════ PANEL DE RESEÑAS ═══════════════ -->
+  <div class="reviews-panel" *ngIf="panelOpen">
+
+    <!-- Resumen de calificación -->
+    <div class="rating-summary" *ngIf="publicReviews.length > 0">
+      <div class="rating-big">
+        <span class="rating-number">{{ avgRating }}</span>
+        <div class="summary-stars">
+          <i
+            *ngFor="let s of [1,2,3,4,5]"
+            class="fa-solid fa-star"
+            [class.active]="s <= +avgRating"
+          ></i>
+        </div>
+        <span class="rating-total">{{ publicReviews.length }} reseña{{ publicReviews.length !== 1 ? 's' : '' }}</span>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="panel-tabs">
+      <button
+        class="panel-tab"
+        [class.active]="activeTab === 'all'"
+        (click)="setTab('all')"
+      >
+        {{ isAdmin ? '🛡 Gestionar reseñas' : 'Todas las reseñas' }}
+      </button>
+      <button
+        class="panel-tab"
+        *ngIf="isCliente"
+        [class.active]="activeTab === 'mine'"
+        (click)="setTab('mine')"
+      >
+        Mis reseñas
+      </button>
+
+      <!-- Sort (solo en tab "all") -->
+      <div class="sort-wrapper" *ngIf="activeTab === 'all'">
+        <select class="sort-select" [(ngModel)]="sortBy" (change)="onSortChange()">
+          <option value="fecha">Más recientes</option>
+          <option value="calificacion_desc">Mayor calificación</option>
+          <option value="calificacion_asc">Menor calificación</option>
+        </select>
+      </div>
+    </div>
+
+    <!-- ── Lista de reseñas: tab ALL ── -->
+    <div *ngIf="activeTab === 'all'">
+      <div class="empty-state" *ngIf="publicReviews.length === 0">
+        <i class="fa-regular fa-face-smile"></i>
+        <p>Aún no hay reseñas publicadas.</p>
+      </div>
+
+      <div class="review-card" *ngFor="let r of publicReviews">
+        <div class="review-header">
+          <div class="review-avatar">{{ getInitials(r.username) }}</div>
+          <div class="review-meta">
+            <span class="review-username">{{ r.username }}</span>
+            <span class="review-order">Orden #{{ r.workOrderNumber }}</span>
+            <span class="review-date">{{ formatDate(r.reviewDate) }}</span>
+          </div>
+          <div class="review-stars">
+            <i
+              *ngFor="let s of [1,2,3,4,5]"
+              class="fa-solid fa-star"
+              [class.active]="s <= r.rating"
+            ></i>
+            <span class="review-rating-num">{{ r.rating }}/5</span>
+          </div>
+        </div>
+
+        <p class="review-comment">{{ r.comment }}</p>
+
+        <!-- Acciones admin: moderar -->
+        <div class="review-actions" *ngIf="isAdmin">
+          <button class="btn-moderate" (click)="moderateReview(r.id)">
+            🛡 Moderar y eliminar
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Lista de reseñas: tab MIS RESEÑAS ── -->
+    <div *ngIf="activeTab === 'mine' && isCliente">
+      <div class="empty-state" *ngIf="myReviews.length === 0">
+        <i class="fa-regular fa-face-meh"></i>
+        <p>Aún no has escrito ninguna reseña.</p>
+      </div>
+
+      <div class="review-card" *ngFor="let r of myReviews">
+        <div class="review-header">
+          <div class="review-avatar">{{ getInitials(r.username) }}</div>
+          <div class="review-meta">
+            <span class="review-username">{{ r.username }}</span>
+            <span class="review-order">Orden #{{ r.workOrderNumber }}</span>
+            <span class="review-date">{{ formatDate(r.reviewDate) }}</span>
+          </div>
+          <div class="review-stars">
+            <i
+              *ngFor="let s of [1,2,3,4,5]"
+              class="fa-solid fa-star"
+              [class.active]="s <= r.rating"
+            ></i>
+          </div>
+        </div>
+
+        <p class="review-comment">{{ r.comment }}</p>
+
+        <!-- Acciones cliente: eliminar -->
+        <div class="review-actions" *ngIf="confirmDeleteId !== r.id">
+          <button class="btn-delete" (click)="askDelete(r.id)">
+            <i class="fa-solid fa-trash"></i> Eliminar
+          </button>
+        </div>
+        <div class="confirm-delete" *ngIf="confirmDeleteId === r.id">
+          <span>¿Confirmar eliminación?</span>
+          <button class="btn-confirm-yes" (click)="confirmDelete(r.id)">Sí, eliminar</button>
+          <button class="btn-confirm-no" (click)="cancelDelete()">Cancelar</button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <!-- /reviews-panel -->
 
 </section>

@@ -16,6 +16,36 @@ $flame: linear-gradient(90deg, $fire-red, $fire-orange, $fire-mid, $fire-yellow)
 
 * { box-sizing: border-box; margin: 0; padding: 0; }
 
+.back-btn {
+  position: fixed;
+  top: 24px;
+  left: 24px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 16px;
+  border-radius: 8px;
+  background: rgba(244,93,1,0.08);
+  border: 1px solid rgba(244,93,1,0.25);
+  color: #F45D01;
+  font-family: "Poppins", sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  z-index: 100;
+
+  svg { flex-shrink: 0; transition: transform 0.2s; }
+
+  &:hover {
+    background: rgba(244,93,1,0.16);
+    border-color: #F45D01;
+    transform: translateX(-2px);
+    svg { transform: translateX(-3px); }
+  }
+}
+
 .auth-wrapper {
   font-family: 'Poppins', sans-serif;
   font-weight: 300;
