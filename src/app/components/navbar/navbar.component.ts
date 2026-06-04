@@ -95,11 +95,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
 
   goToAppointments(): void {
     this.closeMobile();
-    if (!this.isLoggedIn) {
-      this.router.navigate(['/login']);
-    } else {
-      this.router.navigate(['/appointments']);
-    }
+    this.router.navigate(['/appointments']);
   }
 
   goToMechanicAppointments(): void {
@@ -130,7 +126,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   }
 
   private updateActiveSection(): void {
-    const sections = ['inicio', 'nosotros', 'servicios', 'ubicacion', 'contacto'];
+    const sections = ['inicio', 'nosotros', 'servicios', 'ubicacion', 'contacto', 'resenas'];
     for (const id of [...sections].reverse()) {
       const el = document.getElementById(id);
       if (el && window.scrollY >= el.offsetTop - 100) {

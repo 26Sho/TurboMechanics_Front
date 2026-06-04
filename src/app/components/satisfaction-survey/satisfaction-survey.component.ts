@@ -58,10 +58,8 @@ export class SatisfactionSurveyComponent implements OnInit {
     this.isCliente = rolId === 1;
     this.isAdmin   = rolId === 3;
 
-    // GET /reviews requiere autenticación → solo llamar si hay sesión activa
-    if (this.isLoggedIn) {
-      this.loadPublicReviews();
-    }
+    // Cargar reseñas siempre, con o sin sesión activa
+    this.loadPublicReviews();
 
     if (this.isCliente) {
       this.loadDeliveredOrders();
@@ -72,7 +70,10 @@ export class SatisfactionSurveyComponent implements OnInit {
   // ── Carga de datos ─────────────────────────────────────────────────────────
 
   loadPublicReviews(): void {
-    this.reviewService.listAll(this.sortBy).subscribe({
+    const request$ = this.isLoggedIn
+      ? this.reviewService.listAll(this.sortBy)
+      : this.reviewService.listAllPublic(this.sortBy);
+    request$.subscribe({
       next: (data) => (this.publicReviews = data),
       error: () => {}
     });

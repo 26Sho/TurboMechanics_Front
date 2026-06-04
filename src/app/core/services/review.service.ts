@@ -51,6 +51,11 @@ export class ReviewService {
     return this.http.get<ReviewResponseDTO[]>(`${this.apiUrl}?ordenar=${ordenar}`);
   }
 
+  // HU 10.3b – Listar reseñas públicas (sin autenticación, para visitantes)
+  listAllPublic(ordenar: string = 'fecha'): Observable<ReviewResponseDTO[]> {
+    return this.http.get<ReviewResponseDTO[]>(`${this.apiUrl}/public?ordenar=${ordenar}`);
+  }
+
   // HU 10.3 – Listar mis reseñas (cliente autenticado)
   listMine(): Observable<ReviewResponseDTO[]> {
     return this.http.get<ReviewResponseDTO[]>(`${this.apiUrl}/my`);
