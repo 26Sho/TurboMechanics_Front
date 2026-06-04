@@ -21,6 +21,8 @@ import { AdminModule } from './features/admin/admin.module';
 import { authInterceptor } from './core/interceptors/auth.interceptor';
 import { SessionExpiredComponent } from './shared/components/sesion_expired/session.expired.component';
 import { EstimateResponseComponent } from './features/auth/pages/estimate-response/estimate-response.component';
+import { TurboBotComponent } from './shared/components/turbo-bot/turbo-bot.component';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -34,8 +36,9 @@ import { EstimateResponseComponent } from './features/auth/pages/estimate-respon
     HomeComponent,
     ToastComponent,
     SatisfactionSurveyComponent,
-    SessionExpiredComponent,          // ← nuevo
-    EstimateResponseComponent, // ← nuevo
+    SessionExpiredComponent,          
+    EstimateResponseComponent, 
+    TurboBotComponent
   ],
   imports: [
     BrowserModule,
