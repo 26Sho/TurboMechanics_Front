@@ -256,10 +256,10 @@ $border:       rgba(244, 93, 1, 0.25);
   &:hover { opacity: 0.8; transform: scale(1.08); }
   &:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
 
-  &.btn-download { background: rgba($orange, 0.12);    color: $orange;   }
-  &.btn-send     { background: rgba(59,130,246,0.12);  color: #60A5FA;   }
-  &.btn-assign   { background: rgba($green, 0.12);     color: $green;    }
-  &.btn-mp-sm    { background: rgba($mp-blue, 0.12);   color: $mp-blue;  }
+  &.btn-download { background: rgba($orange, 0.12);   color: $orange;  }
+  &.btn-send     { background: rgba(59,130,246,0.12); color: #60A5FA;  }
+  &.btn-assign   { background: rgba($green, 0.12);    color: $green;   }
+  &.btn-mp-sm    { background: rgba($mp-blue, 0.12);  color: $mp-blue; }
 }
 
 .spinner-xs {
