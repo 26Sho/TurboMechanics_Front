@@ -39,7 +39,6 @@
         <form [formGroup]="generateForm" (ngSubmit)="submitGenerate()" novalidate>
 
           <div class="form-row">
-            <!-- Orden de trabajo -->
             <div class="form-group">
               <label class="form-label required">Orden de trabajo</label>
               <select class="form-input" formControlName="workOrderID"
@@ -52,7 +51,6 @@
               <span class="field-error" *ngIf="isInvalid(generateForm, 'workOrderID')">Obligatorio</span>
             </div>
 
-            <!-- Método de pago -->
             <div class="form-group">
               <label class="form-label required">Método de pago</label>
               <select class="form-input" formControlName="payMethodId"
@@ -65,7 +63,6 @@
           </div>
 
           <div class="form-row">
-            <!-- Identificación cliente -->
             <div class="form-group">
               <label class="form-label required">Identificación del cliente</label>
               <input type="number" class="form-input" formControlName="identification"
@@ -74,7 +71,6 @@
               <span class="field-error" *ngIf="isInvalid(generateForm, 'identification')">Obligatorio</span>
             </div>
 
-            <!-- Placa -->
             <div class="form-group">
               <label class="form-label required">Placa del vehículo</label>
               <input type="text" class="form-input" formControlName="plate"
@@ -85,7 +81,6 @@
           </div>
 
           <div class="form-row">
-            <!-- Subtotal -->
             <div class="form-group">
               <label class="form-label required">Subtotal</label>
               <input type="number" class="form-input" formControlName="subtotal"
@@ -95,7 +90,6 @@
               <span class="field-error" *ngIf="isInvalid(generateForm, 'subtotal')">Debe ser mayor a 0</span>
             </div>
 
-            <!-- Creado por -->
             <div class="form-group">
               <label class="form-label required">Creado por</label>
               <input type="text" class="form-input" formControlName="createdBy"
@@ -155,313 +149,6 @@
             <span *ngIf="downloadingId !== generatedBill.id">⬇ Descargar PDF</span>
             <span *ngIf="downloadingId === generatedBill.id" class="spinner-sm"></span>
           </button>
-        </div>
-      </div>
-
-    </ng-container>
-
-    <!-- ══ TAB: HISTORIAL ════════════════════════════════════════════════════ -->
-    <ng-container *ngIf="activeTab === 'history'">
-
-      <div class="bill-card">
-        <h2 class="section-title">Historial de Facturas</h2>
-
-        <form [formGroup]="historyForm" (ngSubmit)="searchHistory()" novalidate>
-          <div class="form-row">
-            <div class="form-group">
-              <label class="form-label required">Identificación del cliente</label>
-              <input type="number" class="form-input" formControlName="identification"
-                     placeholder="Cédula o NIT"
-                     [class.input-error]="isInvalid(historyForm, 'identification')" />
-              <span class="field-error" *ngIf="isInvalid(historyForm, 'identification')">Obligatorio</span>
-            </div>
-            <div class="form-group">
-              <label class="form-label">Placa (opcional)</label>
-              <input type="text" class="form-input" formControlName="plate"
-                     placeholder="ABC-123" style="text-transform:uppercase" />
-            </div>
-          </div>
-          <div class="form-actions">
-            <button type="submit" class="btn btn-primary" [disabled]="loadingHistory">
-              <span *ngIf="!loadingHistory">Buscar</span>
-              <span *ngIf="loadingHistory" class="spinner-sm"></span>
-            </button>
-          </div>
-        </form>
-      </div>
-
-      <div class="bill-card" *ngIf="historySearched">
-        <div class="empty-state" *ngIf="historyBills.length === 0">
-          No se encontraron facturas para este cliente.
-        </div>
-
-        <div class="bill-table-wrap" *ngIf="historyBills.length > 0">
-          <table class="bill-table">
-            <thead>
-              <tr>
-                <th>N° Factura</th>
-                <th>Fecha</th>
-                <th>Subtotal</th>
-                <th>IVA</th>
-                <th>Total</th>
-                <th>Estado</th>
-                <th>Acciones</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr *ngFor="let b of historyBills">
-                <td class="bill-num-col">{{ b.numBill }}</td>
-                <td>{{ b.date | date:'dd/MM/yyyy' }}</td>
-                <td>${{ b.subtotal | number:'1.2-2' }}</td>
-                <td>${{ b.taxes | number:'1.2-2' }}</td>
-                <td class="bill-total">${{ b.total | number:'1.2-2' }}</td>
-                <td>
-                  <span class="badge" [class]="statusClass(b.status)">
-                    {{ statusLabel(b.status) }}
-                  </span>
-                </td>
-                <td class="bill-actions-col">
-                  <button class="btn-action btn-download" (click)="downloadPdf(b)"
-                          [disabled]="downloadingId === b.id" title="Descargar PDF">
-                    <span *ngIf="downloadingId !== b.id">⬇</span>
-                    <span *ngIf="downloadingId === b.id" class="spinner-xs"></span>
-                  </button>
-                  <button class="btn-action btn-send" (click)="openSend(b)" title="Enviar comprobante">📨</button>
-                  <button class="btn-action btn-assign" (click)="openAssign(b)" title="Asignar cliente">👤</button>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-    </ng-container>
-
-  </div>
-</div>
-
-<!-- Modal: Asignar cliente -->
-<div class="modal-overlay" *ngIf="showAssignModal" (click)="closeAssign()">
-  <div class="modal-card" (click)="$event.stopPropagation()">
-    <div class="modal-header">
-      <div class="modal-icon">👤</div>
-      <h2 class="modal-title">Asignar Cliente</h2>
-      <p class="modal-sub">Vincula esta factura con el cliente y vehículo</p>
-    </div>
-    <form [formGroup]="assignForm" (ngSubmit)="submitAssign()" novalidate class="modal-body">
-      <div class="form-group">
-        <label class="form-label required">Identificación del cliente</label>
-        <input type="number" class="form-input" formControlName="identification"
-               placeholder="Cédula o NIT"
-               [class.input-error]="isInvalid(assignForm, 'identification')" />
-        <span class="field-error" *ngIf="isInvalid(assignForm, 'identification')">Obligatorio</span>
-      </div>
-      <div class="form-group">
-        <label class="form-label required">Placa del vehículo</label>
-        <input type="text" class="form-input" formControlName="plate"
-               placeholder="ABC-123" style="text-transform:uppercase"
-               [class.input-error]="isInvalid(assignForm, 'plate')" />
-        <span class="field-error" *ngIf="isInvalid(assignForm, 'plate')">Obligatorio</span>
-      </div>
-      <div class="modal-actions">
-        <button type="button" class="btn btn-ghost" (click)="closeAssign()" [disabled]="assigning">Cancelar</button>
-        <button type="submit" class="btn btn-primary" [disabled]="assigning">
-          <span *ngIf="!assigning">Asignar</span>
-          <span *ngIf="assigning" class="spinner-sm"></span>
-        </button>
-      </div>
-    </form>
-  </div>
-</div>
-
-<!-- Modal: Enviar comprobante -->
-<div class="modal-overlay" *ngIf="showSendModal" (click)="closeSend()">
-  <div class="modal-card" (click)="$event.stopPropagation()">
-    <div class="modal-header">
-      <div class="modal-icon">📨</div>
-      <h2 class="modal-title">Enviar Comprobante</h2>
-      <p class="modal-sub">Selecciona el canal de envío para {{ sendBill?.numBill }}</p>
-    </div>
-    <div class="modal-body">
-      <div class="canal-options">
-        <label class="canal-option" [class.selected]="selectedCanal === 'EMAIL'"
-               (click)="selectedCanal = 'EMAIL'">
-          <span class="canal-icon">✉️</span>
-          <span class="canal-label">Correo electrónico</span>
-        </label>
-        <label class="canal-option" [class.selected]="selectedCanal === 'WHATSAPP'"
-               (click)="selectedCanal = 'WHATSAPP'">
-          <span class="canal-icon">💬</span>
-          <span class="canal-label">WhatsApp</span>
-        </label>
-      </div>
-      <div class="modal-actions">
-        <button type="button" class="btn btn-ghost" (click)="closeSend()" [disabled]="sendingProof">Cancelar</button>
-        <button type="button" class="btn btn-primary" (click)="submitSend()" [disabled]="sendingProof">
-          <span *ngIf="!sendingProof">Enviar</span>
-          <span *ngIf="sendingProof" class="spinner-sm"></span>
-        </button>
-      </div>
-    </div>
-  </div>
-<div class="bill-wrapper">
-  <div class="bill-page">
-
-    <!-- Header -->
-    <div class="bill-header">
-      <div class="header-left">
-        <div class="header-icon">
-          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
-            <polyline points="14 2 14 8 20 8"/>
-            <line x1="16" y1="13" x2="8" y2="13"/>
-            <line x1="16" y1="17" x2="8" y2="17"/>
-            <polyline points="10 9 9 9 8 9"/>
-          </svg>
-        </div>
-        <div>
-          <h1 class="header-title">Facturación</h1>
-          <span class="header-sub">Genera y gestiona las facturas del taller</span>
-        </div>
-      </div>
-    </div>
-
-    <!-- Tabs -->
-    <div class="bill-tabs">
-      <button class="bill-tab" [class.active]="activeTab === 'generate'" (click)="activeTab = 'generate'">
-        Generar Factura
-      </button>
-      <button class="bill-tab" [class.active]="activeTab === 'history'" (click)="activeTab = 'history'">
-        Historial
-      </button>
-    </div>
-
-    <!-- ══ TAB: GENERAR ══════════════════════════════════════════════════════ -->
-    <ng-container *ngIf="activeTab === 'generate'">
-
-      <div class="bill-card">
-        <h2 class="section-title">Nueva Factura</h2>
-
-        <form [formGroup]="generateForm" (ngSubmit)="submitGenerate()" novalidate>
-
-          <div class="form-row">
-            <!-- Orden de trabajo -->
-            <div class="form-group">
-              <label class="form-label required">Orden de trabajo</label>
-              <select class="form-input" formControlName="workOrderID"
-                      [class.input-error]="isInvalid(generateForm, 'workOrderID')">
-                <option [ngValue]="null">Selecciona una orden...</option>
-                <option *ngFor="let o of orders" [ngValue]="o.id">
-                  {{ o.numberorder }} — {{ o.clientname }} ({{ o.vehicleplate }})
-                </option>
-              </select>
-              <span class="field-error" *ngIf="isInvalid(generateForm, 'workOrderID')">Obligatorio</span>
-            </div>
-
-            <!-- Método de pago -->
-            <div class="form-group">
-              <label class="form-label required">Método de pago</label>
-              <select class="form-input" formControlName="payMethodId"
-                      [class.input-error]="isInvalid(generateForm, 'payMethodId')">
-                <option [ngValue]="null">Selecciona...</option>
-                <option *ngFor="let pm of payMethods" [ngValue]="pm.id">{{ pm.name }}</option>
-              </select>
-              <span class="field-error" *ngIf="isInvalid(generateForm, 'payMethodId')">Obligatorio</span>
-            </div>
-          </div>
-
-          <div class="form-row">
-            <!-- Identificación cliente -->
-            <div class="form-group">
-              <label class="form-label required">Identificación del cliente</label>
-              <input type="number" class="form-input" formControlName="identification"
-                     placeholder="Cédula o NIT"
-                     [class.input-error]="isInvalid(generateForm, 'identification')" />
-              <span class="field-error" *ngIf="isInvalid(generateForm, 'identification')">Obligatorio</span>
-            </div>
-
-            <!-- Placa -->
-            <div class="form-group">
-              <label class="form-label required">Placa del vehículo</label>
-              <input type="text" class="form-input" formControlName="plate"
-                     placeholder="ABC-123" style="text-transform:uppercase"
-                     [class.input-error]="isInvalid(generateForm, 'plate')" />
-              <span class="field-error" *ngIf="isInvalid(generateForm, 'plate')">Obligatorio</span>
-            </div>
-          </div>
-
-          <div class="form-row">
-            <!-- Subtotal -->
-            <div class="form-group">
-              <label class="form-label required">Subtotal</label>
-              <input type="number" class="form-input" formControlName="subtotal"
-                     placeholder="0.00" min="1"
-                     [class.input-error]="isInvalid(generateForm, 'subtotal')" />
-              <span class="field-hint">El IVA (19%) se calcula automáticamente</span>
-              <span class="field-error" *ngIf="isInvalid(generateForm, 'subtotal')">Debe ser mayor a 0</span>
-            </div>
-
-            <!-- Creado por -->
-            <div class="form-group">
-              <label class="form-label required">Creado por</label>
-              <input type="text" class="form-input" formControlName="createdBy"
-                     placeholder="Usuario"
-                     [class.input-error]="isInvalid(generateForm, 'createdBy')" />
-              <span class="field-error" *ngIf="isInvalid(generateForm, 'createdBy')">Obligatorio</span>
-            </div>
-          </div>
-
-          <div class="form-actions">
-            <button type="submit" class="btn btn-primary" [disabled]="saving">
-              <span *ngIf="!saving">Generar Factura</span>
-              <span *ngIf="saving" class="spinner-sm"></span>
-            </button>
-          </div>
-
-        </form>
-      </div>
-
-      <!-- Factura generada -->
-      <div class="bill-card bill-card--success" *ngIf="generatedBill">
-        <div class="bill-success-header">
-          <div class="success-icon">✓</div>
-          <div>
-            <h3 class="bill-num">{{ generatedBill.numBill }}</h3>
-            <span class="bill-date">{{ generatedBill.date | date:'dd/MM/yyyy' }}</span>
-          </div>
-          <span class="badge" [class]="statusClass(generatedBill.status)">
-            {{ statusLabel(generatedBill.status) }}
-          </span>
-        </div>
-
-        <div class="bill-amounts">
-          <div class="amount-item">
-            <span class="amount-label">Subtotal</span>
-            <span class="amount-value">${{ generatedBill.subtotal | number:'1.2-2' }}</span>
-          </div>
-          <div class="amount-item">
-            <span class="amount-label">IVA (19%)</span>
-            <span class="amount-value">${{ generatedBill.taxes | number:'1.2-2' }}</span>
-          </div>
-          <div class="amount-item amount-item--total">
-            <span class="amount-label">Total</span>
-            <span class="amount-value">${{ generatedBill.total | number:'1.2-2' }}</span>
-          </div>
-        </div>
-
-        <div class="bill-actions">
-          <button class="btn btn-ghost" (click)="openAssign(generatedBill)">
-            👤 Asignar cliente
-          </button>
-          <button class="btn btn-ghost" (click)="openSend(generatedBill)">
-            📨 Enviar comprobante
-          </button>
-          <button class="btn btn-primary" (click)="downloadPdf(generatedBill)"
-                  [disabled]="downloadingId === generatedBill.id">
-            <span *ngIf="downloadingId !== generatedBill.id">⬇ Descargar PDF</span>
-            <span *ngIf="downloadingId === generatedBill.id" class="spinner-sm"></span>
-          </button>
-          <!-- Botón Mercado Pago -->
           <button class="btn btn-mp"
                   *ngIf="canPay(generatedBill.status)"
                   (click)="openPayModal(generatedBill)"
@@ -542,7 +229,6 @@
                   </button>
                   <button class="btn-action btn-send" (click)="openSend(b)" title="Enviar comprobante">📨</button>
                   <button class="btn-action btn-assign" (click)="openAssign(b)" title="Asignar cliente">👤</button>
-                  <!-- Botón MP solo para facturas pendientes -->
                   <button class="btn-action btn-mp-sm"
                           *ngIf="canPay(b.status)"
                           (click)="openPayModal(b, $event)"
@@ -644,7 +330,6 @@
 
     <form [formGroup]="payForm" (ngSubmit)="submitPay()" novalidate class="modal-body">
 
-      <!-- Email del pagador -->
       <div class="form-group">
         <label class="form-label required">Correo del pagador</label>
         <input type="email" class="form-input" formControlName="payerEmail"
@@ -655,7 +340,6 @@
         </span>
       </div>
 
-      <!-- Nombre y Apellido -->
       <div class="form-row">
         <div class="form-group">
           <label class="form-label">Nombre</label>
@@ -669,7 +353,6 @@
         </div>
       </div>
 
-      <!-- Tipo y número de identificación -->
       <div class="form-row">
         <div class="form-group">
           <label class="form-label">Tipo de identificación</label>
@@ -687,7 +370,6 @@
         </div>
       </div>
 
-      <!-- Método de pago -->
       <div class="form-group">
         <label class="form-label">Método de pago preferido</label>
         <div class="pay-methods-grid">

@@ -22,10 +22,10 @@ export class BillingComponent implements OnInit {
 
   // ── Generate form ─────────────────────────────────────────────────────────
   generateForm!: FormGroup;
-  saving        = false;
+  saving         = false;
   generatedBill: Bill | null = null;
 
-  payMethods:   PayMethod[]        = [];
+  payMethods:   PayMethod[]         = [];
   orders:       WorkOrderResponse[] = [];
   loadingOrders = false;
 
@@ -36,25 +36,25 @@ export class BillingComponent implements OnInit {
   assigning       = false;
 
   // ── Send proof ────────────────────────────────────────────────────────────
-  showSendModal  = false;
-  sendBill:      Bill | null = null;
-  sendingProof   = false;
-  selectedCanal  = 'EMAIL';
+  showSendModal = false;
+  sendBill:     Bill | null = null;
+  sendingProof  = false;
+  selectedCanal = 'EMAIL';
 
   // ── Download ──────────────────────────────────────────────────────────────
   downloadingId: number | null = null;
 
   // ── History ───────────────────────────────────────────────────────────────
-  historyForm!:  FormGroup;
-  historyBills:  Bill[]   = [];
-  loadingHistory = false;
-  historySearched = false;
+  historyForm!:    FormGroup;
+  historyBills:    Bill[] = [];
+  loadingHistory   = false;
+  historySearched  = false;
 
   // ── Mercado Pago ──────────────────────────────────────────────────────────
-  showPayModal  = false;
-  payBill:      Bill | null = null;
-  payForm!:     FormGroup;
-  payingId:     number | null = null;
+  showPayModal = false;
+  payBill:     Bill | null = null;
+  payForm!:    FormGroup;
+  payingId:    number | null = null;
 
   readonly payMethodOptions = [
     { value: 'credit_card',   icon: '💳', label: 'Tarjeta crédito' },
@@ -84,7 +84,7 @@ export class BillingComponent implements OnInit {
     this.generateForm = this.fb.group({
       workOrderID:    [null, Validators.required],
       identification: [null, [Validators.required, Validators.min(1)]],
-      plate:          ['',  Validators.required],
+      plate:          ['',   Validators.required],
       payMethodId:    [null, Validators.required],
       subtotal:       [null, [Validators.required, Validators.min(1)]],
       createdBy:      [this.auth.getUsername(), Validators.required],
@@ -244,7 +244,7 @@ export class BillingComponent implements OnInit {
 
   // ── Mercado Pago ──────────────────────────────────────────────────────────
   canPay(status: string): boolean {
-    return status === 'Pending';
+    return !!status && status.trim() === 'Pending';
   }
 
   openPayModal(bill: Bill, event?: Event): void {
