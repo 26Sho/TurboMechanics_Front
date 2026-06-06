@@ -79,6 +79,9 @@
         <li>
           <a class="navbar__link" (click)="goToMaintenance(); $event.preventDefault()" href="#" style="cursor:pointer">Mi Mantenimiento</a>
         </li>
+        <li>
+          <a class="navbar__link" routerLink="/my-bills" style="cursor:pointer">Mis Facturas</a>
+        </li>
       </ng-container>
 
     </ul>
@@ -123,6 +126,9 @@
       <li><a href="#" (click)="goToAppointments(); $event.preventDefault()">Agendar Cita</a></li>
       <li *ngIf="isCliente">
         <a href="#" (click)="goToMaintenance(); $event.preventDefault()">Mi Mantenimiento</a>
+      </li>
+      <li *ngIf="isCliente">
+        <a routerLink="/my-bills">Mis Facturas</a>
       </li>
       <li *ngIf="!isLoggedIn">
         <a href="#" class="mobile-login" (click)="onLoginClick($event)">Iniciar sesión</a>

@@ -1,0 +1,160 @@
+<div class="bills-wrapper">
+  <div class="bills-page">
+
+    <button class="btn-back" routerLink="/home">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <polyline points="15 18 9 12 15 6"/>
+      </svg>
+      Volver al inicio
+    </button>
+
+    <!-- Encabezado -->
+    <div class="page-header">
+      <div class="page-header__icon">🧾</div>
+      <div>
+        <h1 class="page-title">Mis Facturas</h1>
+        <p class="page-sub">Consulta y paga tus facturas pendientes</p>
+      </div>
+    </div>
+
+    <!-- Búsqueda por cédula -->
+    <div class="search-card">
+      <form [formGroup]="searchForm" (ngSubmit)="loadMyBills()" novalidate class="search-form">
+        <div class="form-group">
+          <label class="form-label required">Tu número de cédula</label>
+          <input type="number" class="form-input" formControlName="identification"
+                 placeholder="Ej: 1234567890"
+                 [class.input-error]="isInvalid(searchForm, 'identification')" />
+          <span class="field-error" *ngIf="isInvalid(searchForm, 'identification')">
+            Ingresa tu número de identificación
+          </span>
+        </div>
+        <button type="submit" class="btn-search" [disabled]="loading">
+          <span *ngIf="!loading">🔍 Consultar facturas</span>
+          <span *ngIf="loading" class="spinner-sm"></span>
+        </button>
+      </form>
+    </div>
+
+    <!-- Sin facturas -->
+    <div class="empty-state" *ngIf="!loading && searched && bills.length === 0">
+      <div class="empty-icon">📄</div>
+      <p class="empty-text">No se encontraron facturas para tu identificación</p>
+    </div>
+
+    <!-- Tabla de facturas -->
+    <div class="bills-table-wrap" *ngIf="!loading && bills.length > 0">
+      <table class="bills-table">
+        <thead>
+          <tr>
+            <th>N° Factura</th>
+            <th>Fecha</th>
+            <th>Subtotal</th>
+            <th>IVA</th>
+            <th>Total</th>
+            <th>Estado</th>
+            <th>Acción</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr *ngFor="let bill of bills">
+            <td class="num-bill">{{ bill.numBill }}</td>
+            <td>{{ bill.date | date:'dd/MM/yyyy' }}</td>
+            <td>${{ bill.subtotal | number:'1.2-2' }}</td>
+            <td>${{ bill.taxes   | number:'1.2-2' }}</td>
+            <td class="total">${{ bill.total | number:'1.2-2' }}</td>
+            <td>
+              <span class="badge" [ngClass]="statusClass(bill.status)">
+                {{ statusLabel(bill.status) }}
+              </span>
+            </td>
+            <td>
+              <button *ngIf="canPay(bill.status)"
+                      class="btn-pay" (click)="openPay(bill)"
+                      title="Pagar con Mercado Pago">
+                💳 Pagar
+              </button>
+              <span *ngIf="!canPay(bill.status)" class="no-action">—</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════ MODAL DE PAGO ══════════════════════ -->
+<div class="modal-overlay" *ngIf="showPayModal" (click)="closePay()">
+  <div class="modal-card" (click)="$event.stopPropagation()">
+
+    <div class="modal-header">
+      <div class="modal-icon">💳</div>
+      <h2 class="modal-title">Pagar con Mercado Pago</h2>
+      <p class="modal-sub">
+        Factura {{ payBill?.numBill }} —
+        <strong class="mp-amount">${{ payBill?.total | number:'1.2-2' }}</strong>
+      </p>
+    </div>
+
+    <form [formGroup]="payForm" (ngSubmit)="submitPay()" novalidate class="modal-body">
+
+      <div class="form-group">
+        <label class="form-label required">Correo del pagador</label>
+        <input type="email" class="form-input" formControlName="payerEmail"
+               placeholder="tu@correo.com"
+               [class.input-error]="isInvalid(payForm, 'payerEmail')" />
+        <span class="field-error" *ngIf="isInvalid(payForm, 'payerEmail')">Correo válido requerido</span>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Nombre</label>
+          <input type="text" class="form-input" formControlName="payerFirstName" placeholder="Juan" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Apellido</label>
+          <input type="text" class="form-input" formControlName="payerLastName" placeholder="Pérez" />
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Tipo de identificación</label>
+          <select class="form-input" formControlName="payerIdentificationType">
+            <option value="">Selecciona...</option>
+            <option value="CC">CC — Cédula de ciudadanía</option>
+            <option value="CE">CE — Cédula de extranjería</option>
+            <option value="NIT">NIT</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Número de identificación</label>
+          <input type="text" class="form-input" formControlName="payerIdentificationNumber"
+                 placeholder="123456789" />
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Método de pago preferido</label>
+        <div class="pay-methods">
+          <label class="pay-method-opt" *ngFor="let opt of payMethodOptions"
+                 [class.active]="payForm.value.paymentMethod === opt.value">
+            <input type="radio" formControlName="paymentMethod" [value]="opt.value" hidden />
+            <span class="pm-icon">{{ opt.icon }}</span>
+            <span class="pm-label">{{ opt.label }}</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn-cancel" (click)="closePay()">Cancelar</button>
+        <button type="submit" class="btn-submit" [disabled]="paying">
+          <span *ngIf="!paying">💳 Ir a pagar</span>
+          <span *ngIf="paying" class="spinner-sm"></span>
+        </button>
+      </div>
+
+    </form>
+  </div>
+</div>
