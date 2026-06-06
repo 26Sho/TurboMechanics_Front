@@ -36,6 +36,7 @@ import { MaintenanceTrackingComponent } from './features/auth/pages/maintenance-
 import { EstimateApproveComponent } from './features/auth/pages/estimate-approve/estimate-approve.component';
 import { EstimateRejectComponent } from './features/auth/pages/estimate-reject/estimate-reject.component';
 import { WhatsappComponent } from './features/admin/whatsapp/whatsapp.component';
+import { ClientBillsComponent } from './features/auth/pages/client-bills/client-bills.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -89,6 +90,8 @@ const routes: Routes = [
   // 🔹 Cliente
   { path: 'appointments', component: ClientAppointmentsComponent, canActivate: [clientGuard] },
   { path: 'maintenance', component: MaintenanceTrackingComponent, canActivate: [clientGuard] },
+  { path: 'my-bills', component: ClientBillsComponent, canActivate: [clientGuard] },
+
 
   // 🔹 Panel MECÁNICO — lazy loading con layout propio
   {
