@@ -1,11 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BillingService } from '../service/billing.service';
-import { PaymentMethodService } from '../service/payment-method.service';
 import { WorkOrderService } from '../../../core/services/work-order.service';
 import { ToastService } from '../../../shared/services/toast.service';
 import { AuthService } from '../../../core/services/auth.service';
-import { Bill, CreatePaymentRequest, PayMethod } from '../../../core/models/billing.model';
+import { Bill, CreatePaymentRequest } from '../../../core/models/billing.model';
 import { WorkOrderResponse } from '../../../core/models/work-order';
 import { MercadoPagoService } from 'src/app/core/services/mercado-pagos-service.service';
 
@@ -25,7 +24,6 @@ export class BillingComponent implements OnInit {
   saving         = false;
   generatedBill: Bill | null = null;
 
-  payMethods:   PayMethod[]         = [];
   orders:       WorkOrderResponse[] = [];
   loadingOrders = false;
 
@@ -67,7 +65,6 @@ export class BillingComponent implements OnInit {
   constructor(
     private fb:        FormBuilder,
     private billing:   BillingService,
-    private pmService: PaymentMethodService,
     private mp:        MercadoPagoService,
     private woService: WorkOrderService,
     private toast:     ToastService,
@@ -76,7 +73,6 @@ export class BillingComponent implements OnInit {
 
   ngOnInit(): void {
     this.buildForms();
-    this.loadPayMethods();
     this.loadOrders();
   }
 
@@ -85,7 +81,6 @@ export class BillingComponent implements OnInit {
       workOrderID:    [null, Validators.required],
       identification: [null, [Validators.required, Validators.min(1)]],
       plate:          ['',   Validators.required],
-      payMethodId:    [null, Validators.required],
       subtotal:       [null, [Validators.required, Validators.min(1)]],
       createdBy:      [this.auth.getUsername(), Validators.required],
     });
@@ -107,13 +102,6 @@ export class BillingComponent implements OnInit {
       payerIdentificationType:   [''],
       payerIdentificationNumber: [''],
       paymentMethod:             [''],
-    });
-  }
-
-  private loadPayMethods(): void {
-    this.pmService.list().subscribe({
-      next: (list) => { this.payMethods = (list ?? []).filter(p => p.active); },
-      error: () => {}
     });
   }
 
