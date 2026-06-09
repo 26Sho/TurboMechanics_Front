@@ -25,9 +25,9 @@ export class TurboBotComponent implements OnInit, AfterViewChecked {
   ) {}
 
   ngOnInit(): void {
-    // Mensaje de bienvenida según el rol
     const rolId = this.authService.getRolId();
-    const welcome = this.getWelcomeMessage(rolId);
+    const username = this.authService.getUsername();
+    const welcome = this.getWelcomeMessage(rolId, username);
     this.messages.push({ role: 'bot', text: welcome, timestamp: new Date() });
   }
 
@@ -81,8 +81,9 @@ export class TurboBotComponent implements OnInit, AfterViewChecked {
 
   clearChat(): void {
     const rolId = this.authService.getRolId();
+    const username = this.authService.getUsername();
     this.messages = [
-      { role: 'bot', text: this.getWelcomeMessage(rolId), timestamp: new Date() }
+      { role: 'bot', text: this.getWelcomeMessage(rolId, username), timestamp: new Date() }
     ];
   }
 
@@ -93,15 +94,16 @@ export class TurboBotComponent implements OnInit, AfterViewChecked {
     } catch {}
   }
 
-  private getWelcomeMessage(rolId: number): string {
+  private getWelcomeMessage(rolId: number, username: string): string {
+    const nombre = username ? `, ${username}` : '';
     switch (rolId) {
       case 3: // ADMIN
-        return '¡Hola, Administrador! 👋 Soy Turbo Bot. Puedo ayudarte con dudas sobre gestión del taller, módulos del sistema y buenas prácticas administrativas. ¿En qué te ayudo?';
+        return `¡Hola${nombre}! 👋 Soy Turbo Bot. Puedo ayudarte con dudas sobre gestión del taller, módulos del sistema y buenas prácticas administrativas. ¿En qué te ayudo?`;
       case 2: // MECANICO
-        return '¡Hola, mecánico! 🔧 Soy Turbo Bot. Puedo orientarte con consultas técnicas, diagnósticos y el uso de tus módulos de trabajo. ¿Qué necesitas?';
+        return `¡Hola${nombre}! 🔧 Soy Turbo Bot. Puedo orientarte con consultas técnicas, diagnósticos y el uso de tus módulos de trabajo. ¿Qué necesitas?`;
       case 1: // CLIENTE
       default:
-        return '¡Hola! 🚗 Soy Turbo Bot, tu asistente del taller TurboMechanics. Puedo ayudarte con información sobre servicios, mantenimiento y el seguimiento de tu vehículo. ¿Cómo puedo ayudarte?';
+        return `¡Hola${nombre}! 🚗 Soy Turbo Bot, tu asistente del taller TurboMechanics. Puedo ayudarte con información sobre servicios, mantenimiento y el seguimiento de tu vehículo. ¿Cómo puedo ayudarte?`;
     }
   }
 
