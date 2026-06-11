@@ -37,6 +37,9 @@ import { EstimateApproveComponent } from './features/auth/pages/estimate-approve
 import { EstimateRejectComponent } from './features/auth/pages/estimate-reject/estimate-reject.component';
 import { WhatsappComponent } from './features/admin/whatsapp/whatsapp.component';
 import { ClientBillsComponent } from './features/auth/pages/client-bills/client-bills.component';
+import { PerfilComponent } from './features/shared/perfil/perfil.component';
+import { MisVehiculosComponent } from './features/auth/pages/mis-vehiculos/mis-vehiculos.component';
+import { AdminVehiculosClienteComponent } from './features/admin/vehiculos-cliente/vehiculos-cliente.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
@@ -84,6 +87,8 @@ const routes: Routes = [
       { path: 'garantias', component: GarantiasComponent },
       { path: 'resenas', component: ResenasAdminComponent },
       { path: 'whatsapp', component: WhatsappComponent },
+      { path: 'perfil', component: PerfilComponent },
+      { path: 'vehiculos-cliente', component: AdminVehiculosClienteComponent },
     ]
   },
 
@@ -91,6 +96,8 @@ const routes: Routes = [
   { path: 'appointments', component: ClientAppointmentsComponent, canActivate: [clientGuard] },
   { path: 'maintenance', component: MaintenanceTrackingComponent, canActivate: [clientGuard] },
   { path: 'my-bills', component: ClientBillsComponent, canActivate: [clientGuard] },
+  { path: 'mis-vehiculos', component: MisVehiculosComponent, canActivate: [clientGuard] },
+  { path: 'perfil', component: PerfilComponent, canActivate: [clientGuard] },
 
 
   // 🔹 Panel MECÁNICO — lazy loading con layout propio

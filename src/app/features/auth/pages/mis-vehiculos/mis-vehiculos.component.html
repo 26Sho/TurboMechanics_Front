@@ -1,0 +1,193 @@
+<div class="mv-wrapper">
+  <div class="mv-page">
+
+    <!-- Header -->
+    <a class="back-btn" routerLink="/" title="Volver al inicio">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+        <polyline points="15 18 9 12 15 6"/>
+      </svg>
+      Volver al inicio
+    </a>
+
+    <div class="mv-header">
+      <div class="header-left">
+        <div class="header-icon">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="1" y="3" width="15" height="13" rx="2"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/>
+          </svg>
+        </div>
+        <div>
+          <h1 class="header-title">Mis Vehículos</h1>
+          <span class="header-sub">Administra tus vehículos registrados</span>
+        </div>
+      </div>
+      <button class="btn btn-primary" (click)="abrirFormNuevo()">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/>
+        </svg>
+        Agregar Vehículo
+      </button>
+    </div>
+
+    <!-- Loading -->
+    <div *ngIf="loading" class="mv-loading">
+      <div class="spinner"></div>
+      <p>Cargando vehículos...</p>
+    </div>
+
+    <!-- Sin vehiculos -->
+    <div *ngIf="!loading && vehiculos.length === 0" class="mv-empty">
+      <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+        <rect x="1" y="3" width="15" height="13" rx="2"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/>
+      </svg>
+      <p>No tienes vehículos registrados</p>
+      <button class="btn btn-primary" (click)="abrirFormNuevo()">Registrar mi primer vehículo</button>
+    </div>
+
+    <!-- Lista de vehiculos -->
+    <div *ngIf="!loading && vehiculos.length > 0" class="mv-grid">
+      <div class="mv-card" *ngFor="let v of vehiculos">
+        <div class="mv-card__header">
+          <div class="mv-plate">{{ v.placa }}</div>
+          <div class="mv-card__actions">
+            <button class="btn-icon-sm btn-edit" (click)="abrirFormEditar(v)" title="Editar">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+              </svg>
+            </button>
+            <button class="btn-icon-sm btn-delete" (click)="confirmarEliminar(v.id)" title="Eliminar">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+                <path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/>
+              </svg>
+            </button>
+          </div>
+        </div>
+        <div class="mv-card__body">
+          <div class="mv-info-row">
+            <span class="mv-label">Marca</span>
+            <span class="mv-value">{{ v.marca }}</span>
+          </div>
+          <div class="mv-info-row">
+            <span class="mv-label">Modelo</span>
+            <span class="mv-value">{{ v.modelo }}</span>
+          </div>
+          <div class="mv-info-row">
+            <span class="mv-label">Año</span>
+            <span class="mv-value">{{ v.anio }}</span>
+          </div>
+          <div class="mv-info-row" *ngIf="v.color">
+            <span class="mv-label">Color</span>
+            <span class="mv-value">{{ v.color }}</span>
+          </div>
+          <div class="mv-info-row" *ngIf="v.tipo">
+            <span class="mv-label">Tipo</span>
+            <span class="mv-value">{{ v.tipo }}</span>
+          </div>
+          <div class="mv-info-row" *ngIf="v.cilindraje">
+            <span class="mv-label">Cilindraje</span>
+            <span class="mv-value">{{ v.cilindraje }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Modal: Registrar / Editar -->
+<div class="modal-overlay" *ngIf="showForm" (click)="cerrarForm()">
+  <div class="modal-card" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2 class="modal-title">{{ editMode ? 'Editar Vehículo' : 'Registrar Vehículo' }}</h2>
+      <button class="modal-close" (click)="cerrarForm()">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
+        </svg>
+      </button>
+    </div>
+
+    <form [formGroup]="form" (ngSubmit)="guardar()" novalidate class="modal-body">
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label required">Placa</label>
+          <input type="text" class="form-input" formControlName="placa"
+                 placeholder="Ej: ABD-80E" style="text-transform:uppercase"
+                 [class.input-error]="isInvalid('placa')" />
+          <span class="field-error" *ngIf="isInvalid('placa')">Placa inválida (3-10 caracteres)</span>
+        </div>
+        <div class="form-group">
+          <label class="form-label required">Marca</label>
+          <input type="text" class="form-input" formControlName="marca"
+                 placeholder="Ej: Chevrolet"
+                 [class.input-error]="isInvalid('marca')" />
+          <span class="field-error" *ngIf="isInvalid('marca')">Obligatorio</span>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label required">Modelo</label>
+          <input type="text" class="form-input" formControlName="modelo"
+                 placeholder="Ej: Spark"
+                 [class.input-error]="isInvalid('modelo')" />
+          <span class="field-error" *ngIf="isInvalid('modelo')">Obligatorio</span>
+        </div>
+        <div class="form-group">
+          <label class="form-label required">Año</label>
+          <input type="number" class="form-input" formControlName="anio"
+                 placeholder="Ej: 2020" min="1970" max="2030"
+                 [class.input-error]="isInvalid('anio')" />
+          <span class="field-error" *ngIf="isInvalid('anio')">Año inválido (1970-2030)</span>
+        </div>
+      </div>
+
+      <div class="form-row">
+        <div class="form-group">
+          <label class="form-label">Color</label>
+          <input type="text" class="form-input" formControlName="color" placeholder="Ej: Rojo" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Tipo</label>
+          <select class="form-input" formControlName="tipo">
+            <option value="">Selecciona un tipo...</option>
+            <option *ngFor="let t of tiposVehiculo" [value]="t">{{ t }}</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Cilindraje</label>
+        <input type="text" class="form-input" formControlName="cilindraje" placeholder="Ej: 1600cc" />
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="btn btn-ghost" (click)="cerrarForm()" [disabled]="saving">Cancelar</button>
+        <button type="submit" class="btn btn-primary" [disabled]="saving">
+          <span *ngIf="!saving">{{ editMode ? 'Guardar cambios' : 'Registrar' }}</span>
+          <span *ngIf="saving" class="spinner-sm"></span>
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Modal: Confirmar eliminar -->
+<div class="modal-overlay" *ngIf="showDeleteModal" (click)="cancelarEliminar()">
+  <div class="modal-card modal-card--sm" (click)="$event.stopPropagation()">
+    <div class="modal-header">
+      <h2 class="modal-title">Eliminar Vehículo</h2>
+    </div>
+    <div class="modal-body">
+      <p class="modal-confirm-text">¿Estás seguro de que deseas eliminar este vehículo? Esta acción no se puede deshacer.</p>
+      <div class="modal-actions">
+        <button class="btn btn-ghost" (click)="cancelarEliminar()" [disabled]="deleting">Cancelar</button>
+        <button class="btn btn-danger" (click)="eliminar()" [disabled]="deleting">
+          <span *ngIf="!deleting">Eliminar</span>
+          <span *ngIf="deleting" class="spinner-sm"></span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>

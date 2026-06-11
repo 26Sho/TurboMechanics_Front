@@ -111,6 +111,12 @@ export class SidebarComponent {
       icon: `<i class="fas fa-calendar-check"></i>`
     },
     {
+      label: 'Vehículos',
+      route: '/admin/vehiculos-cliente',
+      badge: 0,
+      icon: `<i class="fas fa-car"></i>`
+    },
+    {
       label: 'Garantías',
       route: '/admin/garantias',
       badge: 0,

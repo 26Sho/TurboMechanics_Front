@@ -3,6 +3,8 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { AppointmentService, Appointment, AvailabilityResponse } from '../../../admin/service/appointment.service';
 import { ToastService } from '../../../../shared/services/toast.service';
 import { AuthService } from '../../../../core/services/auth.service';
+import { ClienteVehicleService } from 'src/app/core/services/cliente-vehicle.service';
+import { VehiculoClienteResponse } from 'src/app/core/models/vehiculo-cliente';
 
 type TabType = 'register' | 'manage' | 'availability';
 
@@ -15,8 +17,19 @@ export class AppointmentsComponent implements OnInit {
 
   activeTab: TabType = 'register';
 
-  // Fecha mínima para los calendarios (hoy)
-  today = new Date().toISOString().split('T')[0];
+  // Fecha mínima — desde mañana, o desde mañana si ya pasaron las 5pm
+  today = (() => {
+    const d = new Date();
+    if (d.getHours() >= 17) d.setDate(d.getDate() + 1);
+    const yyyy = d.getFullYear();
+    const mm   = String(d.getMonth() + 1).padStart(2, '0');
+    const dd   = String(d.getDate()).padStart(2, '0');
+    return `${yyyy}-${mm}-${dd}`;
+  })();
+
+  // ── Vehiculos del cliente ─────────────────────────────────────────────────
+  misVehiculos: VehiculoClienteResponse[] = [];
+  loadingVehiculos = false;
 
   // ── Register ──────────────────────────────────────────────────────────────
   registerForm!: FormGroup;
@@ -43,14 +56,16 @@ export class AppointmentsComponent implements OnInit {
   availabilitySearched = false;
 
   constructor(
-    private fb:         FormBuilder,
-    private aptService: AppointmentService,
-    private toast:      ToastService,
-    private auth:       AuthService
+    private fb:             FormBuilder,
+    private aptService:     AppointmentService,
+    private toast:          ToastService,
+    private auth:           AuthService,
+    private vehicleService: ClienteVehicleService
   ) {}
 
   ngOnInit(): void {
     this.buildForms();
+    this.cargarVehiculos();
   }
 
   private buildForms(): void {
@@ -72,13 +87,21 @@ export class AppointmentsComponent implements OnInit {
       newTime: ['', Validators.required],
     });
 
-    // ← Solo pide motivo, no correos
     this.cancelForm = this.fb.group({
       reason: ['', Validators.required],
     });
 
     this.availabilityForm = this.fb.group({
       date: ['', Validators.required],
+    });
+  }
+
+  // ── Cargar vehiculos del cliente ───────────────────────────────────────────
+  cargarVehiculos(): void {
+    this.loadingVehiculos = true;
+    this.vehicleService.list().subscribe({
+      next: (data) => { this.misVehiculos = data; this.loadingVehiculos = false; },
+      error: () => { this.loadingVehiculos = false; }
     });
   }
 

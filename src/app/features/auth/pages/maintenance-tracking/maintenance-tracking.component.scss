@@ -24,7 +24,6 @@ $border:  rgba(244, 93, 1, 0.25);
   gap: 24px;
 }
 
-// ── Header ────────────────────────────────────────────────────────────────────
 .apt-header {
   display: flex;
   align-items: center;
@@ -51,7 +50,6 @@ $border:  rgba(244, 93, 1, 0.25);
 
 .header-sub { font-size: 0.85rem; color: $gray-mid; display: block; margin-top: 2px; }
 
-// ── Tabs ──────────────────────────────────────────────────────────────────────
 .apt-tabs {
   display: flex; gap: 4px; flex-wrap: wrap;
   background: $gray-dark;
@@ -69,7 +67,6 @@ $border:  rgba(244, 93, 1, 0.25);
   &:not(.active):hover { background: rgba($white, 0.06); color: $white; }
 }
 
-// ── Card ──────────────────────────────────────────────────────────────────────
 .apt-card {
   background: $gray-dark;
   border: 1px solid $border;
@@ -84,22 +81,6 @@ $border:  rgba(244, 93, 1, 0.25);
   letter-spacing: 0.5px; margin-bottom: 20px;
 }
 
-// ── Agenda type ───────────────────────────────────────────────────────────────
-.agenda-type-row {
-  display: flex; gap: 8px; margin-bottom: 16px;
-}
-
-.type-btn {
-  padding: 6px 16px; border-radius: 6px;
-  border: 1px solid $border; background: transparent;
-  color: $gray-light; font-size: 0.82rem; font-weight: 600;
-  cursor: pointer; transition: all 0.2s;
-
-  &.active { background: rgba($orange, 0.15); color: $orange; border-color: $orange; }
-  &:hover:not(.active) { background: rgba($white, 0.06); }
-}
-
-// ── Form ──────────────────────────────────────────────────────────────────────
 .form-row {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -139,7 +120,19 @@ $border:  rgba(244, 93, 1, 0.25);
 .form-actions  { display: flex; justify-content: flex-end; }
 .field-error   { font-size: 11px; color: #F87171; }
 
-// ── Table ─────────────────────────────────────────────────────────────────────
+.field-hint {
+  font-size: 11px;
+  color: $gray-mid;
+  margin-top: 2px;
+
+  a {
+    color: $orange;
+    cursor: pointer;
+    text-decoration: none;
+    &:hover { text-decoration: underline; }
+  }
+}
+
 .apt-table-wrap { overflow-x: auto; }
 
 .apt-table {
@@ -166,39 +159,6 @@ $border:  rgba(244, 93, 1, 0.25);
 .apt-actions { text-align: center; white-space: nowrap; }
 .apt-no-action { color: $gray-mid; font-size: 12px; }
 
-// ── Availability ──────────────────────────────────────────────────────────────
-.availability-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
-
-  @media (max-width: 600px) { grid-template-columns: 1fr; }
-}
-
-.avail-section { display: flex; flex-direction: column; gap: 10px; }
-
-.avail-title {
-  font-size: 11px; font-weight: 700;
-  text-transform: uppercase; letter-spacing: 0.8px;
-
-  &--available { color: $green; }
-  &--occupied  { color: $red; }
-}
-
-.avail-slots { display: flex; flex-wrap: wrap; gap: 8px; }
-
-.slot {
-  padding: 6px 14px;
-  border-radius: 6px;
-  font-size: 13px; font-weight: 600;
-
-  &--available { background: rgba($green, 0.12); color: $green; border: 1px solid rgba($green, 0.3); }
-  &--occupied  { background: rgba($red, 0.12);   color: $red;   border: 1px solid rgba($red, 0.3);   }
-}
-
-.slot-empty { font-size: 12px; color: $gray-mid; }
-
-// ── Badges ────────────────────────────────────────────────────────────────────
 .badge {
   display: inline-block; padding: 3px 10px;
   border-radius: 20px; font-size: 11px; font-weight: 600;
@@ -209,26 +169,11 @@ $border:  rgba(244, 93, 1, 0.25);
   &--completed    { background: rgba($green, 0.15);  color: $green;  }
 }
 
-// ── Action buttons ────────────────────────────────────────────────────────────
-.btn-action {
-  border: none; border-radius: 6px;
-  padding: 5px 9px; font-size: 0.85rem;
-  cursor: pointer; margin: 0 2px;
-  transition: opacity 0.15s, transform 0.1s;
-
-  &:hover { opacity: 0.8; transform: scale(1.08); }
-
-  &.btn-reschedule  { background: rgba($blue, 0.12);   color: #60A5FA; }
-  &.btn-cancel-apt  { background: rgba($red, 0.12);    color: $red;    }
-}
-
-// ── Empty ─────────────────────────────────────────────────────────────────────
 .empty-state {
   text-align: center; padding: 40px;
   color: $gray-mid; font-size: 0.9rem;
 }
 
-// ── Buttons ───────────────────────────────────────────────────────────────────
 .btn {
   display: inline-flex; align-items: center; gap: 6px;
   padding: 10px 22px; border-radius: 8px; border: none;
@@ -257,7 +202,6 @@ $border:  rgba(244, 93, 1, 0.25);
   &:hover:not(:disabled) { opacity: 0.9; }
 }
 
-// ── Modal ─────────────────────────────────────────────────────────────────────
 .modal-overlay {
   position: fixed; inset: 0;
   background: rgba(0,0,0,0.75);
@@ -305,7 +249,6 @@ $border:  rgba(244, 93, 1, 0.25);
   margin-top: 20px;
 }
 
-// ── Spinner ───────────────────────────────────────────────────────────────────
 .spinner-sm {
   width: 16px; height: 16px;
   border: 2px solid rgba($white, 0.3);
@@ -317,7 +260,6 @@ $border:  rgba(244, 93, 1, 0.25);
 
 @keyframes spin { to { transform: rotate(360deg); } }
 
-// ── Date input ────────────────────────────────────────────────────────────────
 ::ng-deep .form-input[type="date"] {
   color-scheme: dark;
 
@@ -330,15 +272,16 @@ $border:  rgba(244, 93, 1, 0.25);
     &:hover { opacity: 1; }
   }
 }
+
 .back-btn {
   display: inline-flex;
   align-items: center;
   gap: 7px;
   padding: 8px 14px;
   border-radius: 8px;
-  background: rgba(244,93,1,0.08);
-  border: 1px solid rgba(244,93,1,0.25);
-  color: #F45D01;
+  background: rgba($orange, 0.08);
+  border: 1px solid rgba($orange, 0.25);
+  color: $orange;
   font-size: 13px;
   font-weight: 600;
   text-decoration: none;
@@ -349,10 +292,9 @@ $border:  rgba(244, 93, 1, 0.25);
   svg { flex-shrink: 0; transition: transform 0.2s; }
 
   &:hover {
-    background: rgba(244,93,1,0.16);
-    border-color: #F45D01;
+    background: rgba($orange, 0.16);
+    border-color: $orange;
     transform: translateX(-2px);
     svg { transform: translateX(-3px); }
   }
 }
-

@@ -22,6 +22,7 @@ import { TechnicalDiagnosisComponent } from '../auth/pages/technical-diagnosis/t
 import { MovementsComponent } from '../admin/movements/movements.component';
 import { VehicleComponent } from '../auth/pages/vehicle/vehicle.component';
 import { WhatsappComponent } from './whatsapp/whatsapp.component';
+import { PerfilComponent } from '../shared/perfil/perfil.component';
 
 const routes: Routes = [
   {
@@ -43,6 +44,7 @@ const routes: Routes = [
       { path: 'movements',    component: MovementsComponent },
       { path: 'vehicles', component: VehicleComponent },
       { path: 'whatsapp', component: WhatsappComponent },
+      { path: 'perfil', component: PerfilComponent },
     ]
   }
 ];

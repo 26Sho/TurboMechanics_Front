@@ -20,7 +20,7 @@ export class AuthService {
   private _intentionalLogout = false;
   get intentionalLogout(): boolean { return this._intentionalLogout; }
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient) { }
 
   register(data: RegisterRequest): Observable<MessageResponse> {
     return this.http.post<MessageResponse>(`${this.apiUrl}/register`, data);
@@ -34,7 +34,10 @@ export class AuthService {
           sessionStorage.setItem('token', res.jwt);
           // Extraer el nombre real del JWT (campo sub) en vez del email
           try {
-            const payload = JSON.parse(atob(res.jwt.split('.')[1]));
+            const base64 = res.jwt.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
+            const payload = JSON.parse(decodeURIComponent(atob(base64).split('').map(c =>
+              '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)
+            ).join('')));
             sessionStorage.setItem('username', payload.sub || data.email);
           } catch { sessionStorage.setItem('username', data.email); }
           sessionStorage.setItem('rolId', String(res.rolId));
@@ -45,7 +48,7 @@ export class AuthService {
   }
 
   getUsername(): string { return sessionStorage.getItem('username') || ''; }
-  getRolId(): number    { return Number(sessionStorage.getItem('rolId')); }
+  getRolId(): number { return Number(sessionStorage.getItem('rolId')); }
 
   refreshToken(): Observable<RefreshTokenResponse> {
     return this.http.get<RefreshTokenResponse>(`${this.apiUrl}/refresh`).pipe(
@@ -54,7 +57,7 @@ export class AuthService {
   }
 
   getToken(): string | null { return sessionStorage.getItem('token'); }
-  isLoggedIn(): boolean     { return !!this.getToken(); }
+  isLoggedIn(): boolean { return !!this.getToken(); }
 
   /** Cierre de sesión voluntario — limpia todo sin mostrar modal de expiración. */
   logout(): void {
