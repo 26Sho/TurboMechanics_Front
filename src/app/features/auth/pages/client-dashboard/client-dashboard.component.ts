@@ -23,4 +23,8 @@ export class ClientDashboardComponent implements OnInit {
   goToMaintenance(): void {
     this.router.navigate(['/maintenance']);
   }
+
+  goToProfile(): void {
+    this.router.navigate(['/perfil']);
+  }
 }

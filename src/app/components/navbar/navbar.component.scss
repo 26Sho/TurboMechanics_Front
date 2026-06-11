@@ -94,6 +94,7 @@ $font-heading: 'Rajdhani', sans-serif;
   &__auth {
     display: flex;
     justify-content: flex-end;
+    position: relative;
     @media (max-width: 1024px) { display: none; }
   }
 
@@ -125,57 +126,9 @@ $font-heading: 'Rajdhani', sans-serif;
     display: flex;
     align-items: center;
     gap: 12px;
+    position: relative;
   }
 
-  &__user-info {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    color: $gray-light;
-    font-family: $font-heading;
-
-    i { font-size: 1.1rem; color: $orange; }
-  }
-
-  &__username {
-    font-size: 0.9rem;
-    font-weight: 600;
-    letter-spacing: 0.5px;
-    color: $white;
-    max-width: 150px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  &__logout-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 7px;
-    padding: 8px 16px;
-    border-radius: 8px;
-    background: rgba($orange, 0.1);
-    border: 1px solid rgba($orange, 0.25);
-    color: $orange;
-    font-family: $font-heading;
-    font-size: 0.85rem;
-    font-weight: 600;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    cursor: pointer;
-    transition: all 0.2s;
-
-    svg { flex-shrink: 0; }
-
-    &:hover {
-      background: rgba($orange, 0.2);
-      border-color: $orange;
-      transform: translateY(-1px);
-      box-shadow: 0 4px 16px rgba($orange, 0.25);
-    }
-  }
-
-  // ── Hamburger ──────────────────────────────────────────────
   &__hamburger {
     display: none;
     flex-direction: column;
@@ -201,7 +154,6 @@ $font-heading: 'Rajdhani', sans-serif;
     }
   }
 
-  // ── Mobile Menu ────────────────────────────────────────────
   &__mobile {
     display: none;
     background: rgba($gray-dark, 0.97);
@@ -247,7 +199,7 @@ $font-heading: 'Rajdhani', sans-serif;
   }
 }
 
-// ── Dropdown ───────────────────────────────────────────────────
+// ── Dropdown inicio ────────────────────────────────────────────
 .has-dropdown {
   position: relative;
 }
@@ -285,7 +237,6 @@ $font-heading: 'Rajdhani', sans-serif;
     width: 12px; height: 6px;
     background: rgba(#141414, 0.98);
     clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
-    border-top: none;
   }
 
   &.open {
@@ -325,7 +276,172 @@ $font-heading: 'Rajdhani', sans-serif;
     svg { color: $orange; }
   }
 
-  & + & {
-    border-top: 1px solid rgba(255,255,255,0.04);
+  & + & { border-top: 1px solid rgba(255,255,255,0.04); }
+}
+
+// ── User chip + dropdown ───────────────────────────────────────
+.user-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  padding: 7px 16px 7px 7px;
+  border-radius: 30px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+  user-select: none;
+  min-width: 180px;
+
+  &:hover, &.open {
+    border-color: rgba($orange, 0.4);
+    background: rgba($orange, 0.06);
   }
+}
+
+.user-avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: $orange;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 13px;
+  font-weight: 700;
+  color: $white;
+  flex-shrink: 0;
+}
+
+.chip-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+}
+
+.chip-name {
+  font-size: 14px;
+  font-weight: 600;
+  color: $white;
+  line-height: 1;
+  font-family: $font-heading;
+}
+
+.chip-status {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 10px;
+  color: #2ECC71;
+  line-height: 1;
+}
+
+.status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #2ECC71;
+  flex-shrink: 0;
+  animation: statusBlink 1.6s ease-in-out infinite;
+
+  @keyframes statusBlink {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0.3; }
+  }
+}
+
+.chip-chevron {
+  color: $gray-mid;
+  transition: transform 0.2s;
+  flex-shrink: 0;
+
+  &.rotated { transform: rotate(180deg); }
+}
+
+.user-dropdown {
+  display: none;
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  width: 240px;
+  background: $gray-dark;
+  border: 1px solid #2A2A2A;
+  border-radius: 12px;
+  overflow: hidden;
+  z-index: 9999;
+
+  &.open { display: block; }
+}
+
+.user-dropdown__header {
+  padding: 16px 18px;
+  border-bottom: 1px solid #2A2A2A;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.user-dropdown__avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: $orange;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 15px;
+  font-weight: 700;
+  color: $white;
+  flex-shrink: 0;
+}
+
+.user-dropdown__name {
+  font-size: 14px;
+  font-weight: 700;
+  color: $white;
+  font-family: $font-heading;
+}
+
+.user-dropdown__role {
+  font-size: 11px;
+  color: $gray-mid;
+  margin-top: 3px;
+}
+
+.user-dropdown__item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 13px 18px;
+  font-size: 13px;
+  font-weight: 600;
+  color: $gray-light;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+  font-family: $font-heading;
+
+  svg { color: $gray-mid; transition: color 0.15s; flex-shrink: 0; }
+
+  &:hover {
+    background: rgba($orange, 0.08);
+    color: $orange;
+    svg { color: $orange; }
+  }
+
+  &.danger:hover {
+    background: rgba(231, 76, 60, 0.08);
+    color: #E74C3C;
+    svg { color: #E74C3C; }
+  }
+}
+
+.user-dropdown__divider {
+  height: 1px;
+  background: #2A2A2A;
+  margin: 4px 0;
 }

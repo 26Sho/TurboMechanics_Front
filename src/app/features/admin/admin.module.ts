@@ -23,6 +23,8 @@ import { AppointmentsComponent } from './appointments/appointments.component';
 import { GarantiasComponent } from './garantias/Garantias_component';
 import { ResenasAdminComponent } from './resenas/resenas.component';
 import { WhatsappComponent } from './whatsapp/whatsapp.component';
+import { PerfilComponent } from '../shared/perfil/perfil.component';
+import { AdminVehiculosClienteComponent } from './vehiculos-cliente/vehiculos-cliente.component';
 
 @NgModule({
   declarations: [
@@ -44,6 +46,8 @@ import { WhatsappComponent } from './whatsapp/whatsapp.component';
     GarantiasComponent,
     ResenasAdminComponent,
     WhatsappComponent,
+    PerfilComponent,
+    AdminVehiculosClienteComponent,
   ],
   imports: [
     CommonModule,

@@ -16,9 +16,10 @@ import { MechanicMaintenanceComponent } from './pages/mechanic-maintenance/mecha
 import { EstimateApproveComponent } from './pages/estimate-approve/estimate-approve.component';
 import { EstimateRejectComponent } from './pages/estimate-reject/estimate-reject.component';
 import { ClientBillsComponent } from './pages/client-bills/client-bills.component';
+import { MisVehiculosComponent } from './pages/mis-vehiculos/mis-vehiculos.component';
 
 @NgModule({
-  declarations: [AuthComponent, LoginComponent, RecoverPasswordComponent, RegisterComponent, WorkOrderComponent, VehicleComponent, VehicleHistoryComponent, TechnicalDiagnosisComponent, AppointmentsComponent, MaintenanceTrackingComponent, MechanicMaintenanceComponent, EstimateApproveComponent, EstimateRejectComponent, ClientBillsComponent],
+  declarations: [AuthComponent, LoginComponent, RecoverPasswordComponent, RegisterComponent, WorkOrderComponent, VehicleComponent, VehicleHistoryComponent, TechnicalDiagnosisComponent, AppointmentsComponent, MaintenanceTrackingComponent, MechanicMaintenanceComponent, EstimateApproveComponent, EstimateRejectComponent, ClientBillsComponent, MisVehiculosComponent],
   imports: [
     CommonModule,
     FormsModule,

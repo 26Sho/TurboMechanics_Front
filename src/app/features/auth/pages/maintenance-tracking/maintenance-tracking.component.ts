@@ -11,6 +11,8 @@ import {
 } from '../../../admin/service/maintenance-tracking.service';
 import { ToastService } from '../../../../shared/services/toast.service';
 import { AuthService } from '../../../../core/services/auth.service';
+import { ClienteVehicleService } from 'src/app/core/services/cliente-vehicle.service';
+import { VehiculoClienteResponse } from 'src/app/core/models/vehiculo-cliente';
 
 type TabType = 'status' | 'consent';
 
@@ -26,14 +28,14 @@ export class MaintenanceTrackingComponent implements OnInit {
   // ── Estado (HU 9.1, 9.2, 9.3) ────────────────────────────────────────────
   statusForm!: FormGroup;
   status: MaintenanceStatusResponse | null = null;
-  loadingStatus  = false;
+  loadingStatus = false;
   statusSearched = false;
 
   // ── Avances e inconvenientes (HU 9.6.7, 9.7.7) ───────────────────────────
   progresses: MaintenanceProgress[] = [];
   issues: Issue[] = [];
   loadingProgress = false;
-  loadingIssues   = false;
+  loadingIssues = false;
 
   // ── Historial de notificaciones (ST-9.5.8) ────────────────────────────────
   notifications: NotificationLog[] = [];
@@ -46,25 +48,31 @@ export class MaintenanceTrackingComponent implements OnInit {
   // ── Consentimiento (HU 9.8, 9.9) ─────────────────────────────────────────
   consentForm!: FormGroup;
   consent: NotificationConsent | null = null;
-  loadingConsent  = false;
-  savingConsent   = false;
+  loadingConsent = false;
+  savingConsent = false;
   consentSearched = false;
 
+  // ── Vehículos del cliente ─────────────────────────────────────────────────
+  misVehiculos: VehiculoClienteResponse[] = [];
+  loadingVehiculos = false;
+
   channels: { value: NotificationChannel; label: string }[] = [
-    { value: 'Email',    label: '📧 Correo electrónico' },
-    { value: 'Whastapp', label: '💬 WhatsApp'           },
-    { value: 'Both',     label: '📧💬 Ambos'            },
+    { value: 'Email', label: '📧 Correo electrónico' },
+    { value: 'Whastapp', label: '💬 WhatsApp' },
+    { value: 'Both', label: '📧💬 Ambos' },
   ];
 
   constructor(
-    private fb:      FormBuilder,
+    private fb: FormBuilder,
     private service: MaintenanceTrackingService,
-    private toast:   ToastService,
-    private auth:    AuthService
-  ) {}
+    private toast: ToastService,
+    private auth: AuthService,
+    private vehicleService: ClienteVehicleService
+  ) { }
 
   ngOnInit(): void {
     this.buildForms();
+    this.cargarVehiculos();
   }
 
   private buildForms(): void {
@@ -74,8 +82,17 @@ export class MaintenanceTrackingComponent implements OnInit {
 
     this.consentForm = this.fb.group({
       identification: [null, [Validators.required, Validators.min(1)]],
-      authorized:     [true, Validators.required],
-      channel:        ['Email'],
+      authorized: [true, Validators.required],
+      channel: ['Email'],
+    });
+  }
+
+  // ── Cargar vehículos del cliente ──────────────────────────────────────────
+  cargarVehiculos(): void {
+    this.loadingVehiculos = true;
+    this.vehicleService.list().subscribe({
+      next: (data) => { this.misVehiculos = data; this.loadingVehiculos = false; },
+      error: () => { this.loadingVehiculos = false; }
     });
   }
 
@@ -87,25 +104,25 @@ export class MaintenanceTrackingComponent implements OnInit {
   searchStatus(): void {
     this.statusForm.markAllAsTouched();
     if (this.statusForm.invalid) return;
-    this.loadingStatus  = true;
+    this.loadingStatus = true;
     this.statusSearched = false;
-    this.progresses     = [];
-    this.issues         = [];
-    this.history        = [];
-    this.notifications  = [];
+    this.progresses = [];
+    this.issues = [];
+    this.history = [];
+    this.notifications = [];
     const plate = this.statusForm.value.plate;
     this.service.getStatusByPlate(plate).subscribe({
       next: (data) => {
-        this.status         = data;
-        this.loadingStatus  = false;
+        this.status = data;
+        this.loadingStatus = false;
         this.statusSearched = true;
         this.loadProgress(data.workOrderId);
         this.loadIssues(data.workOrderId);
         this.loadHistory(plate);
-        this.loadNotifications(data.workOrderId); // ← nuevo
+        this.loadNotifications(data.workOrderId);
       },
       error: () => {
-        this.loadingStatus  = false;
+        this.loadingStatus = false;
         this.statusSearched = true;
         this.toast.error('No se encontró mantenimiento activo para esa placa');
       }
@@ -116,7 +133,7 @@ export class MaintenanceTrackingComponent implements OnInit {
     this.loadingProgress = true;
     this.service.getProgress(workOrderId).subscribe({
       next: (list) => { this.progresses = list ?? []; this.loadingProgress = false; },
-      error: ()     => { this.loadingProgress = false; }
+      error: () => { this.loadingProgress = false; }
     });
   }
 
@@ -124,16 +141,15 @@ export class MaintenanceTrackingComponent implements OnInit {
     this.loadingIssues = true;
     this.service.getIssues(workOrderId).subscribe({
       next: (list) => { this.issues = list ?? []; this.loadingIssues = false; },
-      error: ()    => { this.loadingIssues = false; }
+      error: () => { this.loadingIssues = false; }
     });
   }
 
-  // ── ST-9.5.8 Historial de notificaciones ──────────────────────────────────
   loadNotifications(workOrderId: number): void {
     this.loadingNotifications = true;
     this.service.getNotifications(workOrderId).subscribe({
       next: (list) => { this.notifications = list ?? []; this.loadingNotifications = false; },
-      error: ()    => { this.loadingNotifications = false; }
+      error: () => { this.loadingNotifications = false; }
     });
   }
 
@@ -174,18 +190,18 @@ export class MaintenanceTrackingComponent implements OnInit {
     this.consentForm.get('identification')!.markAsTouched();
     const id = this.consentForm.value.identification;
     if (!id) return;
-    this.loadingConsent  = true;
+    this.loadingConsent = true;
     this.consentSearched = false;
     this.service.getConsent(id).subscribe({
       next: (data) => {
         this.consent = data;
         this.consentForm.patchValue({ authorized: data.authorized, channel: data.channel ?? 'Email' });
-        this.loadingConsent  = false;
+        this.loadingConsent = false;
         this.consentSearched = true;
       },
       error: () => {
-        this.consent         = null;
-        this.loadingConsent  = false;
+        this.consent = null;
+        this.loadingConsent = false;
         this.consentSearched = true;
       }
     });
@@ -198,7 +214,7 @@ export class MaintenanceTrackingComponent implements OnInit {
     const { identification, authorized, channel } = this.consentForm.value;
     this.service.saveConsent({ identification, authorized, channel: authorized ? channel : null }).subscribe({
       next: (data) => {
-        this.consent       = data;
+        this.consent = data;
         this.savingConsent = false;
         this.toast.success('Consentimiento guardado correctamente');
       },
