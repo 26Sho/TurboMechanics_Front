@@ -1,274 +1,218 @@
 <div class="perfil-page">
 
-    <a class="back-btn" routerLink="/" title="Volver al inicio">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-            <polyline points="15 18 9 12 15 6" />
-        </svg>
-        Volver al inicio
-    </a>
-    <!-- Loading -->
-    <div *ngIf="loading" class="perfil-loading">
-        <div class="spinner"></div>
-        <p>Cargando perfil...</p>
+  <a class="back-btn" routerLink="/" title="Volver al inicio">
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+      <polyline points="15 18 9 12 15 6"/>
+    </svg>
+    Volver al inicio
+  </a>
+
+  <div *ngIf="loading" class="perfil-loading">
+    <div class="spinner"></div>
+    <p>Cargando perfil...</p>
+  </div>
+
+  <div *ngIf="!loading && errorMsg" class="perfil-error-banner">{{ errorMsg }}</div>
+
+  <ng-container *ngIf="!loading && profile">
+
+    <div class="perfil-header">
+      <div class="avatar">{{ getInitials(profile.username) }}</div>
+      <div class="perfil-header__info">
+        <h2 class="perfil-name">{{ profile.username }}</h2>
+        <span class="rol-badge">{{ rolLabel[profile.rolId] || 'Usuario' }}</span>
+        <p class="perfil-email">{{ profile.email }}</p>
+      </div>
     </div>
 
-    <!-- Error general -->
-    <div *ngIf="!loading && errorMsg" class="perfil-error-banner">
-        {{ errorMsg }}
-    </div>
+    <div *ngIf="profileSuccess" class="alert alert--success">✓ {{ profileSuccess }}</div>
 
-    <!-- Contenido principal -->
-    <ng-container *ngIf="!loading && profile">
-
-        <!-- Header del perfil -->
-        <div class="perfil-header">
-            <div class="avatar">
-                {{ getInitials(profile.username) }}
-            </div>
-            <div class="perfil-header__info">
-                <h2 class="perfil-name">{{ profile.username }}</h2>
-                <span class="rol-badge">{{ rolLabel[profile.rolId] || 'Usuario' }}</span>
-                <p class="perfil-email">{{ profile.email }}</p>
-            </div>
+    <!-- ── DATOS PERSONALES ── -->
+    <div class="card">
+      <div class="card__head">
+        <h3 class="card__title">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+          </svg>
+          Datos personales
+        </h3>
+        <button *ngIf="!editMode" class="btn btn--outline" (click)="enableEdit()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+          </svg>
+          Editar
+        </button>
+      </div>
+      <div *ngIf="!editMode" class="info-grid">
+        <div class="info-item"><span class="info-label">Nombre completo</span><span class="info-value">{{ profile.username }}</span></div>
+        <div class="info-item"><span class="info-label">Cédula / Identificación</span><span class="info-value">{{ profile.identification }}</span></div>
+        <div class="info-item"><span class="info-label">Teléfono</span><span class="info-value">{{ profile.phone }}</span></div>
+        <div class="info-item"><span class="info-label">Correo electrónico</span><span class="info-value">{{ profile.email }}</span></div>
+      </div>
+      <form *ngIf="editMode" [formGroup]="profileForm" (ngSubmit)="saveProfile()" novalidate>
+        <div class="form-grid">
+          <div class="form-group">
+            <label>Nombre completo</label>
+            <input type="text" formControlName="username" placeholder="Tu nombre"/>
+            <span class="form-error" *ngIf="isInvalid(profileForm, 'username')">Nombre requerido (mínimo 3 caracteres)</span>
+          </div>
+          <div class="form-group">
+            <label>Cédula / Identificación</label>
+            <input type="number" formControlName="identification" placeholder="Número de cédula"/>
+            <span class="form-error" *ngIf="isInvalid(profileForm, 'identification')">Identificación requerida</span>
+          </div>
+          <div class="form-group">
+            <label>Teléfono</label>
+            <input type="text" formControlName="phone" placeholder="Ej: 3001234567"/>
+            <span class="form-error" *ngIf="isInvalid(profileForm, 'phone')">Teléfono inválido (7–15 dígitos)</span>
+          </div>
+          <div class="form-group">
+            <label>Correo electrónico</label>
+            <input type="email" formControlName="email" placeholder="correo@ejemplo.com"/>
+            <span class="form-error" *ngIf="isInvalid(profileForm, 'email')">Correo inválido</span>
+          </div>
         </div>
+        <div *ngIf="profileError" class="alert alert--error">{{ profileError }}</div>
+        <div class="form-actions">
+          <button type="button" class="btn btn--ghost" (click)="cancelEdit()">Cancelar</button>
+          <button type="submit" class="btn btn--primary" [disabled]="savingProfile">
+            <span *ngIf="!savingProfile">Guardar cambios</span>
+            <span *ngIf="savingProfile">Guardando...</span>
+          </button>
+        </div>
+      </form>
+    </div>
 
-        <!-- Alertas de éxito globales -->
-        <div *ngIf="profileSuccess" class="alert alert--success">✓ {{ profileSuccess }}</div>
+    <!-- ── SEGURIDAD ── -->
+    <div class="card">
+      <div class="card__head">
+        <h3 class="card__title">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>
+          </svg>
+          Seguridad
+        </h3>
+      </div>
+      <form [formGroup]="passwordForm" (ngSubmit)="savePassword()" novalidate>
+        <div class="form-grid">
+          <div class="form-group full-width">
+            <label>Contraseña actual</label>
+            <div class="input-password">
+              <input [type]="showCurrentPassword ? 'text' : 'password'" formControlName="currentPassword" placeholder="Tu contraseña actual"/>
+              <button type="button" class="toggle-eye" (click)="showCurrentPassword = !showCurrentPassword">
+                <svg *ngIf="!showCurrentPassword" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                <svg *ngIf="showCurrentPassword" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19M1 1l22 22"/></svg>
+              </button>
+            </div>
+            <span class="form-error" *ngIf="isInvalid(passwordForm, 'currentPassword')">Ingresa tu contraseña actual</span>
+          </div>
+          <div class="form-group">
+            <label>Nueva contraseña</label>
+            <div class="input-password">
+              <input [type]="showNewPassword ? 'text' : 'password'" formControlName="newPassword" placeholder="Mínimo 6 caracteres"/>
+              <button type="button" class="toggle-eye" (click)="showNewPassword = !showNewPassword">
+                <svg *ngIf="!showNewPassword" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
+                <svg *ngIf="showNewPassword" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19M1 1l22 22"/></svg>
+              </button>
+            </div>
+            <span class="form-error" *ngIf="isInvalid(passwordForm, 'newPassword')">Mínimo 6 caracteres</span>
+          </div>
+          <div class="form-group">
+            <label>Confirmar nueva contraseña</label>
+            <input type="password" formControlName="confirmPassword" placeholder="Repite la nueva contraseña"/>
+            <span class="form-error" *ngIf="isInvalid(passwordForm, 'confirmPassword')">Confirma la contraseña</span>
+          </div>
+        </div>
+        <div *ngIf="passwordError" class="alert alert--error">{{ passwordError }}</div>
         <div *ngIf="passwordSuccess" class="alert alert--success">✓ {{ passwordSuccess }}</div>
-
-        <!-- ── TARJETA DATOS PERSONALES ── -->
-        <div class="card">
-            <div class="card__head">
-                <h3 class="card__title">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                        <circle cx="12" cy="7" r="4" />
-                    </svg>
-                    Datos personales
-                </h3>
-                <button *ngIf="!editMode" class="btn btn--outline" (click)="enableEdit()">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
-                    </svg>
-                    Editar
-                </button>
-            </div>
-
-            <!-- Vista de solo lectura -->
-            <div *ngIf="!editMode" class="info-grid">
-                <div class="info-item">
-                    <span class="info-label">Nombre completo</span>
-                    <span class="info-value">{{ profile.username }}</span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Cédula / Identificación</span>
-                    <span class="info-value">{{ profile.identification }}</span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Teléfono</span>
-                    <span class="info-value">{{ profile.phone }}</span>
-                </div>
-                <div class="info-item">
-                    <span class="info-label">Correo electrónico</span>
-                    <span class="info-value">{{ profile.email }}</span>
-                </div>
-            </div>
-
-            <!-- Formulario de edición -->
-            <form *ngIf="editMode" [formGroup]="profileForm" (ngSubmit)="saveProfile()" novalidate>
-                <div class="form-grid">
-
-                    <div class="form-group">
-                        <label>Nombre completo</label>
-                        <input type="text" formControlName="username" placeholder="Tu nombre" />
-                        <span class="form-error" *ngIf="isInvalid(profileForm, 'username')">
-                            Nombre requerido (mínimo 3 caracteres)
-                        </span>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Cédula / Identificación</label>
-                        <input type="number" formControlName="identification" placeholder="Número de cédula" />
-                        <span class="form-error" *ngIf="isInvalid(profileForm, 'identification')">
-                            Identificación requerida
-                        </span>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Teléfono</label>
-                        <input type="text" formControlName="phone" placeholder="Ej: 3001234567" />
-                        <span class="form-error" *ngIf="isInvalid(profileForm, 'phone')">
-                            Teléfono inválido (7–15 dígitos)
-                        </span>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Correo electrónico</label>
-                        <input type="email" formControlName="email" placeholder="correo@ejemplo.com" />
-                        <span class="form-error" *ngIf="isInvalid(profileForm, 'email')">
-                            Correo inválido
-                        </span>
-                    </div>
-
-                </div>
-
-                <div *ngIf="profileError" class="alert alert--error">{{ profileError }}</div>
-
-                <div class="form-actions">
-                    <button type="button" class="btn btn--ghost" (click)="cancelEdit()">Cancelar</button>
-                    <button type="submit" class="btn btn--primary" [disabled]="savingProfile">
-                        <span *ngIf="!savingProfile">Guardar cambios</span>
-                        <span *ngIf="savingProfile">Guardando...</span>
-                    </button>
-                </div>
-            </form>
+        <div class="form-actions">
+          <button type="button" class="btn btn--ghost" (click)="passwordForm.reset()">Limpiar</button>
+          <button type="submit" class="btn btn--primary" [disabled]="savingPassword">
+            <span *ngIf="!savingPassword">Cambiar contraseña</span>
+            <span *ngIf="savingPassword">Guardando...</span>
+          </button>
         </div>
+      </form>
+    </div>
 
-        <!-- ── TARJETA SEGURIDAD ── -->
-        <div class="card">
-            <div class="card__head">
-                <h3 class="card__title">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <rect x="3" y="11" width="18" height="11" rx="2" ry="2" />
-                        <path d="M7 11V7a5 5 0 0 1 10 0v4" />
-                    </svg>
-                    Seguridad
-                </h3>
-                <button *ngIf="!showPasswordSection" class="btn btn--outline" (click)="showPasswordSection = true">
-                    Cambiar contraseña
-                </button>
-            </div>
-
-            <p *ngIf="!showPasswordSection" class="info-hint">
-                Para cambiar tu contraseña, haz clic en el botón.
-            </p>
-
-            <form *ngIf="showPasswordSection" [formGroup]="passwordForm" (ngSubmit)="savePassword()" novalidate>
-                <div class="form-grid">
-
-                    <div class="form-group full-width">
-                        <label>Contraseña actual</label>
-                        <div class="input-password">
-                            <input [type]="showCurrentPassword ? 'text' : 'password'" formControlName="currentPassword"
-                                placeholder="Tu contraseña actual" />
-                            <button type="button" class="toggle-eye"
-                                (click)="showCurrentPassword = !showCurrentPassword">
-                                <svg *ngIf="!showCurrentPassword" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                                    stroke="currentColor" stroke-width="2">
-                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-                                    <circle cx="12" cy="12" r="3" />
-                                </svg>
-                                <svg *ngIf="showCurrentPassword" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                                    stroke="currentColor" stroke-width="2">
-                                    <path
-                                        d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19M1 1l22 22" />
-                                </svg>
-                            </button>
-                        </div>
-                        <span class="form-error" *ngIf="isInvalid(passwordForm, 'currentPassword')">
-                            Ingresa tu contraseña actual
-                        </span>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Nueva contraseña</label>
-                        <div class="input-password">
-                            <input [type]="showNewPassword ? 'text' : 'password'" formControlName="newPassword"
-                                placeholder="Mínimo 6 caracteres" />
-                            <button type="button" class="toggle-eye" (click)="showNewPassword = !showNewPassword">
-                                <svg *ngIf="!showNewPassword" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                                    stroke="currentColor" stroke-width="2">
-                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
-                                    <circle cx="12" cy="12" r="3" />
-                                </svg>
-                                <svg *ngIf="showNewPassword" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                                    stroke="currentColor" stroke-width="2">
-                                    <path
-                                        d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19M1 1l22 22" />
-                                </svg>
-                            </button>
-                        </div>
-                        <span class="form-error" *ngIf="isInvalid(passwordForm, 'newPassword')">
-                            Mínimo 6 caracteres
-                        </span>
-                    </div>
-
-                    <div class="form-group">
-                        <label>Confirmar nueva contraseña</label>
-                        <input type="password" formControlName="confirmPassword"
-                            placeholder="Repite la nueva contraseña" />
-                        <span class="form-error" *ngIf="isInvalid(passwordForm, 'confirmPassword')">
-                            Confirma la contraseña
-                        </span>
-                    </div>
-
-                </div>
-
-                <div *ngIf="passwordError" class="alert alert--error">{{ passwordError }}</div>
-
-                <div class="form-actions">
-                    <button type="button" class="btn btn--ghost"
-                        (click)="showPasswordSection = false; passwordForm.reset()">
-                        Cancelar
-                    </button>
-                    <button type="submit" class="btn btn--primary" [disabled]="savingPassword">
-                        <span *ngIf="!savingPassword">Cambiar contraseña</span>
-                        <span *ngIf="savingPassword">Guardando...</span>
-                    </button>
-                </div>
-            </form>
+    <!-- ── VEHÍCULOS (solo cliente) ── -->
+    <div class="card" *ngIf="esCliente">
+      <div class="card__head">
+        <h3 class="card__title">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="1" y="3" width="15" height="13" rx="2"/>
+            <path d="M16 8h4l3 3v5h-7V8z"/>
+            <circle cx="5.5" cy="18.5" r="2.5"/>
+            <circle cx="18.5" cy="18.5" r="2.5"/>
+          </svg>
+          Mis Vehículos
+        </h3>
+        <div class="card__head-actions">
+          <div class="vista-toggle" *ngIf="vehiculos.length > 0">
+            <button class="vista-btn" [class.active]="vistaVehiculos === 'lista'" (click)="vistaVehiculos = 'lista'" title="Vista lista">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/>
+                <line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/>
+                <line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/>
+              </svg>
+            </button>
+            <button class="vista-btn" [class.active]="vistaVehiculos === 'carta'" (click)="vistaVehiculos = 'carta'" title="Vista carta">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/>
+                <rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/>
+              </svg>
+            </button>
+          </div>
+          <button class="btn btn--outline" (click)="goToMisVehiculos()">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+            </svg>
+            Gestionar
+          </button>
         </div>
+      </div>
 
-        <!-- ── TARJETA VEHÍCULOS (solo cliente) ── -->
-        <div class="card" *ngIf="esCliente">
-            <div class="card__head">
-                <h3 class="card__title">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <rect x="1" y="3" width="15" height="13" rx="2" />
-                        <path d="M16 8h4l3 3v5h-7V8z" />
-                        <circle cx="5.5" cy="18.5" r="2.5" />
-                        <circle cx="18.5" cy="18.5" r="2.5" />
-                    </svg>
-                    Mis Vehículos
-                </h3>
-                <button class="btn btn--outline" (click)="goToMisVehiculos()">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
-                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
-                    </svg>
-                    Gestionar
-                </button>
-            </div>
+      <div *ngIf="loadingVehiculos" class="info-hint">Cargando vehículos...</div>
 
-            <!-- Loading vehículos -->
-            <div *ngIf="loadingVehiculos" class="info-hint">Cargando vehículos...</div>
+      <div *ngIf="!loadingVehiculos && vehiculos.length === 0" class="vehiculos-empty">
+        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <rect x="1" y="3" width="15" height="13" rx="2"/>
+          <path d="M16 8h4l3 3v5h-7V8z"/>
+          <circle cx="5.5" cy="18.5" r="2.5"/>
+          <circle cx="18.5" cy="18.5" r="2.5"/>
+        </svg>
+        <p>No tienes vehículos registrados.</p>
+        <button class="btn btn--outline btn--sm" (click)="goToMisVehiculos()">Registrar vehículo</button>
+      </div>
 
-            <!-- Sin vehículos -->
-            <div *ngIf="!loadingVehiculos && vehiculos.length === 0" class="vehiculos-empty">
-                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
-                    <rect x="1" y="3" width="15" height="13" rx="2" />
-                    <path d="M16 8h4l3 3v5h-7V8z" />
-                    <circle cx="5.5" cy="18.5" r="2.5" />
-                    <circle cx="18.5" cy="18.5" r="2.5" />
-                </svg>
-                <p>No tienes vehículos registrados.</p>
-                <button class="btn btn--outline btn--sm" (click)="goToMisVehiculos()">Registrar vehículo</button>
-            </div>
-
-            <!-- Lista de vehículos -->
-            <div *ngIf="!loadingVehiculos && vehiculos.length > 0" class="vehiculos-grid">
-                <div class="vehiculo-card" *ngFor="let v of vehiculos">
-                    <div class="vehiculo-placa">{{ v.placa }}</div>
-                    <div class="vehiculo-info">
-                        <span>{{ v.marca }} {{ v.modelo }}</span>
-                        <span class="vehiculo-meta">
-                            {{ v.anio }}{{ v.color ? ' · ' + v.color : '' }}{{ v.tipo ? ' · ' + v.tipo : '' }}
-                        </span>
-                    </div>
-                </div>
-            </div>
+      <div *ngIf="!loadingVehiculos && vehiculos.length > 0 && vistaVehiculos === 'lista'" class="vehiculos-lista">
+        <div class="vehiculo-row" *ngFor="let v of vehiculos">
+          <div class="vehiculo-placa">{{ v.placa }}</div>
+          <div class="vehiculo-info">
+            <span class="vehiculo-nombre">{{ v.marca }} {{ v.modelo }}</span>
+            <span class="vehiculo-meta">{{ v.anio }}{{ v.color ? ' · ' + v.color : '' }}{{ v.tipo ? ' · ' + v.tipo : '' }}</span>
+          </div>
         </div>
+      </div>
 
-    </ng-container>
+      <div *ngIf="!loadingVehiculos && vehiculos.length > 0 && vistaVehiculos === 'carta'" class="vehiculos-cartas">
+        <div class="vehiculo-carta" *ngFor="let v of vehiculos">
+          <div class="vehiculo-carta__header">
+            <span class="vehiculo-placa">{{ v.placa }}</span>
+          </div>
+          <div class="vehiculo-carta__body">
+            <div class="carta-row"><span class="carta-label">Marca</span><span class="carta-val">{{ v.marca }}</span></div>
+            <div class="carta-row"><span class="carta-label">Modelo</span><span class="carta-val">{{ v.modelo }}</span></div>
+            <div class="carta-row"><span class="carta-label">Año</span><span class="carta-val">{{ v.anio }}</span></div>
+            <div class="carta-row" *ngIf="v.color"><span class="carta-label">Color</span><span class="carta-val">{{ v.color }}</span></div>
+            <div class="carta-row" *ngIf="v.tipo"><span class="carta-label">Tipo</span><span class="carta-val">{{ v.tipo }}</span></div>
+            <div class="carta-row" *ngIf="v.cilindraje"><span class="carta-label">Cilindraje</span><span class="carta-val">{{ v.cilindraje }}</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+  </ng-container>
 </div>

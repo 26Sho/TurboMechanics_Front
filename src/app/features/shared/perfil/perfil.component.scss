@@ -3,7 +3,7 @@ $black:     #0D0D0D;
 $gray-dark: #141414;
 $gray-card: #1A1A1A;
 $gray-mid:  #2B2B2B;
-$gray-muted:#6E6E6E;
+$gray-muted:#9f9e9e;
 $white:     #FFFFFF;
 $success:   #2ECC71;
 $danger:    #E74C3C;
@@ -29,11 +29,11 @@ $font:      'Rajdhani', sans-serif;
   padding: 8px 14px;
   border-radius: 8px;
   background: rgba($orange, 0.08);
-  border: 1px solid rgba($orange, 0.25);  // ← más tenue
+  border: 1px solid rgba($orange, 0.25);
   color: $orange;
   font-size: 13px;
   font-weight: 600;
-  font-family: $font;
+  font-family: $font !important;
   text-decoration: none;
   transition: all 0.2s ease;
   align-self: flex-start;
@@ -307,26 +307,17 @@ $font:      'Rajdhani', sans-serif;
     background: transparent;
     border: 1px solid rgba($orange, 0.4);
     color: $orange;
-    &:hover {
-      background: rgba($orange, 0.1);
-      border-color: $orange;
-    }
+    &:hover { background: rgba($orange, 0.1); border-color: $orange; }
   }
 
   &--ghost {
     background: rgba($white, 0.05);
     border: 1px solid $border;
     color: $gray-muted;
-    &:hover {
-      background: rgba($white, 0.08);
-      color: $white;
-    }
+    &:hover { background: rgba($white, 0.08); color: $white; }
   }
 
-  &--sm {
-    padding: 6px 14px;
-    font-size: 12px;
-  }
+  &--sm { padding: 6px 14px; font-size: 12px; }
 }
 
 .alert {
@@ -360,25 +351,6 @@ $font:      'Rajdhani', sans-serif;
   p { font-size: 13px; margin: 0; }
 }
 
-.vehiculos-grid {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.vehiculo-card {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  padding: 12px 16px;
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid $border;
-  border-radius: 8px;
-  transition: border-color 0.2s;
-
-  &:hover { border-color: rgba($orange, 0.3); }
-}
-
 .vehiculo-placa {
   font-size: 14px;
   font-weight: 800;
@@ -393,21 +365,134 @@ $font:      'Rajdhani', sans-serif;
   text-align: center;
 }
 
-.vehiculo-info {
+// ── Toggle vista ──────────────────────────────────────────────
+.card__head-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.vista-toggle {
+  display: flex;
+  gap: 2px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 6px;
+  padding: 3px;
+}
+
+.vista-btn {
+  width: 28px;
+  height: 28px;
+  border-radius: 4px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  color: $gray-muted;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover { color: $orange; }
+  &.active { background: rgba($orange, 0.15); color: $orange; }
+}
+
+// ── Vista lista ───────────────────────────────────────────────
+.vehiculos-lista {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 10px;
+}
 
-  span:first-child {
-    font-size: 14px;
-    font-weight: 600;
-    color: $white;
-  }
+.vehiculo-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 12px 16px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid $border;
+  border-radius: 8px;
+  transition: border-color 0.2s;
+
+  &:hover { border-color: rgba($orange, 0.3); }
+}
+
+.vehiculo-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex: 1;
+  gap: 16px;
+}
+
+.vehiculo-nombre {
+  font-size: 14px;
+  font-weight: 600;
+  color: $white;
+  flex: 1;  
 }
 
 .vehiculo-meta {
-  font-size: 11px;
+  font-size: 12px;
   color: $gray-muted;
+  flex-shrink: 0;
+}
+
+// ── Vista carta ───────────────────────────────────────────────
+.vehiculos-cartas {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 14px;
+}
+
+.vehiculo-carta {
+  background: rgba($white, 0.03);
+  border: 1px solid $border;
+  border-radius: 10px;
+  overflow: hidden;
+  transition: border-color 0.2s;
+
+  &:hover { border-color: rgba($orange, 0.35); }
+}
+
+.vehiculo-carta__header {
+  padding: 12px 16px;
+  background: rgba($orange, 0.06);
+  border-bottom: 1px solid $border;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.vehiculo-carta__body {
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.carta-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.carta-label {
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: $gray-muted;
+  flex-shrink: 0;
+}
+
+.carta-val {
+  font-size: 13px;
+  font-weight: 600;
+  color: $white;
+  text-align: right;
 }
 
 .perfil-page * {

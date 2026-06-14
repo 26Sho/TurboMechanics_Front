@@ -17,13 +17,12 @@ export class AppointmentsComponent implements OnInit {
 
   activeTab: TabType = 'register';
 
-  // Fecha mínima — desde mañana, o desde mañana si ya pasaron las 5pm
   today = (() => {
     const d = new Date();
-    if (d.getHours() >= 17) d.setDate(d.getDate() + 1);
+    d.setDate(d.getDate() + 1); // siempre desde mañana
     const yyyy = d.getFullYear();
-    const mm   = String(d.getMonth() + 1).padStart(2, '0');
-    const dd   = String(d.getDate()).padStart(2, '0');
+    const mm = String(d.getMonth() + 1).padStart(2, '0');
+    const dd = String(d.getDate()).padStart(2, '0');
     return `${yyyy}-${mm}-${dd}`;
   })();
 
@@ -38,30 +37,30 @@ export class AppointmentsComponent implements OnInit {
   // ── Manage ────────────────────────────────────────────────────────────────
   manageForm!: FormGroup;
   manageAppointments: Appointment[] = [];
-  loadingManage  = false;
+  loadingManage = false;
   manageSearched = false;
 
   showRescheduleModal = false;
-  showCancelModal     = false;
+  showCancelModal = false;
   selectedAppointment: Appointment | null = null;
   rescheduleForm!: FormGroup;
-  cancelForm!:     FormGroup;
+  cancelForm!: FormGroup;
   rescheduling = false;
-  cancelling   = false;
+  cancelling = false;
 
   // ── Availability ──────────────────────────────────────────────────────────
-  availabilityForm!:   FormGroup;
-  availability:        AvailabilityResponse | null = null;
-  loadingAvailability  = false;
+  availabilityForm!: FormGroup;
+  availability: AvailabilityResponse | null = null;
+  loadingAvailability = false;
   availabilitySearched = false;
 
   constructor(
-    private fb:             FormBuilder,
-    private aptService:     AppointmentService,
-    private toast:          ToastService,
-    private auth:           AuthService,
+    private fb: FormBuilder,
+    private aptService: AppointmentService,
+    private toast: ToastService,
+    private auth: AuthService,
     private vehicleService: ClienteVehicleService
-  ) {}
+  ) { }
 
   ngOnInit(): void {
     this.buildForms();
@@ -71,11 +70,11 @@ export class AppointmentsComponent implements OnInit {
   private buildForms(): void {
     this.registerForm = this.fb.group({
       identification: [null, [Validators.required, Validators.min(1)]],
-      plate:          ['',   Validators.required],
-      date:           ['',   Validators.required],
-      time:           ['',   Validators.required],
-      reason:         [''],
-      createdBy:      [this.auth.getUsername(), Validators.required],
+      plate: ['', Validators.required],
+      date: ['', Validators.required],
+      time: ['', Validators.required],
+      reason: [''],
+      createdBy: [this.auth.getUsername(), Validators.required],
     });
 
     this.manageForm = this.fb.group({
@@ -132,17 +131,17 @@ export class AppointmentsComponent implements OnInit {
   searchManage(): void {
     this.manageForm.markAllAsTouched();
     if (this.manageForm.invalid) return;
-    this.loadingManage  = true;
+    this.loadingManage = true;
     this.manageSearched = false;
     const { identification } = this.manageForm.value;
     this.aptService.byCustomer(identification).subscribe({
       next: (list) => {
         this.manageAppointments = list ?? [];
-        this.loadingManage      = false;
-        this.manageSearched     = true;
+        this.loadingManage = false;
+        this.manageSearched = true;
       },
       error: () => {
-        this.loadingManage  = false;
+        this.loadingManage = false;
         this.manageSearched = true;
         this.toast.error('Error al cargar las citas');
       }
@@ -208,16 +207,16 @@ export class AppointmentsComponent implements OnInit {
   searchAvailability(): void {
     this.availabilityForm.markAllAsTouched();
     if (this.availabilityForm.invalid) return;
-    this.loadingAvailability  = true;
+    this.loadingAvailability = true;
     this.availabilitySearched = false;
     this.aptService.availability(this.availabilityForm.value.date).subscribe({
       next: (data) => {
-        this.availability         = data;
-        this.loadingAvailability  = false;
+        this.availability = data;
+        this.loadingAvailability = false;
         this.availabilitySearched = true;
       },
       error: () => {
-        this.loadingAvailability  = false;
+        this.loadingAvailability = false;
         this.availabilitySearched = true;
         this.toast.error('Error al consultar disponibilidad');
       }

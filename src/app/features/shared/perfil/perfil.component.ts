@@ -12,19 +12,16 @@ import { VehiculoClienteResponse } from 'src/app/core/models/vehiculo-cliente';
 })
 export class PerfilComponent implements OnInit {
 
-  // ── Estado general ──────────────────────────────────────────
   profile: UserProfileResponse | null = null;
   loading = true;
   errorMsg = '';
 
-  // ── Modo edición de datos ───────────────────────────────────
   editMode = false;
   profileForm!: FormGroup;
   savingProfile = false;
   profileSuccess = '';
   profileError = '';
 
-  // ── Cambio de contraseña ────────────────────────────────────
   showPasswordSection = false;
   passwordForm!: FormGroup;
   savingPassword = false;
@@ -33,12 +30,11 @@ export class PerfilComponent implements OnInit {
   showCurrentPassword = false;
   showNewPassword = false;
 
-  // ── Vehículos (solo cliente) ────────────────────────────────
   vehiculos: VehiculoClienteResponse[] = [];
   loadingVehiculos = false;
   esCliente = false;
+  vistaVehiculos: 'lista' | 'carta' = 'lista';
 
-  // ── Label del rol ───────────────────────────────────────────
   rolLabel: Record<number, string> = { 1: 'Cliente', 2: 'Mecánico', 3: 'Administrador' };
 
   constructor(
@@ -60,7 +56,6 @@ export class PerfilComponent implements OnInit {
       phone:          ['', [Validators.required, Validators.pattern('^[0-9]{7,15}$')]],
       email:          ['', [Validators.required, Validators.email]]
     });
-
     this.passwordForm = this.fb.group({
       currentPassword: ['', Validators.required],
       newPassword:     ['', [Validators.required, Validators.minLength(6)]],
@@ -68,7 +63,6 @@ export class PerfilComponent implements OnInit {
     });
   }
 
-  // ── Cargar perfil ───────────────────────────────────────────
   loadProfile(): void {
     this.loading = true;
     this.profileService.getMyProfile().subscribe({
@@ -78,14 +72,10 @@ export class PerfilComponent implements OnInit {
         this.esCliente = data.rolId === 1;
         if (this.esCliente) this.loadVehiculos();
       },
-      error: () => {
-        this.errorMsg = 'No se pudo cargar el perfil.';
-        this.loading = false;
-      }
+      error: () => { this.errorMsg = 'No se pudo cargar el perfil.'; this.loading = false; }
     });
   }
 
-  // ── Cargar vehículos del cliente ────────────────────────────
   loadVehiculos(): void {
     this.loadingVehiculos = true;
     this.vehicleService.list().subscribe({
@@ -94,99 +84,54 @@ export class PerfilComponent implements OnInit {
     });
   }
 
-  goToMisVehiculos(): void {
-    this.router.navigate(['/mis-vehiculos']);
-  }
+  goToMisVehiculos(): void { this.router.navigate(['/mis-vehiculos']); }
 
-  // ── Activar / cancelar edición ──────────────────────────────
   enableEdit(): void {
     if (!this.profile) return;
     this.profileForm.patchValue({
-      username:       this.profile.username,
-      identification: this.profile.identification,
-      phone:          this.profile.phone,
-      email:          this.profile.email
+      username: this.profile.username, identification: this.profile.identification,
+      phone: this.profile.phone, email: this.profile.email
     });
-    this.profileError = '';
-    this.profileSuccess = '';
-    this.editMode = true;
+    this.profileError = ''; this.profileSuccess = ''; this.editMode = true;
   }
 
-  cancelEdit(): void {
-    this.editMode = false;
-    this.profileError = '';
-    this.profileSuccess = '';
-  }
+  cancelEdit(): void { this.editMode = false; this.profileError = ''; this.profileSuccess = ''; }
 
-  // ── Guardar datos del perfil ────────────────────────────────
   saveProfile(): void {
-    if (this.profileForm.invalid) {
-      this.profileForm.markAllAsTouched();
-      return;
-    }
-    this.savingProfile = true;
-    this.profileError = '';
-    this.profileSuccess = '';
-
+    if (this.profileForm.invalid) { this.profileForm.markAllAsTouched(); return; }
+    this.savingProfile = true; this.profileError = ''; this.profileSuccess = '';
     this.profileService.updateMyProfile(this.profileForm.value).subscribe({
       next: (updated) => {
-        this.profile = updated;
-        this.editMode = false;
-        this.savingProfile = false;
+        this.profile = updated; this.editMode = false; this.savingProfile = false;
         this.profileSuccess = 'Perfil actualizado correctamente.';
         setTimeout(() => (this.profileSuccess = ''), 3000);
       },
-      error: (err) => {
-        this.savingProfile = false;
-        this.profileError = err?.error?.message || 'Error al actualizar el perfil.';
-      }
+      error: (err) => { this.savingProfile = false; this.profileError = err?.error?.message || 'Error al actualizar el perfil.'; }
     });
   }
 
-  // ── Guardar nueva contraseña ────────────────────────────────
   savePassword(): void {
-    this.passwordError = '';
-    this.passwordSuccess = '';
-
-    if (this.passwordForm.invalid) {
-      this.passwordForm.markAllAsTouched();
-      return;
-    }
-
+    this.passwordError = ''; this.passwordSuccess = '';
+    if (this.passwordForm.invalid) { this.passwordForm.markAllAsTouched(); return; }
     const { currentPassword, newPassword, confirmPassword } = this.passwordForm.value;
-    if (newPassword !== confirmPassword) {
-      this.passwordError = 'Las contraseñas nuevas no coinciden.';
-      return;
-    }
-
+    if (newPassword !== confirmPassword) { this.passwordError = 'Las contraseñas nuevas no coinciden.'; return; }
     this.savingPassword = true;
     this.profileService.changePassword({ currentPassword, newPassword }).subscribe({
       next: () => {
-        this.savingPassword = false;
-        this.passwordSuccess = 'Contraseña cambiada correctamente.';
-        this.passwordForm.reset();
-        this.showPasswordSection = false;
+        this.savingPassword = false; this.passwordSuccess = 'Contraseña cambiada correctamente.';
+        this.passwordForm.reset(); this.showPasswordSection = false;
         setTimeout(() => (this.passwordSuccess = ''), 3000);
       },
-      error: (err) => {
-        this.savingPassword = false;
-        this.passwordError = err?.error?.message || 'Error al cambiar la contraseña.';
-      }
+      error: (err) => { this.savingPassword = false; this.passwordError = err?.error?.message || 'Error al cambiar la contraseña.'; }
     });
   }
 
-  // ── Helpers ─────────────────────────────────────────────────
   isInvalid(form: FormGroup, field: string): boolean {
     const c = form.get(field);
     return !!(c && c.invalid && c.touched);
   }
 
   getInitials(name: string): string {
-    return name
-      .split(' ')
-      .slice(0, 2)
-      .map(w => w[0])
-      .join('')
-      .toUpperCase();
+    return name.split(' ').slice(0, 2).map(w => w[0]).join('').toUpperCase();
   }
 }
