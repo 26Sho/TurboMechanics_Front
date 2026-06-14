@@ -14,6 +14,7 @@ export interface RegisterRequest {
   identification: number;
   phone: string;
   email: string;
+  address: string;
   password: string;
 }
 
@@ -41,12 +42,12 @@ export interface ForgotPasswordRequest {
 }
 
 export interface ValidateResetTokenRequest {
-  emailOrPhone: string; // ← agregado
-  code: string;         // ← era "token"
+  emailOrPhone: string;
+  code: string;
 }
 
 export interface ResetPasswordRequest {
-  emailOrPhone: string; // ← agregado
-  code: string;         // ← era "token"
+  emailOrPhone: string;
+  code: string;
   newPassword: string;
 }

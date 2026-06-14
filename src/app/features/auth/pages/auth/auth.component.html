@@ -15,8 +15,8 @@
       <span [class.active]="isRegister" (click)="isRegister = true">Registrar</span>
     </div>
 
-    <div class="card-3d-wrap">
-      <div class="card-3d-wrapper" [class.flipped]="isRegister">
+    <div [ngClass]="{'card-3d-wrap': true, 'show-register': isRegister}">
+      <div [ngClass]="{'card-3d-wrapper': true, 'flipped': isRegister}">
 
         <!-- LOGIN -->
         <div class="card-face card-front">
@@ -95,13 +95,45 @@
                 </span>
               </div>
 
+              <!-- address -->
+              <div class="form-group">
+                <i class="uil uil-map-marker input-icon"></i>
+                <input type="text" class="form-style" placeholder="Dirección *" formControlName="address" />
+                <span class="field-error"
+                  *ngIf="registerForm.get('address')?.touched && registerForm.get('address')?.invalid">
+                  La dirección es obligatoria
+                </span>
+              </div>
+
               <!-- password -->
               <div class="form-group">
                 <i class="uil uil-lock-alt input-icon"></i>
-                <input type="password" class="form-style" placeholder="Contraseña *" formControlName="password" />
+                <input [type]="showPassword ? 'text' : 'password'"
+                  class="form-style form-style--eye"
+                  placeholder="Contraseña *"
+                  formControlName="password" />
+                <button type="button" class="eye-btn" (click)="showPassword = !showPassword" tabindex="-1">
+                  <i class="uil" [ngClass]="showPassword ? 'uil-eye-slash' : 'uil-eye'"></i>
+                </button>
                 <span class="field-error"
                   *ngIf="registerForm.get('password')?.touched && registerForm.get('password')?.invalid">
-                  La contraseña es obligatoria
+                  Mínimo 8 caracteres
+                </span>
+              </div>
+
+              <!-- confirm password -->
+              <div class="form-group">
+                <i class="uil uil-lock input-icon"></i>
+                <input [type]="showConfirm ? 'text' : 'password'"
+                  class="form-style form-style--eye"
+                  placeholder="Confirmar Contraseña *"
+                  formControlName="confirmPassword" />
+                <button type="button" class="eye-btn" (click)="showConfirm = !showConfirm" tabindex="-1">
+                  <i class="uil" [ngClass]="showConfirm ? 'uil-eye-slash' : 'uil-eye'"></i>
+                </button>
+                <span class="field-error"
+                  *ngIf="registerForm.get('confirmPassword')?.touched && registerForm.hasError('passwordMismatch')">
+                  Las contraseñas no coinciden
                 </span>
               </div>
 

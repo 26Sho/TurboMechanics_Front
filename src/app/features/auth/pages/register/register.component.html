@@ -26,7 +26,7 @@
             <input type="text" class="form-style" placeholder="Identification" formControlName="identification" required />
           </div>
 
-          <!-- phone (este faltaba) -->
+          <!-- phone -->
           <div class="form-group">
             <i class="uil uil-phone input-icon"></i>
             <input type="text" class="form-style" placeholder="Phone" formControlName="phone" required />
@@ -38,11 +38,46 @@
             <input type="email" class="form-style" placeholder="Email" formControlName="email" required />
           </div>
 
+          <!-- address -->
+          <div class="form-group">
+            <i class="uil uil-map-marker input-icon"></i>
+            <input type="text" class="form-style" placeholder="Address" formControlName="address" required />
+          </div>
+
           <!-- password -->
           <div class="form-group">
             <i class="uil uil-lock-alt input-icon"></i>
-            <input type="password" class="form-style" placeholder="Password" formControlName="password" required />
+            <input
+              [type]="showPassword ? 'text' : 'password'"
+              class="form-style form-style--with-eye"
+              placeholder="Password"
+              formControlName="password"
+              required
+            />
+            <button type="button" class="eye-btn" (click)="showPassword = !showPassword" tabindex="-1">
+              <i class="uil" [ngClass]="showPassword ? 'uil-eye-slash' : 'uil-eye'"></i>
+            </button>
           </div>
+
+          <!-- confirm password -->
+          <div class="form-group">
+            <i class="uil uil-lock input-icon"></i>
+            <input
+              [type]="showConfirm ? 'text' : 'password'"
+              class="form-style form-style--with-eye"
+              placeholder="Confirm Password"
+              formControlName="confirmPassword"
+              required
+            />
+            <button type="button" class="eye-btn" (click)="showConfirm = !showConfirm" tabindex="-1">
+              <i class="uil" [ngClass]="showConfirm ? 'uil-eye-slash' : 'uil-eye'"></i>
+            </button>
+          </div>
+
+          <!-- password mismatch error -->
+          <p class="error-text" *ngIf="form.hasError('passwordMismatch') && form.get('confirmPassword')?.touched">
+            Passwords do not match.
+          </p>
 
           <button class="btn-primary" type="button" (click)="register()">
             Register

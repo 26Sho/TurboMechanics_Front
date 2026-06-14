@@ -1,8 +1,14 @@
 import { Component } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { AbstractControl, FormBuilder, FormGroup, ValidationErrors, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from 'src/app/core/services/auth.service';
 import { ToastService } from 'src/app/shared/services/toast.service';
+
+function passwordMatchValidator(control: AbstractControl): ValidationErrors | null {
+  const password = control.get('password')?.value;
+  const confirm  = control.get('confirmPassword')?.value;
+  return password && confirm && password !== confirm ? { passwordMismatch: true } : null;
+}
 
 @Component({
   selector: 'app-auth',
@@ -30,7 +36,7 @@ export class AuthComponent {
         this.loginLoading = false;
         if (response?.jwt) {
           this.toast.success('¡Bienvenido!');
-          this.router.navigate(['/home']); // todos los roles van al home primero
+          this.router.navigate(['/home']);
         } else {
           this.toast.error(response?.message || 'Usuario no encontrado.');
         }
@@ -46,17 +52,27 @@ export class AuthComponent {
 
   // REGISTER
   registerForm: FormGroup;
-  showPolicy     = false;
+  showPolicy      = false;
   registerLoading = false;
+  showPassword    = false;
+  showConfirm     = false;
 
   register() {
     if (!this.registerForm.valid) {
       this.registerForm.markAllAsTouched();
-      this.toast.warning('Completa todos los campos y acepta el tratamiento de datos.');
+      if (this.registerForm.hasError('passwordMismatch')) {
+        this.toast.warning('Las contraseñas no coinciden.');
+      } else {
+        this.toast.warning('Completa todos los campos y acepta el tratamiento de datos.');
+      }
       return;
     }
     this.registerLoading = true;
-    this.authService.register(this.registerForm.value).subscribe({
+
+    // Excluir confirmPassword y consentimiento antes de enviar al API
+    const { confirmPassword, consentimiento, ...payload } = this.registerForm.value;
+
+    this.authService.register(payload).subscribe({
       next: () => {
         this.registerLoading = false;
         this.toast.success('¡Registro exitoso! Ya puedes iniciar sesión.');
@@ -76,13 +92,18 @@ export class AuthComponent {
     private router: Router,
     private toast: ToastService
   ) {
-    this.registerForm = this.fb.group({
-      username:       ['', Validators.required],
-      identification: ['', [Validators.required, Validators.pattern(/^\d{6,12}$/)]],
-      phone:          ['', Validators.required],
-      email:          ['', [Validators.required, Validators.email]],
-      password:       ['', Validators.required],
-      consentimiento: [false, Validators.requiredTrue]
-    });
+    this.registerForm = this.fb.group(
+      {
+        username:        ['', Validators.required],
+        identification:  ['', [Validators.required, Validators.pattern(/^\d{6,12}$/)]],
+        phone:           ['', Validators.required],
+        email:           ['', [Validators.required, Validators.email]],
+        address:         ['', Validators.required],
+        password:        ['', [Validators.required, Validators.minLength(8)]],
+        confirmPassword: ['', Validators.required],
+        consentimiento:  [false, Validators.requiredTrue]
+      },
+      { validators: passwordMatchValidator }
+    );
   }
 }
