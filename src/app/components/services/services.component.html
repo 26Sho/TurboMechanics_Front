@@ -3,7 +3,8 @@
     <div class="services__header">
       <div class="services__badge">Nuestros Servicios</div>
       <h2 class="services__title">Lo que hacemos mejor</h2>
-      <p class="services__subtitle">Atendemos los servicios más demandados con procesos claros y técnicos certificados.</p>
+      <p class="services__subtitle">Atendemos los servicios más demandados con procesos claros y técnicos certificados.
+      </p>
     </div>
 
     <!-- Loading -->
@@ -25,9 +26,9 @@
         <div class="service-card__number">{{ getNumber(i) }}</div>
         <h3>{{ service.name }}</h3>
         <p>{{ service.description }}</p>
-        <a [href]="'https://wa.me/573000000000?text=' + getWaText(service.name)"
-           class="service-card__link" target="_blank">
-          Cotizar <i class="fas fa-arrow-right"></i>
+        <div class="service-card__price">${{ service.price | number:'1.0-0' }}</div>
+        <a routerLink="/appointments" class="service-card__link">
+          Agendar Cita <i class="fas fa-arrow-right"></i>
         </a>
       </div>
     </div>
