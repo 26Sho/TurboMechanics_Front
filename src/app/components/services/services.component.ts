@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { AuthService } from '../../core/services/auth.service';
 
 export interface ServiceResponseDTO {
   id:          number;
@@ -9,18 +10,17 @@ export interface ServiceResponseDTO {
   active:      boolean;
 }
 
-// Iconos por defecto según palabras clave en el nombre del servicio
 const ICON_MAP: { keywords: string[]; icon: string }[] = [
-  { keywords: ['aceite'],                     icon: 'fas fa-oil-can' },
-  { keywords: ['freno', 'frenos'],            icon: 'fas fa-circle-notch' },
-  { keywords: ['suspension', 'suspensión'],   icon: 'fas fa-car' },
-  { keywords: ['electri'],                    icon: 'fas fa-bolt' },
-  { keywords: ['sincroniz'],                  icon: 'fas fa-tachometer-alt' },
-  { keywords: ['preventivo', 'mantenimiento'],icon: 'fas fa-cog' },
-  { keywords: ['llanta', 'neumatico'],        icon: 'fas fa-circle' },
-  { keywords: ['aire', 'acondicionado'],      icon: 'fas fa-wind' },
-  { keywords: ['lavado', 'limpieza'],         icon: 'fas fa-tint' },
-  { keywords: ['diagnostico', 'diagnóstico'], icon: 'fas fa-search' },
+  { keywords: ['aceite'],                      icon: 'fas fa-oil-can' },
+  { keywords: ['freno', 'frenos'],             icon: 'fas fa-circle-notch' },
+  { keywords: ['suspension', 'suspensión'],    icon: 'fas fa-car' },
+  { keywords: ['electri'],                     icon: 'fas fa-bolt' },
+  { keywords: ['sincroniz'],                   icon: 'fas fa-tachometer-alt' },
+  { keywords: ['preventivo', 'mantenimiento'], icon: 'fas fa-cog' },
+  { keywords: ['llanta', 'neumatico'],         icon: 'fas fa-circle' },
+  { keywords: ['aire', 'acondicionado'],       icon: 'fas fa-wind' },
+  { keywords: ['lavado', 'limpieza'],          icon: 'fas fa-tint' },
+  { keywords: ['diagnostico', 'diagnóstico'],  icon: 'fas fa-search' },
 ];
 
 function getIcon(name: string): string {
@@ -28,7 +28,7 @@ function getIcon(name: string): string {
   for (const entry of ICON_MAP) {
     if (entry.keywords.some(k => lower.includes(k))) return entry.icon;
   }
-  return 'fas fa-wrench'; // icono por defecto
+  return 'fas fa-wrench';
 }
 
 @Component({
@@ -42,20 +42,23 @@ export class ServicesComponent implements OnInit {
   services: ServiceResponseDTO[] = [];
   loading = false;
 
-private readonly apiUrl = 'http://localhost:9090/admin/catalogo/public/servicios';
+  private readonly apiUrl = 'http://localhost:9090/admin/catalogo/public/servicios';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private auth: AuthService) {}
 
   ngOnInit(): void {
     this.loading = true;
     this.http.get<ServiceResponseDTO[]>(this.apiUrl).subscribe({
       next: (data) => {
-        // Mostrar solo servicios activos
         this.services = (data ?? []).filter(s => s.active);
         this.loading  = false;
       },
       error: () => { this.loading = false; }
     });
+  }
+
+  isLoggedIn(): boolean {
+    return this.auth.isLoggedIn();
   }
 
   getIcon(name: string): string {

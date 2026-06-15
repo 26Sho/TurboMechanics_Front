@@ -27,7 +27,7 @@
         <h3>{{ service.name }}</h3>
         <p>{{ service.description }}</p>
         <div class="service-card__price">${{ service.price | number:'1.0-0' }}</div>
-        <a routerLink="/appointments" class="service-card__link">
+        <a [routerLink]="isLoggedIn() ? '/appointments' : '/login'" class="service-card__link">
           Agendar Cita <i class="fas fa-arrow-right"></i>
         </a>
       </div>
