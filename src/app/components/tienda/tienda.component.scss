@@ -1,0 +1,277 @@
+$black: #0D0D0D;
+$gray-dark: #2B2B2B;
+$gray-mid: #6E6E6E;
+$orange: #F45D01;
+$orange-light: #FF8C00;
+$red: #D62828;
+$yellow: #FFD60A;
+$white: #FFFFFF;
+$font-display: 'Bebas Neue', sans-serif;
+$font-heading: 'Rajdhani', sans-serif;
+
+.tienda {
+  padding: 100px 24px;
+  background: lighten($black, 3%);
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba($orange, 0.3), transparent);
+  }
+
+  &__container { max-width: 1200px; margin: 0 auto; }
+
+  &__header { text-align: center; margin-bottom: 48px; }
+
+  &__badge {
+    display: inline-block;
+    font-family: $font-heading;
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: $orange;
+    background: rgba($orange, 0.1);
+    border: 1px solid rgba($orange, 0.25);
+    padding: 6px 18px;
+    border-radius: 100px;
+    margin-bottom: 16px;
+  }
+
+  &__title {
+    font-family: $font-display;
+    font-size: clamp(2rem, 4vw, 3.2rem);
+    letter-spacing: 3px;
+    color: $white;
+    margin-bottom: 12px;
+  }
+
+  &__subtitle { font-size: 1rem; color: $gray-mid; max-width: 520px; margin: 0 auto; }
+
+  // ─── Filtros ──────────────────────────────────────────────────────────
+  &__filters {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px;
+    margin-bottom: 40px;
+  }
+
+  &__filter-btn {
+    font-family: $font-heading;
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    padding: 7px 18px;
+    border-radius: 100px;
+    border: 1px solid rgba($gray-mid, 0.3);
+    background: transparent;
+    color: $gray-mid;
+    cursor: pointer;
+    transition: all 0.2s;
+
+    &:hover {
+      border-color: $orange;
+      color: $orange;
+    }
+
+    &--active {
+      background: linear-gradient(90deg, $red, $orange);
+      border-color: transparent;
+      color: $black;
+    }
+  }
+
+  // ─── Estado loading / vacío ───────────────────────────────────────────
+  &__state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    padding: 80px 0;
+    color: $gray-mid;
+
+    i { font-size: 2.5rem; color: rgba($orange, 0.4); }
+    span { font-size: 1rem; }
+  }
+
+  // ─── Grid de repuestos ────────────────────────────────────────────────
+  &__grid {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 20px;
+
+    .repuesto-card {
+      width: calc(25% - 15px);
+      min-width: 220px;
+      max-width: 300px;
+      flex: 0 0 auto;
+    }
+
+    @media (max-width: 1100px) {
+      .repuesto-card { width: calc(33.333% - 14px); }
+    }
+    @media (max-width: 768px) {
+      .repuesto-card { width: calc(50% - 10px); }
+    }
+    @media (max-width: 480px) {
+      .repuesto-card { width: 100%; max-width: 100%; }
+    }
+  }
+}
+
+// ─── Repuesto Card ────────────────────────────────────────────────────────
+.repuesto-card {
+  background: $gray-dark;
+  border: 1px solid rgba($gray-mid, 0.12);
+  border-radius: 12px;
+  padding: 24px 20px 20px;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+  transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0;
+    width: 0; height: 3px;
+    background: linear-gradient(90deg, $red, $orange, $yellow);
+    transition: width 0.4s ease;
+  }
+
+  &:hover {
+    border-color: rgba($orange, 0.3);
+    transform: translateY(-5px);
+    box-shadow: 0 16px 40px rgba($black, 0.7);
+
+    &::before { width: 100%; }
+
+    .repuesto-card__icon i { transform: rotate(90deg); }
+  }
+
+  &__header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+  }
+
+  &__categoria {
+    font-family: $font-heading;
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: $gray-mid;
+  }
+
+  &__stock {
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 3px 10px;
+    border-radius: 100px;
+
+    &--ok  { background: rgba(#22c55e, 0.12); color: #22c55e; border: 1px solid rgba(#22c55e, 0.3); }
+    &--out { background: rgba($red, 0.12);     color: $red;    border: 1px solid rgba($red, 0.3);   }
+  }
+
+  &__icon {
+    width: 48px; height: 48px;
+    background: linear-gradient(135deg, rgba($red, 0.15), rgba($orange, 0.15));
+    border: 1px solid rgba($orange, 0.2);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.3rem;
+    color: $orange;
+    margin-bottom: 14px;
+
+    i { transition: transform 0.4s ease; }
+  }
+
+  &__name {
+    font-family: $font-heading;
+    font-size: 1rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+    color: $white;
+    margin-bottom: 4px;
+    flex: 1;
+  }
+
+  &__ref {
+    font-size: 0.75rem;
+    color: $gray-mid;
+    margin-bottom: 12px;
+  }
+
+  &__precio {
+    font-family: $font-display;
+    font-size: 1.5rem;
+    letter-spacing: 1px;
+    background: linear-gradient(90deg, $red, $orange);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 16px;
+  }
+
+  // ─── Botones de acción ─────────────────────────────────────────────────
+  &__btn {
+    width: 100%;
+    height: 42px;
+    border-radius: 8px;
+    border: none;
+    font-family: $font-heading;
+    font-size: 0.82rem;
+    font-weight: 700;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: opacity 0.2s, box-shadow 0.2s, transform 0.15s;
+    margin-top: auto;
+
+    &--comprar {
+      background: linear-gradient(90deg, $red, $orange);
+      color: $black;
+
+      &:hover:not(:disabled) {
+        opacity: 0.88;
+        box-shadow: 0 8px 24px rgba($red, 0.4);
+        transform: translateY(-1px);
+      }
+
+      &:disabled { opacity: 0.5; cursor: not-allowed; }
+    }
+
+    &--login {
+      background: transparent;
+      border: 1px solid rgba($orange, 0.35);
+      color: $orange;
+
+      &:hover {
+        background: rgba($orange, 0.07);
+        border-color: $orange;
+      }
+    }
+
+    &--agotado {
+      background: rgba($gray-mid, 0.1);
+      border: 1px solid rgba($gray-mid, 0.2);
+      color: $gray-mid;
+      cursor: not-allowed;
+    }
+  }
+}

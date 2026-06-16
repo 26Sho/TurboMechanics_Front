@@ -16,6 +16,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   isScrolled = false;
   isMobileOpen = false;
   dropdownOpen = false;
+  serviciosDropdownOpen = false;
   userMenuOpen = false;
   activeSection = 'inicio';
   isLoggedIn = false;
@@ -104,7 +105,7 @@ export class NavbarComponent implements OnInit, OnDestroy {
   }
 
   private updateActiveSection(): void {
-    const sections = ['inicio', 'nosotros', 'servicios', 'ubicacion', 'contacto', 'resenas'];
+    const sections = ['inicio', 'nosotros', 'servicios', 'tienda', 'ubicacion', 'contacto', 'resenas'];
     for (const id of [...sections].reverse()) {
       const el = document.getElementById(id);
       if (el && window.scrollY >= el.offsetTop - 100) {
