@@ -1,6 +1,8 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 
 import { SatisfactionSurveyComponent } from './components/satisfaction-survey/satisfaction-survey.component';
@@ -22,6 +24,7 @@ import { authInterceptor } from './core/interceptors/auth.interceptor';
 import { SessionExpiredComponent } from './shared/components/sesion_expired/session.expired.component';
 import { EstimateResponseComponent } from './features/auth/pages/estimate-response/estimate-response.component';
 import { TurboBotComponent } from './shared/components/turbo-bot/turbo-bot.component';
+import { TiendaComponent } from './components/tienda/tienda.component';
 
 @NgModule({
   declarations: [
@@ -38,11 +41,15 @@ import { TurboBotComponent } from './shared/components/turbo-bot/turbo-bot.compo
     SatisfactionSurveyComponent,
     SessionExpiredComponent,          
     EstimateResponseComponent, 
-    TurboBotComponent
+    TurboBotComponent,
+    TiendaComponent
   ],
   imports: [
     BrowserModule,
+    CommonModule,
     FormsModule,
+    ReactiveFormsModule,
+    RouterModule,
     AppRoutingModule,
     AuthModule,
     CoreModule,

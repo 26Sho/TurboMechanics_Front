@@ -24,6 +24,7 @@ export class AuthComponent {
   loginEmail    = '';
   loginPassword = '';
   loginLoading  = false;
+  showLoginPassword = false;
 
   login() {
     if (!this.loginEmail || !this.loginPassword) {

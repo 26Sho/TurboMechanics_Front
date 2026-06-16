@@ -33,6 +33,8 @@ export class AuthService {
           this._intentionalLogout = false;          // reset al entrar
           sessionStorage.setItem('token', res.jwt);
           // Extraer el nombre real del JWT (campo sub) en vez del email
+          // Guardar siempre el email real para usarlo como payerEmail en compras
+          sessionStorage.setItem('email', data.email);
           try {
             const base64 = res.jwt.split('.')[1].replace(/-/g, '+').replace(/_/g, '/');
             const payload = JSON.parse(decodeURIComponent(atob(base64).split('').map(c =>
@@ -48,6 +50,7 @@ export class AuthService {
   }
 
   getUsername(): string { return sessionStorage.getItem('username') || ''; }
+  getEmail(): string    { return sessionStorage.getItem('email') || ''; }
   getRolId(): number { return Number(sessionStorage.getItem('rolId')); }
 
   refreshToken(): Observable<RefreshTokenResponse> {
@@ -64,6 +67,7 @@ export class AuthService {
     this._intentionalLogout = true;               // ← marcar ANTES de limpiar
     sessionStorage.removeItem('token');
     sessionStorage.removeItem('username');
+    sessionStorage.removeItem('email');
     sessionStorage.removeItem('rolId');
     this.authState$.next(false);
   }

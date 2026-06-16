@@ -1,0 +1,80 @@
+<section class="tienda" id="tienda">
+  <div class="tienda__container">
+
+    <div class="tienda__header">
+      <div class="tienda__badge">Repuestos</div>
+      <h2 class="tienda__title">Tienda de Repuestos</h2>
+      <p class="tienda__subtitle">Repuestos originales y de alta calidad para tu vehículo.</p>
+    </div>
+
+    <!-- Filtro por categoría -->
+    <div class="tienda__filters" *ngIf="!loading && repuestos.length > 0">
+      <button
+        *ngFor="let cat of categorias"
+        class="tienda__filter-btn"
+        [ngClass]="{'tienda__filter-btn--active': categoriaActiva === cat}"
+        (click)="filtrar(cat)">
+        {{ cat }}
+      </button>
+    </div>
+
+    <!-- Loading -->
+    <div class="tienda__state" *ngIf="loading">
+      <i class="fas fa-spinner fa-spin"></i>
+      <span>Cargando repuestos...</span>
+    </div>
+
+    <!-- Sin repuestos -->
+    <div class="tienda__state" *ngIf="!loading && repuestosFiltrados.length === 0">
+      <i class="fas fa-box-open"></i>
+      <span>No hay repuestos disponibles en este momento.</span>
+    </div>
+
+    <!-- Grid -->
+    <div class="tienda__grid" *ngIf="!loading && repuestosFiltrados.length > 0">
+      <div class="repuesto-card" *ngFor="let r of repuestosFiltrados">
+
+        <div class="repuesto-card__header">
+          <span class="repuesto-card__categoria">{{ r.category }}</span>
+          <span class="repuesto-card__stock"
+            [ngClass]="{'repuesto-card__stock--ok': r.stock > 0, 'repuesto-card__stock--out': r.stock === 0}">
+            {{ r.stock > 0 ? 'En stock' : 'Agotado' }}
+          </span>
+        </div>
+
+        <div class="repuesto-card__icon">
+          <i class="fas fa-cog"></i>
+        </div>
+
+        <h3 class="repuesto-card__name">{{ r.name }}</h3>
+        <p class="repuesto-card__ref">Ref: {{ r.reference }}</p>
+        <p class="repuesto-card__precio">{{ r.price | currency:'COP':'symbol':'1.0-0' }}</p>
+
+        <!-- Sin login -->
+        <button class="repuesto-card__btn repuesto-card__btn--login"
+          *ngIf="!isLoggedIn"
+          (click)="irALogin()">
+          <i class="fas fa-lock"></i> Inicia sesión para comprar
+        </button>
+
+        <!-- Con login y en stock -->
+        <button class="repuesto-card__btn repuesto-card__btn--comprar"
+          *ngIf="isLoggedIn && r.stock > 0"
+          [disabled]="comprando === r.id"
+          (click)="comprar(r)">
+          <i class="fas fa-shopping-cart"></i>
+          {{ comprando === r.id ? 'Procesando...' : 'Comprar ahora' }}
+        </button>
+
+        <!-- Con login pero agotado -->
+        <button class="repuesto-card__btn repuesto-card__btn--agotado"
+          *ngIf="isLoggedIn && r.stock === 0"
+          disabled>
+          Agotado
+        </button>
+
+      </div>
+    </div>
+
+  </div>
+</section>
