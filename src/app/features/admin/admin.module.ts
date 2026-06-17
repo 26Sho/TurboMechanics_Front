@@ -3,8 +3,6 @@ import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { RouterModule } from '@angular/router';
 
-
-// COMPONENTES
 import { LayoutComponent } from './layout/layout.component';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { ClientsComponent } from './clients/clients.component';
@@ -25,6 +23,7 @@ import { ResenasAdminComponent } from './resenas/resenas.component';
 import { WhatsappComponent } from './whatsapp/whatsapp.component';
 import { PerfilComponent } from '../shared/perfil/perfil.component';
 import { AdminVehiculosClienteComponent } from './vehiculos-cliente/vehiculos-cliente.component';
+import { SpareSalesComponent } from './spare-sales/spare-sales.component';
 
 @NgModule({
   declarations: [
@@ -48,6 +47,7 @@ import { AdminVehiculosClienteComponent } from './vehiculos-cliente/vehiculos-cl
     WhatsappComponent,
     PerfilComponent,
     AdminVehiculosClienteComponent,
+    SpareSalesComponent,
   ],
   imports: [
     CommonModule,

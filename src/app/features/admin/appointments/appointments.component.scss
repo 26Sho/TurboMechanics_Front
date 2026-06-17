@@ -75,6 +75,8 @@ $border:  rgba(244, 93, 1, 0.25);
   border: 1px solid $border;
   border-radius: 12px;
   padding: 24px;
+  @media (max-width: 768px) { padding: 16px; }
+  @media (max-width: 480px) { padding: 12px; }
 }
 
 .section-title {
@@ -140,7 +142,8 @@ $border:  rgba(244, 93, 1, 0.25);
 .field-error   { font-size: 11px; color: #F87171; }
 
 // ── Table ─────────────────────────────────────────────────────────────────────
-.apt-table-wrap { overflow-x: auto; }
+.apt-table-wrap { overflow-x: auto;
+  -webkit-overflow-scrolling: touch; }
 
 .apt-table {
   width: 100%; border-collapse: collapse; font-size: 13px;

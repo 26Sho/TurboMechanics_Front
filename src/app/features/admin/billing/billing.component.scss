@@ -83,6 +83,8 @@ $border:       rgba(244, 93, 1, 0.25);
   border: 1px solid $border;
   border-radius: 12px;
   padding: 24px;
+  @media (max-width: 768px) { padding: 16px; }
+  @media (max-width: 480px) { padding: 12px; }
 
   &--success {
     border-color: rgba($green, 0.4);
@@ -218,7 +220,8 @@ $border:       rgba(244, 93, 1, 0.25);
 }
 
 // ── Table ─────────────────────────────────────────────────────────────────────
-.bill-table-wrap { overflow-x: auto; }
+.bill-table-wrap { overflow-x: auto;
+  -webkit-overflow-scrolling: touch; }
 
 .bill-table {
   width: 100%;

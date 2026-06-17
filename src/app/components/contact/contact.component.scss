@@ -14,10 +14,13 @@ $font-heading: 'Rajdhani', sans-serif;
   background: $black;
   position: relative;
 
+  @media (max-width: 768px) { padding: 64px 16px; }
+
   &__container { max-width: 900px; margin: 0 auto; text-align: center; }
 
   &__header {
     margin-bottom: 50px;
+    @media (max-width: 768px) { margin-bottom: 32px; }
     p { font-size: 1rem; color: $gray-mid; margin-top: 12px; }
   }
 
@@ -60,11 +63,12 @@ $font-heading: 'Rajdhani', sans-serif;
     transition: border-color 0.3s, transform 0.3s, box-shadow 0.3s;
     text-align: left;
 
+    @media (max-width: 480px) { padding: 16px; gap: 12px; }
+
     &:hover {
       border-color: rgba($orange, 0.4);
       transform: translateX(6px);
       box-shadow: -4px 0 0 $orange, 0 8px 30px rgba($black, 0.4);
-
       .contact__channel-arrow { color: $orange; transform: translateX(4px); }
     }
 
@@ -83,7 +87,9 @@ $font-heading: 'Rajdhani', sans-serif;
       color: $white;
     }
 
-    span { font-size: 1rem; color: $gray-light; margin-top: 2px; }
+    span { font-size: 1rem; color: $gray-light; margin-top: 2px;
+      @media (max-width: 480px) { font-size: 0.85rem; }
+    }
     small { font-size: 0.8rem; color: $gray-mid; margin-top: 2px; }
   }
 
@@ -96,26 +102,17 @@ $font-heading: 'Rajdhani', sans-serif;
     justify-content: center;
     font-size: 1.4rem;
 
-    &--whatsapp {
-      background: rgba(37, 211, 102, 0.15);
-      border: 1px solid rgba(37, 211, 102, 0.3);
-      color: #25D366;
-    }
-    &--phone {
-      background: rgba($orange, 0.12);
-      border: 1px solid rgba($orange, 0.25);
-      color: $orange;
-    }
-    &--email {
-      background: rgba($yellow, 0.1);
-      border: 1px solid rgba($yellow, 0.2);
-      color: $yellow;
-    }
+    @media (max-width: 480px) { width: 40px; height: 40px; font-size: 1.1rem; }
+
+    &--whatsapp { background: rgba(37, 211, 102, 0.15); border: 1px solid rgba(37, 211, 102, 0.3); color: #25D366; }
+    &--phone    { background: rgba($orange, 0.12); border: 1px solid rgba($orange, 0.25); color: $orange; }
+    &--email    { background: rgba($yellow, 0.1); border: 1px solid rgba($yellow, 0.2); color: $yellow; }
   }
 
   &__channel-arrow {
     color: rgba($gray-mid, 0.4);
     font-size: 0.85rem;
     transition: color 0.2s, transform 0.2s;
+    @media (max-width: 480px) { display: none; }
   }
 }

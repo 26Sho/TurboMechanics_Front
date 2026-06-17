@@ -284,7 +284,8 @@ $yellow:  #FFD60A;
   grid-template-columns: repeat(4, 1fr);
   gap: 8px;
 
-  @media (max-width: 640px) { grid-template-columns: repeat(2, 1fr); }
+  @media (max-width: 640px) { grid-template-columns: repeat(2, 1fr);
+  @media (max-width: 480px) { grid-template-columns: 1fr; } }
 }
 
 .urgency-option {
@@ -562,6 +563,7 @@ $yellow:  #FFD60A;
 
 .orders-dropdown__empty {
   padding: 24px;
+  @media (max-width: 480px) { padding: 16px; }
   text-align: center;
   color: $muted;
   font-size: 0.85rem;

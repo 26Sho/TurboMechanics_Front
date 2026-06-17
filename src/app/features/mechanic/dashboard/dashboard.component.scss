@@ -1,6 +1,8 @@
 /* Cancela el padding del main-content y ocupa todo el espacio disponible */
 .dashboard-fullscreen {
   margin: -28px;
+  @media (max-width: 768px) { margin: -16px; padding: 24px 20px; }
+  @media (max-width: 480px) { margin: -12px; padding: 20px 12px; }
   height: calc(100vh - 60px);
   overflow: hidden;
   position: relative;

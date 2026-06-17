@@ -78,7 +78,8 @@ $border:       rgba(244, 93, 1, 0.25);
 }
 
 // ── Table ─────────────────────────────────────────────────────────────────────
-.mov-table-wrap { overflow-x: auto; }
+.mov-table-wrap { overflow-x: auto;
+  -webkit-overflow-scrolling: touch; }
 
 .mov-table {
   width: 100%;

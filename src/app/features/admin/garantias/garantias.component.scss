@@ -79,6 +79,8 @@ $border-dim:  rgba(255, 255, 255, 0.07);
   border: 1px solid $border;
   border-radius: 12px;
   padding: 24px;
+  @media (max-width: 768px) { padding: 16px; }
+  @media (max-width: 480px) { padding: 12px; }
 }
 
 .card-toolbar {
@@ -203,7 +205,8 @@ textarea.form-input { resize: vertical; }
 }
 
 // ── Table ─────────────────────────────────────────────────────────────────────
-.table-wrap { overflow-x: auto; border-radius: 8px; }
+.table-wrap { overflow-x: auto;
+  -webkit-overflow-scrolling: touch; border-radius: 8px; }
 
 .gar-table {
   width: 100%; border-collapse: collapse; font-size: 0.84rem;
@@ -321,6 +324,7 @@ textarea.form-input { resize: vertical; }
 .workshop-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  @media (max-width: 480px) { grid-template-columns: 1fr; }
   gap: 16px;
   margin-top: 8px;
 }
@@ -516,6 +520,8 @@ textarea.form-input { resize: vertical; }
 
 .modal-body {
   padding: 24px;
+  @media (max-width: 768px) { padding: 16px; }
+  @media (max-width: 480px) { padding: 12px; }
   overflow-y: auto;
   flex: 1;
 }
