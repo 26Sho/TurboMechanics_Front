@@ -9,12 +9,10 @@ $negro: #0D0D0D;
 $color-border: #2A2A2A;
 $color-success: #2ECC71;
 $border-radius: 8px;
-$font-mono: 'JetBrains Mono', monospace;
 
 .topbar {
   position: fixed;
-  top: 0;
-  right: 0;
+  top: 0; right: 0;
   left: $sidebar-collapsed;
   height: $topbar-height;
   background: rgba($gris-osc, 0.95);
@@ -28,204 +26,106 @@ $font-mono: 'JetBrains Mono', monospace;
   gap: 16px;
   z-index: 90;
   transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
   &.expanded { left: $sidebar-width; }
-}
 
-.topbar__left {
-  display: flex;
-  align-items: center;
-  gap: 14px;
-  flex: 1;
-}
+  @media (max-width: 768px) {
+    left: 0 !important;
+    padding: 0 16px;
+  }
 
-.topbar__right {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  flex-shrink: 0;
-  position: relative;
-}
-
-.btn-icon {
-  width: 36px;
-  height: 36px;
-  border-radius: $border-radius;
-  background: rgba($blanco, 0.05);
-  border: 1px solid $color-border;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  color: $gris-med;
-  cursor: pointer;
-  transition: all 0.2s;
-  flex-shrink: 0;
-
-  &:hover {
-    background: rgba($naranja, 0.08);
-    border-color: rgba($naranja, 0.3);
-    color: $naranja;
+  @media (max-width: 480px) {
+    padding: 0 12px;
   }
 }
 
-// ─── User chip ────────────────────────────────────────────────
-.user-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: 9px;
-  padding: 5px 10px 5px 5px;
-  border-radius: 22px;
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid $color-border;
-  cursor: pointer;
-  transition: border-color 0.2s, background 0.2s;
-  user-select: none;
+.topbar__left {
+  display: flex; align-items: center; gap: 14px; flex: 1;
+}
 
-  &:hover, &.open {
-    border-color: rgba($naranja, 0.4);
-    background: rgba($naranja, 0.06);
+.topbar__right {
+  display: flex; align-items: center; gap: 10px;
+  flex-shrink: 0; position: relative;
+}
+
+.btn-icon {
+  width: 36px; height: 36px;
+  border-radius: $border-radius;
+  background: rgba($blanco, 0.05);
+  border: 1px solid $color-border;
+  display: flex; align-items: center; justify-content: center;
+  color: $gris-med; cursor: pointer; transition: all 0.2s; flex-shrink: 0;
+
+  &:hover { background: rgba($naranja, 0.08); border-color: rgba($naranja, 0.3); color: $naranja; }
+}
+
+.user-chip {
+  display: inline-flex; align-items: center; gap: 9px;
+  padding: 5px 10px 5px 5px; border-radius: 22px;
+  background: rgba(255,255,255,0.04); border: 1px solid $color-border;
+  cursor: pointer; transition: border-color 0.2s, background 0.2s; user-select: none;
+
+  &:hover, &.open { border-color: rgba($naranja, 0.4); background: rgba($naranja, 0.06); }
+
+  @media (max-width: 480px) {
+    .chip-info { display: none; }
+    padding: 5px;
   }
 }
 
 .avatar-circle {
-  width: 28px;
-  height: 28px;
-  border-radius: 50%;
+  width: 28px; height: 28px; border-radius: 50%;
   background: $naranja;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 12px;
-  font-weight: 700;
-  color: $blanco;
-  flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 700; color: $blanco; flex-shrink: 0;
 }
 
-.chip-info {
-  display: flex;
-  flex-direction: column;
-  gap: 1px;
-}
-
-.chip-name {
-  font-size: 13px;
-  font-weight: 600;
-  color: $blanco;
-  line-height: 1;
-}
-
-.chip-status {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 10px;
-  color: $color-success;
-  line-height: 1;
-}
+.chip-info { display: flex; flex-direction: column; gap: 1px; }
+.chip-name { font-size: 13px; font-weight: 600; color: $blanco; line-height: 1; }
+.chip-status { display: flex; align-items: center; gap: 4px; font-size: 10px; color: $color-success; line-height: 1; }
 
 .status-dot {
-  width: 6px;
-  height: 6px;
-  border-radius: 50%;
-  background: $color-success;
-  flex-shrink: 0;
+  width: 6px; height: 6px; border-radius: 50%;
+  background: $color-success; flex-shrink: 0;
   animation: statusPulse 1.6s ease-in-out infinite;
-
-  @keyframes statusPulse {
-    0%, 100% { opacity: 1; }
-    50%       { opacity: 0.3; }
-  }
+  @keyframes statusPulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
 }
 
-.chevron {
-  color: $gris-med;
-  transition: transform 0.2s;
-  flex-shrink: 0;
+.chevron { color: $gris-med; transition: transform 0.2s; flex-shrink: 0; &.rotated { transform: rotate(180deg); } }
 
-  &.rotated { transform: rotate(180deg); }
-}
-
-// ─── User dropdown ────────────────────────────────────────────
 .user-dropdown {
   display: none;
-  position: absolute;
-  top: calc(100% + 8px);
-  right: 0;
-  width: 220px;
-  background: #1A1A1A;
-  border: 1px solid $color-border;
-  border-radius: 10px;
-  overflow: hidden;
-  z-index: 200;
-
+  position: absolute; top: calc(100% + 8px); right: 0;
+  width: 220px; background: #1A1A1A;
+  border: 1px solid $color-border; border-radius: 10px;
+  overflow: hidden; z-index: 200;
   &.open { display: block; }
 }
 
 .dropdown-header {
-  padding: 14px 16px;
-  border-bottom: 1px solid $color-border;
-  display: flex;
-  align-items: center;
-  gap: 10px;
+  padding: 14px 16px; border-bottom: 1px solid $color-border;
+  display: flex; align-items: center; gap: 10px;
 }
 
 .dropdown-avatar {
-  width: 36px;
-  height: 36px;
-  border-radius: 50%;
-  background: $naranja;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 14px;
-  font-weight: 700;
-  color: $blanco;
-  flex-shrink: 0;
+  width: 36px; height: 36px; border-radius: 50%; background: $naranja;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 14px; font-weight: 700; color: $blanco; flex-shrink: 0;
 }
 
-.dropdown-name {
-  font-size: 13px;
-  font-weight: 700;
-  color: $blanco;
-}
-
-.dropdown-role {
-  font-size: 11px;
-  color: $gris-med;
-  margin-top: 2px;
-}
+.dropdown-name { font-size: 13px; font-weight: 700; color: $blanco; }
+.dropdown-role { font-size: 11px; color: $gris-med; margin-top: 2px; }
 
 .dropdown-item {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 11px 16px;
-  font-size: 13px;
-  font-weight: 600;
-  color: #CCCCCC;
-  cursor: pointer;
+  display: flex; align-items: center; gap: 10px;
+  padding: 11px 16px; font-size: 13px; font-weight: 600;
+  color: #CCCCCC; cursor: pointer;
   transition: background 0.15s, color 0.15s;
-  border: none;
-  background: none;
-  width: 100%;
-  text-align: left;
+  border: none; background: none; width: 100%; text-align: left;
 
   svg { color: $gris-med; transition: color 0.15s; flex-shrink: 0; }
-
-  &:hover {
-    background: rgba($naranja, 0.08);
-    color: $naranja;
-    svg { color: $naranja; }
-  }
-
-  &.danger:hover {
-    background: rgba(231, 76, 60, 0.08);
-    color: #E74C3C;
-    svg { color: #E74C3C; }
-  }
+  &:hover { background: rgba($naranja, 0.08); color: $naranja; svg { color: $naranja; } }
+  &.danger:hover { background: rgba(231,76,60,0.08); color: #E74C3C; svg { color: #E74C3C; } }
 }
 
-.dropdown-divider {
-  height: 1px;
-  background: $color-border;
-  margin: 4px 0;
-}
+.dropdown-divider { height: 1px; background: $color-border; margin: 4px 0; }

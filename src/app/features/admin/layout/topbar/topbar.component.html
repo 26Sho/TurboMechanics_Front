@@ -1,7 +1,13 @@
 <header class="topbar" [class.expanded]="!sidebarService.collapsed()">
 
   <div class="topbar__left">
-    <button class="btn-icon" (click)="sidebarService.toggle()" title="Alternar barra lateral">
+    <!-- Hamburger móvil -->
+    <button class="btn-icon mobile-only" (click)="toggleMobile()" title="Menú">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/>
+      </svg>
+    </button>
+    <button class="btn-icon desktop-only" (click)="sidebarService.toggle()" title="Alternar barra lateral">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
         <line x1="3" y1="6" x2="21" y2="6"/>
         <line x1="3" y1="12" x2="21" y2="12"/>

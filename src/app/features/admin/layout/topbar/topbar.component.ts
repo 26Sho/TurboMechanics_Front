@@ -15,9 +15,8 @@ export class TopbarComponent {
 
   dropdownOpen = false;
 
-  toggleDropdown(): void {
-    this.dropdownOpen = !this.dropdownOpen;
-  }
+  toggleDropdown(): void { this.dropdownOpen = !this.dropdownOpen; }
+  toggleMobile(): void   { this.sidebarService.toggleMobile(); }
 
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent): void {
@@ -27,10 +26,7 @@ export class TopbarComponent {
     }
   }
 
-  goToProfile(): void {
-    this.dropdownOpen = false;
-    this.router.navigate(['/admin/perfil']);
-  }
+  goToProfile(): void { this.dropdownOpen = false; this.router.navigate(['/admin/perfil']); }
 
   logout(): void {
     this.dropdownOpen = false;

@@ -1,6 +1,9 @@
 .wa-page {
   padding: 2rem;
+  @media (max-width: 480px) { padding: 1rem; }
   max-width: 600px;
+  margin: 0 auto;
+  margin: 0 auto;
 }
 
 // ── Header ────────────────────────────────────────────────
@@ -88,6 +91,7 @@
   border: 1px solid #2A2A2A;
   border-radius: 16px;
   padding: 2rem;
+  @media (max-width: 480px) { padding: 1rem; }
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -294,4 +298,4 @@
 @keyframes pulse {
   0%, 100% { opacity: 1; }
   50%       { opacity: 0.3; }
-}   
+}

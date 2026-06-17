@@ -1,4 +1,7 @@
-<aside class="sidebar" [class.collapsed]="sidebarService.collapsed()">
+<aside class="sidebar" [class.collapsed]="sidebarService.collapsed()" [class.mobile-open]="sidebarService.mobileOpen()">
+
+<!-- Overlay móvil -->
+<div class="sidebar-overlay" [class.visible]="sidebarService.mobileOpen()" (click)="closeMobile()"></div>
 
   <div class="sidebar__logo">
     <img src="assets/Logo.png" alt="Turbo Mechanics" class="logo-img" />

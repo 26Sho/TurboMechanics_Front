@@ -48,18 +48,21 @@ $font-heading: 'Rajdhani', sans-serif;
       background: radial-gradient($red, transparent);
       top: -100px; right: 10%;
       animation-delay: 0s;
+      @media (max-width: 768px) { width: 300px; height: 300px; }
     }
     &--2 {
       width: 350px; height: 350px;
       background: radial-gradient($orange, transparent);
       bottom: -50px; right: 20%;
       animation-delay: 2s;
+      @media (max-width: 768px) { width: 200px; height: 200px; }
     }
     &--3 {
       width: 200px; height: 200px;
       background: radial-gradient($yellow, transparent);
       top: 40%; right: 35%;
       animation-delay: 4s;
+      @media (max-width: 768px) { display: none; }
     }
   }
 
@@ -84,6 +87,11 @@ $font-heading: 'Rajdhani', sans-serif;
       flex-direction: column;
       text-align: center;
       padding-top: 100px;
+      gap: 40px;
+    }
+
+    @media (max-width: 480px) {
+      padding: 90px 16px 60px;
     }
   }
 
@@ -135,11 +143,13 @@ $font-heading: 'Rajdhani', sans-serif;
     letter-spacing: 4px;
     text-transform: uppercase;
     color: $gray-mid;
+
+    @media (max-width: 480px) { font-size: 1rem; letter-spacing: 2px; }
   }
 
   &__title-main {
     font-family: $font-display;
-    font-size: clamp(3.5rem, 8vw, 6rem);
+    font-size: clamp(3rem, 8vw, 6rem);
     line-height: 0.95;
     letter-spacing: 4px;
     background: linear-gradient(to right, $red, $orange, $orange-light, $yellow);
@@ -147,6 +157,8 @@ $font-heading: 'Rajdhani', sans-serif;
     -webkit-text-fill-color: transparent;
     background-clip: text;
     margin: 4px 0;
+
+    @media (max-width: 480px) { letter-spacing: 2px; }
   }
 
   &__title-sub {
@@ -156,6 +168,8 @@ $font-heading: 'Rajdhani', sans-serif;
     color: $gray-light;
     letter-spacing: 2px;
     text-transform: uppercase;
+
+    @media (max-width: 480px) { font-size: 0.85rem; letter-spacing: 1px; }
   }
 
   &__desc {
@@ -166,6 +180,7 @@ $font-heading: 'Rajdhani', sans-serif;
     max-width: 520px;
 
     @media (max-width: 1024px) { margin: 0 auto 32px; }
+    @media (max-width: 480px) { font-size: 0.9rem; }
   }
 
   &__actions {
@@ -176,6 +191,11 @@ $font-heading: 'Rajdhani', sans-serif;
     flex-wrap: wrap;
 
     @media (max-width: 1024px) { justify-content: center; }
+    @media (max-width: 480px) {
+      flex-direction: column;
+      width: 100%;
+      a, button { width: 100%; justify-content: center; }
+    }
   }
 
   &__stats {
@@ -185,6 +205,7 @@ $font-heading: 'Rajdhani', sans-serif;
     border-top: 1px solid rgba($gray-dark, 0.8);
 
     @media (max-width: 1024px) { justify-content: center; }
+    @media (max-width: 480px) { padding-top: 20px; }
   }
 
   &__stat {
@@ -195,6 +216,8 @@ $font-heading: 'Rajdhani', sans-serif;
 
     &:first-child { padding-left: 0; }
 
+    @media (max-width: 480px) { padding: 0 12px; }
+
     strong {
       font-family: $font-display;
       font-size: 2rem;
@@ -203,6 +226,8 @@ $font-heading: 'Rajdhani', sans-serif;
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
       background-clip: text;
+
+      @media (max-width: 480px) { font-size: 1.5rem; }
     }
 
     span {
@@ -211,6 +236,8 @@ $font-heading: 'Rajdhani', sans-serif;
       letter-spacing: 1px;
       text-transform: uppercase;
       margin-top: 2px;
+
+      @media (max-width: 480px) { font-size: 0.65rem; }
     }
   }
 
@@ -219,13 +246,13 @@ $font-heading: 'Rajdhani', sans-serif;
     background: rgba($gray-dark, 0.8);
   }
 
-  // ── Wheel visual ──────────────────────────────────────────
   &__visual {
     flex-shrink: 0;
     position: relative;
     width: 360px; height: 360px;
 
     @media (max-width: 1024px) { width: 260px; height: 260px; }
+    @media (max-width: 480px)  { width: 200px; height: 200px; }
   }
 
   &__wheel {
@@ -337,6 +364,8 @@ $font-heading: 'Rajdhani', sans-serif;
     text-transform: uppercase;
     color: $gray-mid;
     animation: scrollBounce 2s ease-in-out infinite;
+
+    @media (max-width: 480px) { display: none; }
   }
 
   &__scroll-arrow {
