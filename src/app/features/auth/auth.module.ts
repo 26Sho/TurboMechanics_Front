@@ -17,14 +17,33 @@ import { EstimateApproveComponent } from './pages/estimate-approve/estimate-appr
 import { EstimateRejectComponent } from './pages/estimate-reject/estimate-reject.component';
 import { ClientBillsComponent } from './pages/client-bills/client-bills.component';
 import { MisVehiculosComponent } from './pages/mis-vehiculos/mis-vehiculos.component';
+import { NavbarModule } from '../../components/navbar/navbar.module';
 
 @NgModule({
-  declarations: [AuthComponent, LoginComponent, RecoverPasswordComponent, RegisterComponent, WorkOrderComponent, VehicleComponent, VehicleHistoryComponent, TechnicalDiagnosisComponent, AppointmentsComponent, MaintenanceTrackingComponent, MechanicMaintenanceComponent, EstimateApproveComponent, EstimateRejectComponent, ClientBillsComponent, MisVehiculosComponent],
+  declarations: [
+    AuthComponent,
+    LoginComponent,
+    RecoverPasswordComponent,
+    RegisterComponent,
+    WorkOrderComponent,
+    VehicleComponent,
+    VehicleHistoryComponent,
+    TechnicalDiagnosisComponent,
+    AppointmentsComponent,
+    MaintenanceTrackingComponent,
+    MechanicMaintenanceComponent,
+    EstimateApproveComponent,
+    EstimateRejectComponent,
+    ClientBillsComponent,
+    MisVehiculosComponent
+  ],
   imports: [
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
-    RouterModule
-  ], exports: [AuthComponent, RecoverPasswordComponent]
+    RouterModule,
+    NavbarModule
+  ],
+  exports: [AuthComponent, RecoverPasswordComponent]
 })
 export class AuthModule { }
