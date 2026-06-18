@@ -22,7 +22,7 @@
     </div>
 
     <!-- Stats cards -->
-    <div class="dash-stats dash-stats--3">
+    <div class="dash-stats dash-stats--2">
       <div class="dash-loading" *ngIf="loadingStats">
         <div class="dash-spinner"></div>
         <span>Cargando estadísticas...</span>
@@ -30,22 +30,10 @@
 
       <ng-container *ngIf="!loadingStats">
 
-        <!-- Clientes -->
-        <div class="stat-card" style="--accent: #F45D01">
-          <div class="stat-card__icon" style="color:#F45D01; background:rgba(244,93,1,0.12);">
-            <i class="fas fa-users"></i>
-          </div>
-          <div class="stat-card__body">
-            <span class="stat-card__value" style="color:#F45D01;">{{ totalClientes }}</span>
-            <span class="stat-card__label">Clientes</span>
-            <span class="stat-card__sub">registrados</span>
-          </div>
-        </div>
-
-        <!-- Órdenes -->
-        <div class="stat-card" style="--accent: #FFD60A">
+        <!-- Órdenes de Trabajo -->
+        <div class="stat-card stat-card--link" style="--accent: #FFD60A" routerLink="/mechanic/work-order">
           <div class="stat-card__icon" style="color:#FFD60A; background:rgba(255,210,10,0.12);">
-            <i class="fas fa-clipboard-list"></i>
+            <i class="fas fa-tools"></i>
           </div>
           <div class="stat-card__body">
             <span class="stat-card__value" style="color:#FFD60A;">{{ totalOrdenes }}</span>
@@ -54,38 +42,19 @@
           </div>
         </div>
 
-        <!-- Stock crítico -->
-        <div class="stat-card" [style.--accent]="stockCritico.length > 0 ? '#DC2626' : '#22C55E'">
-          <div class="stat-card__icon"
-            [style.color]="stockCritico.length > 0 ? '#F87171' : '#4ade80'"
-            [style.background]="stockCritico.length > 0 ? 'rgba(220,38,38,0.12)' : 'rgba(34,197,94,0.12)'">
-            <i class="fas fa-boxes"></i>
+        <!-- Citas -->
+        <div class="stat-card stat-card--link" style="--accent: #F45D01" routerLink="/mechanic/appointments">
+          <div class="stat-card__icon" style="color:#F45D01; background:rgba(244,93,1,0.12);">
+            <i class="fas fa-calendar-check"></i>
           </div>
           <div class="stat-card__body">
-            <span class="stat-card__value"
-              [style.color]="stockCritico.length > 0 ? '#F87171' : '#4ade80'">
-              {{ stockCritico.length }}
-            </span>
-            <span class="stat-card__label">Stock Crítico</span>
-            <span class="stat-card__sub">{{ stockCritico.length > 0 ? 'repuestos en alerta' : 'todo en orden' }}</span>
+            <span class="stat-card__value" style="color:#F45D01;">{{ totalCitas }}</span>
+            <span class="stat-card__label">Citas</span>
+            <span class="stat-card__sub">hoy</span>
           </div>
         </div>
 
       </ng-container>
-    </div>
-
-    <!-- Alertas stock crítico -->
-    <div class="dash-alerts" *ngIf="!loadingStats && stockCritico.length > 0">
-      <div class="dash-alerts__title">
-        <i class="fas fa-exclamation-triangle"></i>
-        Repuestos con stock crítico
-      </div>
-      <div class="dash-alerts__list">
-        <div class="dash-alert-item" *ngFor="let r of stockCritico">
-          <span class="dash-alert-item__name">{{ r.name }}</span>
-          <span class="dash-alert-item__stock">Stock: {{ r.currentStock }} / Mín: {{ r.minStock }}</span>
-        </div>
-      </div>
     </div>
 
     <!-- Últimas órdenes -->
@@ -110,7 +79,7 @@
               <td class="order-num">{{ o.numberorder }}</td>
               <td>{{ o.clientname }}</td>
               <td>{{ o.vehicleplate }}</td>
-              <td><span class="badge" [ngClass]="statusClass(o.stateorder)">{{ o.stateorder }}</span></td>
+              <td><span class="badge badge--neutral">{{ stateLabel(o.stateorder) }}</span></td>
               <td>{{ o.dateentry | date:'dd/MM/yyyy' }}</td>
             </tr>
           </tbody>

@@ -10,12 +10,11 @@ import { forkJoin } from 'rxjs';
 export class DashboardComponent implements OnInit {
   Math = Math;
 
-  orders = signal<any[]>([]);
+  orders  = signal<any[]>([]);
 
-  totalOrdenes    = 0;
-  totalClientes   = 0;
-  stockCritico: any[] = [];
-  loadingStats    = true;
+  totalOrdenes = 0;
+  totalCitas   = 0;
+  loadingStats = true;
 
   stats: any[] = [];
 
@@ -28,17 +27,16 @@ export class DashboardComponent implements OnInit {
   }
 
   cargarDatosDashboard(): void {
+    const hoy = new Date().toISOString().split('T')[0];
     forkJoin({
-      ordenes:      this.http.get<any[]>(`${this.apiUrl}/orders`),
-      clientes:     this.http.get<any[]>(`${this.apiUrl}/admin/users`),
-      stockCritico: this.http.get<any[]>(`${this.apiUrl}/admin/inventario/reportes/stock-critico`)
+      ordenes: this.http.get<any[]>(`${this.apiUrl}/orders`),
+      citas:   this.http.get<any[]>(`${this.apiUrl}/appointments/agenda/daily?date=${hoy}`)
     }).subscribe({
-      next: ({ ordenes, clientes, stockCritico }) => {
-        this.totalOrdenes  = ordenes.length;
-        this.totalClientes = clientes.length;
-        this.stockCritico  = stockCritico;
+      next: ({ ordenes, citas }) => {
+        this.totalOrdenes = ordenes.length;
+        this.totalCitas   = citas.length;
         this.orders.set(ordenes.slice(-5).reverse());
-        this.loadingStats  = false;
+        this.loadingStats = false;
         this.construirStats();
       },
       error: (err) => {
@@ -51,36 +49,40 @@ export class DashboardComponent implements OnInit {
   construirStats(): void {
     this.stats = [
       {
-        label: 'Clientes',
-        value: this.totalClientes,
-        sub: 'registrados',
-        accent: '#F45D01',
-        icon: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>`
-      },
-      {
         label: 'Órdenes de Trabajo',
         value: this.totalOrdenes,
         sub: 'en total',
         accent: '#FFD60A',
-        icon: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>`
+        icon: `fas fa-tools`
       },
       {
-        label: 'Stock Crítico',
-        value: this.stockCritico.length,
-        sub: this.stockCritico.length > 0 ? 'repuestos en alerta' : 'todo en orden',
-        accent: this.stockCritico.length > 0 ? '#DC2626' : '#22C55E',
-        icon: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/></svg>`
+        label: 'Citas',
+        value: this.totalCitas,
+        sub: 'hoy',
+        accent: '#F45D01',
+        icon: `fas fa-calendar-check`
       },
     ];
   }
 
-  statusClass(status: string) {
+  stateLabel(status: string): string {
     const map: Record<string, string> = {
-      'En proceso': 'badge--accent',
-      'Pendiente':  'badge--warning',
-      'Listo':      'badge--success',
-      'Entregado':  'badge--neutral',
+      RECIBIDO: 'Recibido', EN_DIAGNOSTICO: 'En diagnóstico',
+      EN_REPARACION: 'En reparación', LISTO: 'Listo',
+      ENTREGADO: 'Entregado', CANCELADO: 'Cancelado'
     };
-    return map[status] ?? 'badge--neutral';
+    return map[status] ?? status;
+  }
+
+  statusClass(status: string) {
+    if (!status) return 'badge--neutral';
+    const s = status.toUpperCase().replace(/_/g, '');
+    if (s === 'RECIBIDO')       return 'badge--recibido';
+    if (s === 'ENDIAGNOSTICO')  return 'badge--diagnostico';
+    if (s === 'ENREPARACION')   return 'badge--reparacion';
+    if (s === 'LISTO')          return 'badge--listo';
+    if (s === 'ENTREGADO')      return 'badge--entregado';
+    if (s === 'CANCELADO')      return 'badge--cancelado';
+    return 'badge--neutral';
   }
 }

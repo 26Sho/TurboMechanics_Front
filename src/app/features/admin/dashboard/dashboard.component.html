@@ -45,7 +45,7 @@
         <!-- Órdenes -->
         <div class="stat-card stat-card--link" style="--accent: #FFD60A" routerLink="/admin/work-order">
           <div class="stat-card__icon" style="color:#FFD60A; background:rgba(255,210,10,0.12);">
-            <i class="fas fa-tools"></i>
+            <i class="fas fa-clipboard-list"></i>
           </div>
           <div class="stat-card__body">
             <span class="stat-card__value" style="color:#FFD60A;">{{ totalOrdenes }}</span>
@@ -122,7 +122,7 @@
               <td class="order-num">{{ o.numberorder }}</td>
               <td>{{ o.clientname }}</td>
               <td>{{ o.vehicleplate }}</td>
-              <td><span class="badge" [ngClass]="statusClass(o.stateorder)">{{ o.stateorder }}</span></td>
+              <td><span class="badge badge--neutral">{{ stateLabel(o.stateorder) }}</span></td>
               <td>{{ o.dateentry | date:'dd/MM/yyyy' }}</td>
             </tr>
           </tbody>
