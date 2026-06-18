@@ -107,7 +107,6 @@ export class WorkOrderComponent implements OnInit {
   ];
 
   readonly mechanicStateOptions: { value: StateOrder; label: string; icon: string }[] = [
-    { value: 'EN_DIAGNOSTICO', label: 'En diagnóstico', icon: '🔍' },
     { value: 'EN_REPARACION',  label: 'En reparación',  icon: '🔧' },
     { value: 'LISTO',          label: 'Listo',          icon: '✅' },
     { value: 'ENTREGADO',      label: 'Entregado',      icon: '🚗' },

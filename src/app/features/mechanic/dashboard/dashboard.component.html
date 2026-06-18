@@ -9,20 +9,114 @@
   </div>
 
   <div class="hero-inner">
-    <div class="hero-top">
 
-    <div class="hero-center">
-      <img src="assets/Logo-removebg.png" alt="TurboMechanics" class="hero-logo" />
+    <!-- Hero horizontal -->
+    <div class="hero-header">
       <div class="hero-text">
         <p class="hero-eyebrow">Panel de control</p>
         <h1 class="hero-title">
-          Bienvenido,<br>
-          <span class="hero-highlight">Mecánico</span>
+          Bienvenido, <span class="hero-highlight">Mecánico</span>
         </h1>
         <p class="hero-sub">Revisa tus órdenes y gestiona tu trabajo</p>
-        <div class="hero-line"></div>
       </div>
     </div>
-  </div>
 
+    <!-- Stats cards -->
+    <div class="dash-stats dash-stats--3">
+      <div class="dash-loading" *ngIf="loadingStats">
+        <div class="dash-spinner"></div>
+        <span>Cargando estadísticas...</span>
+      </div>
+
+      <ng-container *ngIf="!loadingStats">
+
+        <!-- Clientes -->
+        <div class="stat-card" style="--accent: #F45D01">
+          <div class="stat-card__icon" style="color:#F45D01; background:rgba(244,93,1,0.12);">
+            <i class="fas fa-users"></i>
+          </div>
+          <div class="stat-card__body">
+            <span class="stat-card__value" style="color:#F45D01;">{{ totalClientes }}</span>
+            <span class="stat-card__label">Clientes</span>
+            <span class="stat-card__sub">registrados</span>
+          </div>
+        </div>
+
+        <!-- Órdenes -->
+        <div class="stat-card" style="--accent: #FFD60A">
+          <div class="stat-card__icon" style="color:#FFD60A; background:rgba(255,210,10,0.12);">
+            <i class="fas fa-clipboard-list"></i>
+          </div>
+          <div class="stat-card__body">
+            <span class="stat-card__value" style="color:#FFD60A;">{{ totalOrdenes }}</span>
+            <span class="stat-card__label">Órdenes de Trabajo</span>
+            <span class="stat-card__sub">en total</span>
+          </div>
+        </div>
+
+        <!-- Stock crítico -->
+        <div class="stat-card" [style.--accent]="stockCritico.length > 0 ? '#DC2626' : '#22C55E'">
+          <div class="stat-card__icon"
+            [style.color]="stockCritico.length > 0 ? '#F87171' : '#4ade80'"
+            [style.background]="stockCritico.length > 0 ? 'rgba(220,38,38,0.12)' : 'rgba(34,197,94,0.12)'">
+            <i class="fas fa-boxes"></i>
+          </div>
+          <div class="stat-card__body">
+            <span class="stat-card__value"
+              [style.color]="stockCritico.length > 0 ? '#F87171' : '#4ade80'">
+              {{ stockCritico.length }}
+            </span>
+            <span class="stat-card__label">Stock Crítico</span>
+            <span class="stat-card__sub">{{ stockCritico.length > 0 ? 'repuestos en alerta' : 'todo en orden' }}</span>
+          </div>
+        </div>
+
+      </ng-container>
+    </div>
+
+    <!-- Alertas stock crítico -->
+    <div class="dash-alerts" *ngIf="!loadingStats && stockCritico.length > 0">
+      <div class="dash-alerts__title">
+        <i class="fas fa-exclamation-triangle"></i>
+        Repuestos con stock crítico
+      </div>
+      <div class="dash-alerts__list">
+        <div class="dash-alert-item" *ngFor="let r of stockCritico">
+          <span class="dash-alert-item__name">{{ r.name }}</span>
+          <span class="dash-alert-item__stock">Stock: {{ r.currentStock }} / Mín: {{ r.minStock }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Últimas órdenes -->
+    <div class="dash-orders" *ngIf="!loadingStats && orders().length > 0">
+      <div class="dash-orders__title">
+        <i class="fas fa-history"></i>
+        Últimas órdenes de trabajo
+      </div>
+      <div class="dash-orders__table-wrap">
+        <table class="dash-orders__table">
+          <thead>
+            <tr>
+              <th>N° Orden</th>
+              <th>Cliente</th>
+              <th>Vehículo</th>
+              <th>Estado</th>
+              <th>Fecha</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let o of orders()">
+              <td class="order-num">{{ o.numberorder }}</td>
+              <td>{{ o.clientname }}</td>
+              <td>{{ o.vehicleplate }}</td>
+              <td><span class="badge" [ngClass]="statusClass(o.stateorder)">{{ o.stateorder }}</span></td>
+              <td>{{ o.dateentry | date:'dd/MM/yyyy' }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
 </div>
