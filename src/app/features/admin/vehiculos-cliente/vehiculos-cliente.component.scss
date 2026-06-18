@@ -9,6 +9,8 @@ $danger:    #DC2626;
 
 .page-wrapper {
   padding: 24px;
+  @media (max-width: 768px) { padding: 16px; }
+  @media (max-width: 480px) { padding: 12px; }
   background: $bg-dark;
   min-height: 100vh;
   animation: fadeSlideIn 0.4s ease;
@@ -147,7 +149,8 @@ $danger:    #DC2626;
   overflow: hidden;
 }
 
-.table-wrap { overflow-x: auto; }
+.table-wrap { overflow-x: auto;
+  -webkit-overflow-scrolling: touch; }
 
 .data-table {
   width: 100%; border-collapse: collapse; font-size: 13px;

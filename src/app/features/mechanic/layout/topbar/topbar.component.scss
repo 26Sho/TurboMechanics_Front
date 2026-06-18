@@ -13,6 +13,11 @@ $sidebar-width:     240px;
   top: 0;
   right: 0;
   left: $sidebar-collapsed;
+
+  @media (max-width: 768px) {
+    left: 0 !important;
+    padding: 0 16px;
+  }
   height: 60px;
   background: rgba($card, 0.95);
   backdrop-filter: blur(12px);
@@ -116,6 +121,7 @@ $sidebar-width:     240px;
 }
 
 .chip-info {
+  @media (max-width: 480px) { display: none; }
   display: flex;
   flex-direction: column;
   gap: 1px;

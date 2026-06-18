@@ -1,0 +1,267 @@
+$orange:    #F45D01;
+$black:     #0D0D0D;
+$gray-dark: #1A1A1A;
+$gray-mid:  #2B2B2B;
+$gray-muted:#6E6E6E;
+$white:     #FFFFFF;
+$green:     #22C55E;
+$red:       #DC2626;
+$yellow:    #F59E0B;
+$border:    rgba(244, 93, 1, 0.2);
+
+// ── Page ──────────────────────────────────────────────────────────────────
+.page {
+  padding: 32px;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  min-height: 100vh;
+  background: $black;
+}
+
+// ── Header ────────────────────────────────────────────────────────────────
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.header-icon {
+  width: 52px; height: 52px;
+  border-radius: 12px;
+  background: rgba($orange, 0.12);
+  border: 1px solid $border;
+  display: flex; align-items: center; justify-content: center;
+  color: $orange; flex-shrink: 0;
+}
+
+.header-title {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 1.7rem; font-weight: 700;
+  color: $white; margin: 0;
+}
+
+.header-sub { font-size: 0.85rem; color: $gray-muted; display: block; margin-top: 2px; }
+
+.header-stats {
+  display: flex;
+  gap: 12px;
+}
+
+.stat-card {
+  background: $gray-dark;
+  border: 1px solid rgba($white, 0.07);
+  border-radius: 10px;
+  padding: 12px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 130px;
+
+  &--orange {
+    border-color: $border;
+    background: rgba($orange, 0.06);
+  }
+}
+
+.stat-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: $gray-muted;
+}
+
+.stat-value {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 1.4rem;
+  font-weight: 700;
+  color: $white;
+
+  .stat-card--orange & { color: $orange; }
+}
+
+// ── Card ──────────────────────────────────────────────────────────────────
+.card {
+  background: $gray-dark;
+  border: 1px solid rgba($white, 0.07);
+  border-radius: 12px;
+  padding: 20px 24px;
+}
+
+// ── Filters ───────────────────────────────────────────────────────────────
+.filters-bar {
+  display: flex;
+  align-items: flex-end;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.search-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex: 1;
+  min-width: 200px;
+}
+
+.search-label {
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: $gray-muted;
+}
+
+.turbo-input {
+  background: $black;
+  border: 1px solid rgba($white, 0.08);
+  border-radius: 6px;
+  color: $white;
+  font-size: 14px;
+  padding: 10px 12px;
+  outline: none;
+  width: 100%;
+  box-sizing: border-box;
+  font-family: inherit;
+  transition: border-color 0.2s;
+
+  &::placeholder { color: $gray-muted; }
+  &:focus { border-color: $orange; }
+}
+
+.spacer { flex: 1; }
+.text-muted { color: $gray-muted; font-size: 13px; }
+
+// ── Empty / Loading ────────────────────────────────────────────────────────
+.loading-state, .empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 60px 0;
+  color: $gray-muted;
+
+  svg { opacity: 0.3; }
+}
+
+// ── Sales Grid ─────────────────────────────────────────────────────────────
+.sales-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 16px;
+}
+
+.sale-card {
+  padding: 0;
+  overflow: hidden;
+  transition: border-color 0.2s, transform 0.2s;
+
+  &:hover {
+    border-color: rgba($orange, 0.35);
+    transform: translateY(-2px);
+  }
+}
+
+.sale-card__header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 20px;
+  background: rgba($orange, 0.05);
+  border-bottom: 1px solid rgba($white, 0.06);
+}
+
+.sale-icon {
+  width: 36px; height: 36px;
+  border-radius: 8px;
+  background: rgba($orange, 0.12);
+  border: 1px solid $border;
+  display: flex; align-items: center; justify-content: center;
+  color: $orange; flex-shrink: 0;
+}
+
+.sale-card__info { flex: 1; min-width: 0; }
+
+.sale-name {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 14px;
+  font-weight: 700;
+  color: $white;
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.sale-ref {
+  font-size: 11px;
+  color: $gray-muted;
+  margin: 2px 0 0;
+}
+
+.sale-card__body {
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.sale-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.sale-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: $gray-muted;
+  flex-shrink: 0;
+}
+
+.sale-value {
+  font-size: 13px;
+  font-weight: 600;
+  color: $white;
+  text-align: right;
+  word-break: break-all;
+}
+
+.sale-price {
+  color: $orange;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 15px;
+}
+
+.sale-ref-mp {
+  font-size: 10px;
+  color: $gray-muted;
+  font-family: monospace;
+}
+
+// ── Badges ─────────────────────────────────────────────────────────────────
+.badge {
+  display: inline-block;
+  padding: 3px 10px;
+  border-radius: 20px;
+  font-size: 11px;
+  font-weight: 600;
+  flex-shrink: 0;
+
+  &--pending   { background: rgba($yellow, 0.15); color: $yellow; }
+  &--approved  { background: rgba($green, 0.15);  color: $green;  }
+  &--rejected  { background: rgba($red, 0.15);    color: $red;    }
+  &--cancelled { background: rgba($gray-muted, 0.15); color: $gray-muted; }
+}

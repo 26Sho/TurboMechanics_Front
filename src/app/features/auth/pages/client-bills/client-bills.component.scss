@@ -346,3 +346,36 @@ $border:     rgba(244, 93, 1, 0.25);
 
   &:hover { background: rgba($orange, 0.2); }
 }
+
+// ── Responsive ────────────────────────────────────────────────────────────
+.bills-wrapper {
+  min-height: 100vh;
+  background: $black;
+  padding: 92px 24px 64px;
+
+  @media (max-width: 768px) { padding: 80px 16px 48px; }
+  @media (max-width: 480px) { padding: 72px 12px 40px; }
+}
+
+.bills-table { min-width: 600px; }
+
+.bills-table-wrap { -webkit-overflow-scrolling: touch; }
+
+.form-row {
+  @media (max-width: 480px) { grid-template-columns: 1fr; }
+}
+
+.search-form {
+  @media (max-width: 480px) {
+    flex-direction: column;
+    .form-group { min-width: 100%; }
+    .btn-search { width: 100%; }
+  }
+}
+
+.modal-footer {
+  @media (max-width: 480px) {
+    flex-direction: column;
+    .btn-cancel, .btn-submit { width: 100%; text-align: center; }
+  }
+}

@@ -40,27 +40,24 @@ import { ClientBillsComponent } from './features/auth/pages/client-bills/client-
 import { PerfilComponent } from './features/shared/perfil/perfil.component';
 import { MisVehiculosComponent } from './features/auth/pages/mis-vehiculos/mis-vehiculos.component';
 import { AdminVehiculosClienteComponent } from './features/admin/vehiculos-cliente/vehiculos-cliente.component';
+import { SpareSalesComponent } from './features/admin/spare-sales/spare-sales.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'home', pathMatch: 'full' },
   { path: 'home', component: HomeComponent },
 
-  // 🔹 Confirmación de presupuesto — públicas
   { path: 'estima-confirmation/:token/aprobar', component: EstimateApproveComponent },
   { path: 'estima-confirmation/:token/rechazar', component: EstimateRejectComponent },
 
-  // 🔹 Solo NO autenticados
   { path: 'login', component: AuthComponent, canActivate: [noAuthGuard] },
   { path: 'recover-password', component: RecoverPasswordComponent, canActivate: [noAuthGuard] },
 
-  // 🔹 Usuarios autenticados
   { path: 'work-order', component: WorkOrderComponent, canActivate: [authGuard] },
   { path: 'vehicles', component: VehicleComponent, canActivate: [authGuard] },
   { path: 'vehicle-history', component: VehicleHistoryComponent, canActivate: [authGuard] },
   { path: 'diagnosis', component: TechnicalDiagnosisComponent, canActivate: [mechanicGuard] },
   { path: 'movements', component: MovementsComponent, canActivate: [mechanicGuard] },
 
-  // 🔹 Panel ADMIN
   {
     path: 'admin',
     component: LayoutComponent,
@@ -89,18 +86,16 @@ const routes: Routes = [
       { path: 'whatsapp', component: WhatsappComponent },
       { path: 'perfil', component: PerfilComponent },
       { path: 'vehiculos-cliente', component: AdminVehiculosClienteComponent },
+      { path: 'spare-sales', component: SpareSalesComponent },
     ]
   },
 
-  // 🔹 Cliente
   { path: 'appointments', component: ClientAppointmentsComponent, canActivate: [clientGuard] },
   { path: 'maintenance', component: MaintenanceTrackingComponent, canActivate: [clientGuard] },
   { path: 'my-bills', component: ClientBillsComponent, canActivate: [clientGuard] },
   { path: 'mis-vehiculos', component: MisVehiculosComponent, canActivate: [clientGuard] },
   { path: 'perfil', component: PerfilComponent, canActivate: [clientGuard] },
 
-
-  // 🔹 Panel MECÁNICO — lazy loading con layout propio
   {
     path: 'mechanic',
     loadChildren: () =>

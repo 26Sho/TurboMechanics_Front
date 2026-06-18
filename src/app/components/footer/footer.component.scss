@@ -19,8 +19,8 @@ $font-heading: 'Rajdhani', sans-serif;
     grid-template-columns: 2fr 1fr 1fr 1.5fr;
     gap: 50px;
 
-    @media (max-width: 1024px) { grid-template-columns: repeat(2, 1fr); }
-    @media (max-width: 576px)  { grid-template-columns: 1fr; }
+    @media (max-width: 1024px) { grid-template-columns: repeat(2, 1fr); gap: 32px; }
+    @media (max-width: 576px)  { grid-template-columns: 1fr; padding: 40px 16px 24px; gap: 28px; }
   }
 
   &__logo { margin-bottom: 16px; }
@@ -43,6 +43,7 @@ $font-heading: 'Rajdhani', sans-serif;
     display: flex;
     align-items: center;
     gap: 10px;
+    flex-wrap: wrap;
 
     a {
       width: 38px; height: 38px;
@@ -56,12 +57,7 @@ $font-heading: 'Rajdhani', sans-serif;
       color: $gray-mid;
       transition: all 0.3s;
 
-      &:hover {
-        border-color: $orange;
-        color: $orange;
-        background: rgba($orange, 0.1);
-        transform: translateY(-3px);
-      }
+      &:hover { border-color: $orange; color: $orange; background: rgba($orange, 0.1); transform: translateY(-3px); }
     }
   }
 
@@ -122,6 +118,8 @@ $font-heading: 'Rajdhani', sans-serif;
     justify-content: space-between;
     flex-wrap: wrap;
     gap: 8px;
+
+    @media (max-width: 576px) { padding: 16px; flex-direction: column; text-align: center; }
 
     p { font-size: 0.82rem; color: rgba($gray-mid, 0.6); }
   }

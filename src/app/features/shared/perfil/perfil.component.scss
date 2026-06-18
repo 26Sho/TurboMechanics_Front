@@ -14,7 +14,10 @@ $font:      'Rajdhani', sans-serif;
 .perfil-page {
   max-width: 860px;
   margin: 0 auto;
-  padding: 32px 24px;
+  padding: 92px 24px 40px;
+
+  @media (max-width: 768px) { padding: 80px 16px 32px; }
+  @media (max-width: 480px) { padding: 72px 12px 24px; }
   display: flex;
   flex-direction: column;
   gap: 24px;
@@ -84,6 +87,7 @@ $font:      'Rajdhani', sans-serif;
   border: 1px solid $border;
   border-radius: $radius;
   padding: 28px 32px;
+  @media (max-width: 480px) { padding: 20px 16px; }
 }
 
 .avatar {
@@ -140,6 +144,7 @@ $font:      'Rajdhani', sans-serif;
   border: 1px solid $border;
   border-radius: $radius;
   padding: 28px 32px;
+  @media (max-width: 480px) { padding: 20px 16px; }
   display: flex;
   flex-direction: column;
   gap: 20px;
