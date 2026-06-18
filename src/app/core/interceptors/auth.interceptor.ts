@@ -1,11 +1,13 @@
-import { HttpInterceptorFn, HttpRequest, HttpHandlerFn, HttpErrorResponse } from '@angular/common/http';
+import {
+  HttpInterceptorFn, HttpRequest, HttpHandlerFn, HttpErrorResponse
+} from '@angular/common/http';
 import { inject } from '@angular/core';
 import { catchError, switchMap, throwError } from 'rxjs';
 import { AuthService } from '../services/auth.service';
 import { SessionExpiredService } from '../services/session.expired.service';
 
 export const authInterceptor: HttpInterceptorFn = (req: HttpRequest<unknown>, next: HttpHandlerFn) => {
-  const authService = inject(AuthService);
+  const authService        = inject(AuthService);
   const sessionExpiredService = inject(SessionExpiredService);
 
   const token = sessionStorage.getItem('token');
@@ -32,22 +34,23 @@ export const authInterceptor: HttpInterceptorFn = (req: HttpRequest<unknown>, ne
         return throwError(() => error);
       }
 
-      // Hay token activo → intentar renovarlo
+      // Hay token → intentar renovarlo silenciosamente
       return authService.refreshToken().pipe(
         switchMap(res => {
           if (res?.jwt) {
+            // Éxito: reintentar la petición original con el token nuevo
             const retryReq = req.clone({
               setHeaders: { Authorization: `Bearer ${res.jwt}` }
             });
             return next(retryReq);
           }
-          // Refresh no devolvió token → sesión realmente expirada
+          // El backend no devolvió token → sesión realmente inválida
           authService.logout();
           sessionExpiredService.show();
           return throwError(() => error);
         }),
         catchError(() => {
-          // Refresh falló → mostrar modal solo si fue expiración real
+          // Refresh falló (token demasiado viejo / inactividad prolongada)
           if (!authService.intentionalLogout) {
             authService.logout();
             sessionExpiredService.show();

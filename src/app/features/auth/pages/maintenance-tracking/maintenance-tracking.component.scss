@@ -14,7 +14,6 @@ $border:  rgba(244, 93, 1, 0.25);
   min-height: 100vh;
   background: $black;
   padding: 92px 24px 64px;
-
   @media (max-width: 768px) { padding: 80px 16px 48px; }
   @media (max-width: 480px) { padding: 72px 12px 40px; }
 }
