@@ -11,6 +11,7 @@ export interface Repuesto {
   price:       number;
   category:    string;
   statusStock: string;
+  imageUrl?:   string;
 }
 
 export interface CompraRepuestoRequest {

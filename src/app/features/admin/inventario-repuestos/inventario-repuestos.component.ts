@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { ToastService } from 'src/app/shared/services/toast.service';
+import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 
 interface SparePartsResponseDTO {
   id: number;
@@ -12,6 +13,7 @@ interface SparePartsResponseDTO {
   price: number;
   category: string;
   statusStock: string;
+  imageUrl?: string;
 }
 
 interface MovementsResponseDTO {
@@ -42,6 +44,10 @@ export class InventarioRepuestosComponent implements OnInit {
   cargando = false;
   guardando = false;
 
+  // Imagen
+  selectedImageFile: File | null = null;
+  imagenPreview: SafeUrl | null = null;
+
   // Modal repuesto
   modalAbierto = false;
   modoEdicion = false;
@@ -68,7 +74,8 @@ export class InventarioRepuestosComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private http: HttpClient,
-    private toast: ToastService
+    private toast: ToastService,
+    private sanitizer: DomSanitizer
   ) {}
 
   ngOnInit(): void {
@@ -101,9 +108,9 @@ export class InventarioRepuestosComponent implements OnInit {
   cargar(): void {
     this.cargando = true;
     this.http.get<SparePartsResponseDTO[]>(this.apiUrl, this.getHeaders()).subscribe({
-      next: (data: SparePartsResponseDTO[]) => {
+      next: (data) => {
         this.repuestos = data;
-        const cats = data.map((r: SparePartsResponseDTO) => r.category);
+        const cats = data.map(r => r.category);
         this.categorias = ['todas', ...Array.from(new Set(cats))];
         this.aplicarFiltros();
         this.cargando = false;
@@ -124,9 +131,10 @@ export class InventarioRepuestosComponent implements OnInit {
     this.repuestosFiltrados = lista;
   }
 
-  // ── CRUD ──────────────────────────────────────────────────
   abrirAgregar(): void {
     this.modoEdicion = false;
+    this.selectedImageFile = null;
+    this.imagenPreview = null;
     this.form.reset({ name: '', reference: '', category: '', price: 0, stock: 0, stockMin: 5 });
     this.modalAbierto = true;
   }
@@ -134,6 +142,10 @@ export class InventarioRepuestosComponent implements OnInit {
   abrirEditar(r: SparePartsResponseDTO): void {
     this.modoEdicion = true;
     this.repuestoEditId = r.id;
+    this.selectedImageFile = null;
+    this.imagenPreview = r.imageUrl
+      ? this.sanitizer.bypassSecurityTrustUrl(r.imageUrl)
+      : null;
     this.form.patchValue({
       name: r.name, reference: r.reference, category: r.category,
       price: r.price, stock: r.stock, stockMin: r.stockMin
@@ -141,7 +153,32 @@ export class InventarioRepuestosComponent implements OnInit {
     this.modalAbierto = true;
   }
 
-  cerrarModal(): void { this.modalAbierto = false; this.form.reset(); }
+  cerrarModal(): void {
+    this.modalAbierto = false;
+    this.selectedImageFile = null;
+    this.imagenPreview = null;
+    this.form.reset();
+  }
+
+  quitarImagen(fileInput: HTMLInputElement): void {
+    this.selectedImageFile = null;
+    this.imagenPreview = null;
+    fileInput.value = '';
+  }
+
+  onImageSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0] || null;
+    this.selectedImageFile = file;
+    this.imagenPreview = null;
+    if (file && file.type.startsWith('image/')) {
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        this.imagenPreview = this.sanitizer.bypassSecurityTrustUrl(e.target?.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  }
 
   guardar(): void {
     if (this.form.invalid) { this.form.markAllAsTouched(); this.toast.warning('Completa todos los campos.'); return; }
@@ -152,11 +189,36 @@ export class InventarioRepuestosComponent implements OnInit {
       : this.http.post<SparePartsResponseDTO>(this.apiUrl, this.form.value, this.getHeaders());
 
     req$.subscribe({
+      next: (repuesto) => {
+        // Si hay imagen seleccionada, subirla después de guardar
+        if (this.selectedImageFile) {
+          this.subirImagen(repuesto.id);
+        } else {
+          this.toast.success(this.modoEdicion ? 'Repuesto actualizado.' : 'Repuesto registrado.');
+          this.cargar(); this.cerrarModal(); this.guardando = false;
+        }
+      },
+      error: (err: any) => { this.toast.error(err.error?.message || 'Error al guardar.'); this.guardando = false; }
+    });
+  }
+
+  private subirImagen(id: number): void {
+    if (!this.selectedImageFile) return;
+    const formData = new FormData();
+    formData.append('file', this.selectedImageFile);
+
+    const token = sessionStorage.getItem('token');
+    const headers = new HttpHeaders({ Authorization: `Bearer ${token}` });
+
+    this.http.post<SparePartsResponseDTO>(`${this.apiUrl}/${id}/imagen`, formData, { headers }).subscribe({
       next: () => {
         this.toast.success(this.modoEdicion ? 'Repuesto actualizado.' : 'Repuesto registrado.');
         this.cargar(); this.cerrarModal(); this.guardando = false;
       },
-      error: (err: any) => { this.toast.error(err.error?.message || 'Error al guardar.'); this.guardando = false; }
+      error: () => {
+        this.toast.warning('Repuesto guardado pero la imagen no se pudo subir.');
+        this.cargar(); this.cerrarModal(); this.guardando = false;
+      }
     });
   }
 
@@ -170,7 +232,6 @@ export class InventarioRepuestosComponent implements OnInit {
     });
   }
 
-  // ── Movimiento ────────────────────────────────────────────
   abrirMovimiento(r: SparePartsResponseDTO): void {
     this.movRepuestoId     = r.id;
     this.movRepuestoNombre = r.name;
@@ -192,14 +253,13 @@ export class InventarioRepuestosComponent implements OnInit {
     });
   }
 
-  // ── Historial ─────────────────────────────────────────────
   verHistorial(r: SparePartsResponseDTO): void {
     this.historialNombre = r.name;
     this.historial = [];
     this.cargandoHistorial = true;
     this.modalHistorial = true;
     this.http.get<MovementsResponseDTO[]>(`${this.apiUrl}/${r.id}/movimientos`, this.getHeaders()).subscribe({
-      next: (data: MovementsResponseDTO[]) => { this.historial = data; this.cargandoHistorial = false; },
+      next: (data) => { this.historial = data; this.cargandoHistorial = false; },
       error: () => { this.toast.error('Error al cargar historial.'); this.cargandoHistorial = false; }
     });
   }
