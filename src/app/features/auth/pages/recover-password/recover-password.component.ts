@@ -16,6 +16,7 @@ export class RecoverPasswordComponent {
   email = '';
   code = '';        // ← era "token"
   newPassword = '';
+  showNewPassword = false;
 
   constructor(
     private authService: AuthService,
