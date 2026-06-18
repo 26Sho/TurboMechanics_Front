@@ -1,1 +1,55 @@
 @use '../shared/inventario-shared' as *;
+
+.inv-form-group--full {
+  grid-column: 1 / -1;
+}
+
+.inv-form-hint {
+  font-size: 11px;
+  color: #6E6E6E;
+  margin-top: 4px;
+  display: block;
+}
+
+// ── Fila con input + botón borrar ──────────────────────────────────────────
+.inv-file-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  .inv-file-input { flex: 1; }
+}
+
+.inv-btn-remove-img {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 12px;
+  border-radius: 6px;
+  border: 1px solid rgba(220, 38, 38, 0.35);
+  background: rgba(220, 38, 38, 0.08);
+  color: #F87171;
+  font-size: 12px;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.2s;
+  flex-shrink: 0;
+
+  &:hover { background: rgba(220, 38, 38, 0.18); }
+}
+
+// ── Preview imagen ─────────────────────────────────────────────────────────
+.inv-img-preview {
+  &__img {
+    width: 100%;
+    max-height: 200px;
+    object-fit: contain;       // muestra la imagen completa sin recortar
+    object-position: center;
+    border-radius: 8px;
+    border: 1px solid rgba(244, 93, 1, 0.25);
+    background: rgba(0, 0, 0, 0.3);
+    margin-top: 6px;
+    display: block;
+  }
+}

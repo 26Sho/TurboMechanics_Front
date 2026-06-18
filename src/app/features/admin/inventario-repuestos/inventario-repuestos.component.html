@@ -129,6 +129,27 @@
           <input type="number" formControlName="stockMin" min="0" />
         </div>
 
+        <!-- Imagen del repuesto -->
+        <div class="inv-form-group inv-form-group--full">
+          <label>Imagen del repuesto</label>
+          <div class="inv-file-row">
+            <input type="file" accept="image/*" class="inv-file-input"
+                   (change)="onImageSelected($event)" #fileInput />
+            <button type="button" class="inv-btn-remove-img"
+                    *ngIf="imagenPreview"
+                    (click)="quitarImagen(fileInput)">
+              <i class="fas fa-trash"></i> Quitar
+            </button>
+          </div>
+          <span class="inv-form-hint">Formatos: JPG, PNG, WEBP. Máx 5MB</span>
+        </div>
+
+        <!-- Preview imagen -->
+        <div class="inv-form-group inv-form-group--full inv-img-preview" *ngIf="imagenPreview">
+          <label>Vista previa</label>
+          <img [src]="imagenPreview" alt="Preview" class="inv-img-preview__img" />
+        </div>
+
       </div>
       <div class="inv-modal__footer">
         <button type="button" class="inv-btn inv-btn--ghost" (click)="cerrarModal()">Cancelar</button>
