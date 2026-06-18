@@ -50,9 +50,18 @@ export class NavbarComponent implements OnInit, OnDestroy {
     this.isAdmin = rolId === 3;
     this.isCliente = rolId === 1;
 
-    if (loggedIn && rolId === 3) this.router.navigate(['/admin/dashboard']);
-    if (loggedIn && rolId === 2) this.router.navigate(['/mechanic/dashboard']);
-    if (loggedIn && rolId === 1) this.router.navigate(['/client/dashboard']);
+    const currentUrl = this.router.url;
+    const rutasClienteInternas = [
+      '/maintenance-tracking', '/my-bills', '/mis-vehiculos',
+      '/appointments', '/perfil', '/maintenance'
+    ];
+    const estaEnRutaInterna = rutasClienteInternas.some(r => currentUrl.startsWith(r));
+
+    if (loggedIn && !estaEnRutaInterna) {
+      if (rolId === 3) this.router.navigate(['/admin/dashboard']);
+      if (rolId === 2) this.router.navigate(['/mechanic/dashboard']);
+      if (rolId === 1) this.router.navigate(['/client/dashboard']);
+    }
   }
 
   // ─── User menu ───────────────────────────────────────────────
@@ -125,12 +134,21 @@ export class NavbarComponent implements OnInit, OnDestroy {
     this.router.navigate(['/login']);
   }
 
+  isHomePage(): boolean {
+    const url = this.router.url;
+    return url === '/' || url === '/home' || url.startsWith('/home#') || url === '';
+  }
+
   scrollTo(id: string): void {
     this.closeMobile();
-    const el = document.getElementById(id);
-    if (el) {
-      const top = el.getBoundingClientRect().top + window.scrollY - 80;
-      window.scrollTo({ top, behavior: 'smooth' });
+    if (this.isHomePage()) {
+      const el = document.getElementById(id);
+      if (el) {
+        const top = el.getBoundingClientRect().top + window.scrollY - 80;
+        window.scrollTo({ top, behavior: 'smooth' });
+      }
+    } else {
+      this.router.navigate(['/home'], { fragment: id });
     }
   }
 }
