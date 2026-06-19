@@ -339,19 +339,34 @@
 
             <div class="form-group flex-1">
               <label class="form-label">Archivo</label>
-              <input type="file" class="form-input" (change)="onFileSelected($event)" accept="image/*,video/*,.pdf" />
 
-              <!-- Preview si es imagen -->
-              <div class="evidence-preview" *ngIf="previewUrl">
-                <img [src]="previewUrl" alt="Vista previa" class="evidence-preview__img" />
-                <span class="evidence-preview__name">{{ selectedFile?.name }}</span>
+              <div class="ev-dropzone" [class.has-preview]="previewUrl || (selectedFile && !previewUrl)"
+                   (click)="!selectedFile && fileInput.click()">
+                <input #fileInput type="file" class="ev-dropzone__input"
+                       (change)="onFileSelected($event)" accept="image/*,video/*,.pdf" />
+
+                <ng-container *ngIf="!selectedFile">
+                  <i class="ev-dropzone__icon">📎</i>
+                  <span>Haz clic para seleccionar un archivo</span>
+                  <small>Imagen, video o PDF</small>
+                </ng-container>
+
+                <!-- Preview si es imagen -->
+                <ng-container *ngIf="previewUrl">
+                  <img [src]="previewUrl" alt="Vista previa" class="ev-dropzone__img" />
+                </ng-container>
+
+                <!-- Nombre del archivo si no es imagen -->
+                <ng-container *ngIf="selectedFile && !previewUrl">
+                  <span class="ev-dropzone__icon">📄</span>
+                  <span class="ev-dropzone__filename">{{ selectedFile.name }}</span>
+                </ng-container>
               </div>
 
-              <!-- Nombre del archivo si no es imagen -->
-              <div class="evidence-preview evidence-preview--file" *ngIf="selectedFile && !previewUrl">
-                <span class="evidence-preview__icon">📄</span>
-                <span class="evidence-preview__name">{{ selectedFile.name }}</span>
-              </div>
+              <button type="button" class="ev-dropzone__remove" *ngIf="selectedFile"
+                      (click)="selectedFile = null; previewUrl = null; fileInput.value = ''">
+                🗑 Quitar archivo
+              </button>
             </div>
 
             <div class="form-group flex-1">
