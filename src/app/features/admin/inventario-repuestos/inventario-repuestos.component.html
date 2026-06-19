@@ -129,25 +129,27 @@
           <input type="number" formControlName="stockMin" min="0" />
         </div>
 
-        <!-- Imagen del repuesto -->
+        <!-- Imagen del repuesto — Dropzone único -->
         <div class="inv-form-group inv-form-group--full">
           <label>Imagen del repuesto</label>
-          <div class="inv-file-row">
-            <input type="file" accept="image/*" class="inv-file-input"
-                   (change)="onImageSelected($event)" #fileInput />
-            <button type="button" class="inv-btn-remove-img"
-                    *ngIf="imagenPreview"
-                    (click)="quitarImagen(fileInput)">
-              <i class="fas fa-trash"></i> Quitar
-            </button>
-          </div>
-          <span class="inv-form-hint">Formatos: JPG, PNG, WEBP. Máx 5MB</span>
-        </div>
 
-        <!-- Preview imagen -->
-        <div class="inv-form-group inv-form-group--full inv-img-preview" *ngIf="imagenPreview">
-          <label>Vista previa</label>
-          <img [src]="imagenPreview" alt="Preview" class="inv-img-preview__img" />
+          <div class="inv-dropzone" [class.has-image]="imagenPreview" (click)="!imagenPreview && fileInput.click()">
+            <input type="file" accept="image/*" class="inv-dropzone__input"
+                   (change)="onImageSelected($event)" #fileInput />
+
+            <ng-container *ngIf="!imagenPreview">
+              <i class="fas fa-cloud-upload-alt"></i>
+              <span>Haz clic para seleccionar una imagen</span>
+              <small>JPG, PNG, WEBP. Máx 5MB</small>
+            </ng-container>
+
+            <img *ngIf="imagenPreview" [src]="imagenPreview" alt="Preview" class="inv-dropzone__img" />
+          </div>
+
+          <button type="button" class="inv-dropzone__remove" *ngIf="imagenPreview"
+                  (click)="quitarImagen(fileInput)">
+            <i class="fas fa-trash"></i> Quitar imagen
+          </button>
         </div>
 
       </div>

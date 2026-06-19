@@ -37,9 +37,9 @@ export class ContactComponent {
       iconClass: 'fas fa-envelope',
       iconType: 'email',
       label: 'Correo',
-      value: 'info@turbomechanics.com',
+      value: 'TurboMechanicsTaller@gmail.com',
       detail: 'Respuesta en 24h',
-      href: 'mailto:info@turbomechanics.com'
+      href: 'mailto:TurboMechanicsTaller@gmail.com'
     }
   ];
 }
