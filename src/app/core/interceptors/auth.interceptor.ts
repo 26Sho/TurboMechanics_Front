@@ -3,12 +3,20 @@ import { inject } from '@angular/core';
 import { catchError, switchMap, throwError } from 'rxjs';
 import { AuthService } from '../services/auth.service';
 import { SessionExpiredService } from '../services/session.expired.service';
+import { InactivityService } from '../services/inactivity.service';
 
 export const authInterceptor: HttpInterceptorFn = (req: HttpRequest<unknown>, next: HttpHandlerFn) => {
   const authService = inject(AuthService);
   const sessionExpiredService = inject(SessionExpiredService);
+  const inactivityService = inject(InactivityService);
 
   const token = sessionStorage.getItem('token');
+
+  // Cualquier petición real al backend cuenta como actividad del usuario,
+  // así que reseteamos el contador de inactividad de 30 min.
+  if (token && !req.url.includes('/auth/refresh')) {
+    inactivityService.registerActivity();
+  }
 
   const clonedReq = token
     ? req.clone({ setHeaders: { Authorization: `Bearer ${token}` } })
