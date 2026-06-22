@@ -71,6 +71,7 @@ export class MecanicosComponent implements OnInit {
   modoEdicion = false;
   documentoEdicion: number | null = null;
   form!: FormGroup;
+  showPassword = false;
 
   // Modal cambiar estado laboral
   modalEstado = false;
@@ -126,7 +127,8 @@ export class MecanicosComponent implements OnInit {
       position:         ['', [Validators.required, Validators.minLength(2)]],
       hireDate:         ['', Validators.required],
       phone:            ['', [Validators.pattern('^[0-9]{7,15}$')]],
-      email:            ['', [Validators.email]],
+      email:            ['', [Validators.required, Validators.email]],
+      password:         ['', [Validators.minLength(8)]],
       salary:           [null, [Validators.min(0.01)]],
       laborStatus:      ['ACTIVO'],
       maxOrderCapacity: [3, [Validators.required, Validators.min(1), Validators.max(10)]]
@@ -191,13 +193,19 @@ export class MecanicosComponent implements OnInit {
   abrirRegistrar(): void {
     this.modoEdicion = false;
     this.documentoEdicion = null;
+    this.showPassword = false;
     this.form.reset({ laborStatus: 'ACTIVO', maxOrderCapacity: 3 });
+    this.form.get('password')!.setValidators([Validators.required, Validators.minLength(8)]);
+    this.form.get('password')!.updateValueAndValidity();
     this.modalAbierto = true;
   }
 
   abrirEditar(m: MechanicResponseDTO): void {
     this.modoEdicion = true;
     this.documentoEdicion = m.document;
+    this.showPassword = false;
+    this.form.get('password')!.setValidators([Validators.minLength(8)]);
+    this.form.get('password')!.updateValueAndValidity();
     this.form.patchValue({
       name:             m.name,
       document:         m.document,
@@ -205,6 +213,7 @@ export class MecanicosComponent implements OnInit {
       hireDate:         m.hireDate,
       phone:            m.phone || '',
       email:            m.email || '',
+      password:         '',
       salary:           m.salary || null,
       laborStatus:      m.laborStatus,
       maxOrderCapacity: m.maxOrderCapacity || 3
@@ -224,7 +233,10 @@ export class MecanicosComponent implements OnInit {
       return;
     }
     this.guardando = true;
-    const payload = this.form.value;
+    const payload = { ...this.form.value };
+    if (this.modoEdicion && !payload.password) {
+      delete payload.password;
+    }
 
     if (this.modoEdicion && this.documentoEdicion !== null) {
       this.http.put<MechanicResponseDTO>(
