@@ -162,9 +162,24 @@
             <span class="inv-form-error" *ngIf="f['phone'].invalid && f['phone'].touched">Teléfono inválido (7–15 dígitos)</span>
           </div>
           <div class="inv-form-group">
-            <label>Correo electrónico</label>
+            <label>Correo electrónico *</label>
             <input type="email" formControlName="email" placeholder="Ej: carlos@taller.com" />
-            <span class="inv-form-error" *ngIf="f['email'].invalid && f['email'].touched">Correo inválido</span>
+            <span class="inv-form-error" *ngIf="f['email'].invalid && f['email'].touched">Correo obligatorio y válido</span>
+          </div>
+        </div>
+
+        <div class="mec-form-row">
+          <div class="inv-form-group">
+            <label>{{ modoEdicion ? 'Nueva contraseña (opcional)' : 'Contraseña *' }}</label>
+            <div class="input-password">
+              <input [type]="showPassword ? 'text' : 'password'" formControlName="password"
+                     [placeholder]="modoEdicion ? 'Dejar en blanco para no cambiarla' : 'Mínimo 8 caracteres'" />
+              <button type="button" class="toggle-eye" (click)="showPassword = !showPassword">
+                <i class="fas" [ngClass]="showPassword ? 'fa-eye-slash' : 'fa-eye'"></i>
+              </button>
+            </div>
+            <span class="inv-form-error" *ngIf="f['password'].invalid && f['password'].touched">Mínimo 8 caracteres</span>
+            <small class="mec-hint" *ngIf="!modoEdicion">Con este correo y contraseña el mecánico podrá iniciar sesión.</small>
           </div>
         </div>
 
