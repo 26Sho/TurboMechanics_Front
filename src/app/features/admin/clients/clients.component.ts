@@ -9,9 +9,24 @@ import { AdminService, UserRequest, UserResponse, WorkOrderResponse } from '../s
 })
 export class ClientsComponent implements OnInit {
 
-  statusClass(arg0: string): string|string[]|Set<string>|{ [klass: string]: any; }|null|undefined {
-    throw new Error('Method not implemented.');
+  statusClass(estado: string): string {
+    switch (estado) {
+      case 'RECIBIDO':
+        return 'badge badge--info';
+      case 'EN_DIAGNOSTICO':
+      case 'EN_REPARACION':
+        return 'badge badge--warning';
+      case 'LISTO':
+        return 'badge badge--success';
+      case 'ENTREGADO':
+        return 'badge badge--info';
+      case 'CANCELADO':
+        return 'badge badge--danger';
+      default:
+        return 'badge badge--neutral';
+    }
   }
+
   verDetalles(_t23: UserResponse) {
     throw new Error('Method not implemented.');
   }
