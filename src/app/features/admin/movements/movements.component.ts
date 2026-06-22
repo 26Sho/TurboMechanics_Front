@@ -1,9 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MovementService } from '../service/movement.service';
-import { PaymentMethodService } from '../service/payment-method.service';
 import { ToastService } from '../../../shared/services/toast.service';
-import { MovementConcept, MovementPay, MovementType, PayMethod, RegisterMovementRequest } from '../../../core/models/billing.model';
+import { MovementConcept, MovementPay, MovementType, RegisterMovementRequest } from '../../../core/models/billing.model';
 
 @Component({
   selector: 'app-movements',
@@ -17,7 +16,6 @@ export class MovementsComponent implements OnInit {
   showForm = false;
 
   movements: MovementPay[] = [];
-  payMethods: PayMethod[] = [];
 
   readonly types: { value: MovementType; label: string }[] = [
     { value: 'Input', label: 'Entrada' },
@@ -34,17 +32,12 @@ export class MovementsComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private movService: MovementService,
-    private pmService: PaymentMethodService,
     private toast: ToastService,
   ) { }
 
   ngOnInit(): void {
     this.buildForm();
     this.loadMovements();
-    this.pmService.list().subscribe({
-      next: (list) => { this.payMethods = (list ?? []).filter(p => p.active); },
-      error: () => { }
-    });
   }
 
   loadMovements(): void {
@@ -61,10 +54,8 @@ export class MovementsComponent implements OnInit {
       description: [''],
       amount: [null, [Validators.required, Validators.min(1)]],
       billId: [null],
-      payMethod: [null],
       registerByIdentification: [null, Validators.required],
     });
-
   }
 
   isInvalid(field: string): boolean {
@@ -88,7 +79,6 @@ export class MovementsComponent implements OnInit {
       description: v.description || undefined,
       amount: v.amount,
       billId: v.billId || undefined,
-      payMethod: v.payMethod || undefined,
       registerByIdentification: v.registerByIdentification,
     };
 

@@ -33,7 +33,6 @@
                             <th>Concepto</th>
                             <th>Descripción</th>
                             <th>Monto</th>
-                            <th>Método de pago</th>
                             <th>Fecha</th>
                         </tr>
                     </thead>
@@ -51,7 +50,6 @@
                                 [class.amount--output]="m.type === 'Output'">
                                 {{ m.type === 'Input' ? '+' : '-' }}${{ m.amount | number:'1.2-2' }}
                             </td>
-                            <td>{{ m.payMethod?.name || '—' }}</td>
                             <td class="mov-date">{{ m.date | date:'dd/MM/yyyy HH:mm' }}</td>
                         </tr>
                     </tbody>
@@ -113,16 +111,6 @@
                 <label class="form-label">Descripción</label>
                 <textarea class="form-input form-textarea" formControlName="description"
                     placeholder="Describe el motivo del movimiento..." rows="3"></textarea>
-            </div>
-
-            <!-- Método de pago -->
-            <div class="form-group">
-                <label class="form-label">Método de pago</label>
-                <select class="form-input" formControlName="payMethod">
-                    <option [ngValue]="null">Sin método específico</option>
-                    <option *ngFor="let pm of payMethods" [ngValue]="pm.id">{{ pm.name }}</option>
-
-                </select>
             </div>
 
             <!-- ID Factura (opcional) -->
