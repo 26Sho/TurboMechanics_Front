@@ -20,10 +20,11 @@
 
         <div class="wo-card">
           <div class="wo-card-title">Datos del cliente</div>
-          <div class="wo-alert wo-alert-warning" *ngIf="clientNotFound">
-            <span class="wo-alert-icon">⚠️</span>
-            <div><strong>Cliente no registrado</strong>
-              <p>Este cliente no está en el sistema. Se creará la orden con los datos ingresados manualmente.</p>
+          <div class="wo-alert wo-alert-info" *ngIf="clientNotFound">
+            <span class="wo-alert-icon">👤</span>
+            <div>
+              <strong>Primera orden de este cliente</strong>
+              <p>Este cliente no tiene órdenes previas en el sistema. Por favor ingresa su nombre y teléfono manualmente.</p>
             </div>
           </div>
           <div class="wo-grid">
@@ -52,9 +53,10 @@
         <div class="wo-card">
           <div class="wo-card-title">Datos del vehículo</div>
           <div class="wo-alert wo-alert-info" *ngIf="vehicleNotFound">
-            <span class="wo-alert-icon">ℹ️</span>
-            <div><strong>Vehículo no registrado</strong>
-              <p>Esta placa no está registrada. Complete los datos del vehículo manualmente.</p>
+            <span class="wo-alert-icon">🚗</span>
+            <div>
+              <strong>Primera orden de este vehículo</strong>
+              <p>Esta placa no tiene órdenes previas en el sistema. Por favor ingresa los datos del vehículo manualmente.</p>
             </div>
           </div>
           <div class="wo-grid wo-grid-3">
@@ -203,19 +205,17 @@
                 </td>
                 <td class="col-sub">{{ o.dateentry | date:'dd/MM/yyyy HH:mm' }}</td>
                 <td class="col-actions" (click)="$event.stopPropagation()">
-                  <!-- Asignar: solo admin y solo si NO tiene mecánico -->
                   <button class="btn-action btn-assign" *ngIf="isAdmin() && canEdit(o) && !yaAsignado(o)"
                     (click)="openAsignar(o, $event)" title="Asignar mecánico">👤</button>
-                  <!-- Reasignar: solo admin y solo si YA tiene mecánico -->
                   <button class="btn-action btn-assign" *ngIf="isAdmin() && canEdit(o) && yaAsignado(o)"
                     (click)="openAsignar(o, $event)" title="Reasignar mecánico" style="opacity:0.7">🔁</button>
-                  <!-- Cambiar estado: admin y mecánico -->
                   <button class="btn-action btn-state" *ngIf="canChangeState(o)" (click)="openChangeState(o, $event)"
                     title="Cambiar estado">✓</button>
                   <button class="btn-action btn-edit" *ngIf="canEdit(o)" (click)="openEdit(o, $event)"
                     title="Editar orden">✏️</button>
                   <button class="btn-action btn-cancel" *ngIf="isAdmin() && o.stateorder === 'RECIBIDO'"
-                    (click)="openCancel(o, $event)" title="Cancelar orden">✕</button> <button class="btn-action btn-pdf"
+                    (click)="openCancel(o, $event)" title="Cancelar orden">✕</button>
+                  <button class="btn-action btn-pdf"
                     (click)="descargarComprobante(o, $event)" [disabled]="downloadingId === o.id"
                     title="Descargar comprobante PDF">
                     <span *ngIf="downloadingId !== o.id">📄</span>
@@ -233,7 +233,6 @@
     <ng-container *ngIf="activeTab === 'buscar'">
       <div class="wo-card">
         <div class="wo-card-title">Buscar orden</div>
-        <!-- Dropdown de criterio tipo tarjeta -->
         <div class="wo-search-criteria">
           <p class="wo-search-criteria__label">Buscar por:</p>
           <div class="wo-criteria-grid">
@@ -264,9 +263,7 @@
           </div>
         </div>
 
-        <!-- Dropdown de valor según criterio -->
         <div class="wo-search-row">
-          <!-- Estado: opciones fijas -->
           <ng-container *ngIf="searchType === 'state'">
             <select class="form-style wo-search-input" [(ngModel)]="searchValue" (ngModelChange)="doSearch()">
               <option value="">Selecciona un estado...</option>
@@ -274,7 +271,6 @@
             </select>
           </ng-container>
 
-          <!-- Otros criterios: opciones cargadas del backend -->
           <ng-container *ngIf="searchType !== 'state'">
             <div class="wo-dropdown-wrap">
               <select class="form-style wo-search-input"
@@ -338,7 +334,8 @@
                   <button class="btn-action btn-edit" *ngIf="canEdit(o)" (click)="openEdit(o, $event)"
                     title="Editar orden">✏️</button>
                   <button class="btn-action btn-cancel" *ngIf="isAdmin() && o.stateorder === 'RECIBIDO'"
-                    (click)="openCancel(o, $event)" title="Cancelar orden">✕</button> <button class="btn-action btn-pdf"
+                    (click)="openCancel(o, $event)" title="Cancelar orden">✕</button>
+                  <button class="btn-action btn-pdf"
                     (click)="descargarComprobante(o, $event)" [disabled]="downloadingId === o.id"
                     title="Descargar comprobante PDF">
                     <span *ngIf="downloadingId !== o.id">📄</span>
