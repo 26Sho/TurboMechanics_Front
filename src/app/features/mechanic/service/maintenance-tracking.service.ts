@@ -11,7 +11,7 @@ export type StateOrder =
   | 'ENTREGADO'
   | 'CANCELADO';
 
-export type NotificationChannel = 'Email' | 'Whastapp' | 'Both';
+export type NotificationChannel = 'Email' | 'Whatsapp' | 'Both';
 
 // ── DTOs ──────────────────────────────────────────────────────────────────────
 export interface MaintenanceStatusResponse {

@@ -172,12 +172,15 @@
         <div class="form-group">
           <label class="form-label">Correo</label>
           <input class="turbo-input" type="email" [(ngModel)]="editForm.email" placeholder="correo@ejemplo.com" />
+          <small class="text-danger" *ngIf="editForm.email && !isEditEmailValid">
+            Correo inválido. Debe tener un dominio con extensión, ej: nombre&#64;dominio.com
+          </small>
         </div>
       </div>
 
       <div class="modal-footer">
         <button class="btn btn-ghost" (click)="cerrarModales()">Cancelar</button>
-        <button class="btn btn-primary" (click)="guardarEdicion()" [disabled]="savingEdit">
+        <button class="btn btn-primary" (click)="guardarEdicion()" [disabled]="savingEdit || !isEditEmailValid">
           {{ savingEdit ? 'Guardando...' : 'Guardar cambios' }}
         </button>
       </div>

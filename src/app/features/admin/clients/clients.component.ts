@@ -9,24 +9,9 @@ import { AdminService, UserRequest, UserResponse, WorkOrderResponse } from '../s
 })
 export class ClientsComponent implements OnInit {
 
-  statusClass(estado: string): string {
-    switch (estado) {
-      case 'RECIBIDO':
-        return 'badge badge--info';
-      case 'EN_DIAGNOSTICO':
-      case 'EN_REPARACION':
-        return 'badge badge--warning';
-      case 'LISTO':
-        return 'badge badge--success';
-      case 'ENTREGADO':
-        return 'badge badge--info';
-      case 'CANCELADO':
-        return 'badge badge--danger';
-      default:
-        return 'badge badge--neutral';
-    }
+  statusClass(arg0: string): string|string[]|Set<string>|{ [klass: string]: any; }|null|undefined {
+    throw new Error('Method not implemented.');
   }
-
   verDetalles(_t23: UserResponse) {
     throw new Error('Method not implemented.');
   }
@@ -48,6 +33,12 @@ export class ClientsComponent implements OnInit {
   showEdit = false;
   editForm: UserRequest = { username: '', identification: 0, phone: '', email: '' };
   savingEdit = false;
+
+  private emailPattern = /^[\w.+-]+@[\w-]+\.[a-zA-Z]{2,}$/;
+
+  get isEditEmailValid(): boolean {
+    return this.emailPattern.test((this.editForm.email || '').trim());
+  }
 
   // Modal eliminar
   showDeleteModal = false;
@@ -103,6 +94,10 @@ export class ClientsComponent implements OnInit {
   }
 
   guardarEdicion(): void {
+    if (!this.isEditEmailValid) {
+      this.toast.error('El correo no tiene un formato válido (ej: nombre@dominio.com)');
+      return;
+    }
     this.savingEdit = true;
     this.adminService.updateClient(this.editForm.identification, this.editForm).subscribe({
       next: (updated) => {

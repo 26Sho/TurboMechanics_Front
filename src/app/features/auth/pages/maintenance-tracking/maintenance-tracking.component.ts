@@ -58,7 +58,7 @@ export class MaintenanceTrackingComponent implements OnInit {
 
   channels: { value: NotificationChannel; label: string }[] = [
     { value: 'Email', label: '📧 Correo electrónico' },
-    { value: 'Whastapp', label: '💬 WhatsApp' },
+    { value: 'Whatsapp', label: '💬 WhatsApp' },
     { value: 'Both', label: '📧💬 Ambos' },
   ];
 
