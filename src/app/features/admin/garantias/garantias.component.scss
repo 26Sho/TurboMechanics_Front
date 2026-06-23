@@ -166,6 +166,88 @@ textarea.form-input { resize: vertical; }
 .error-msg { font-size: 0.74rem; color: $red; }
 .hint      { font-size: 0.76rem; color: $gray-mid; margin: -8px 0 12px; }
 
+// ─── Selección múltiple de servicios / repuestos al registrar garantía ───
+// Dropdown estilo "select múltiple": botón que despliega un panel con
+// checkboxes debajo, igual a un combobox nativo pero con casillas.
+
+.ms-dropdown {
+  position: relative;
+
+  &__trigger {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    background: rgba($black, 0.5);
+    border: 1px solid rgba($gray-mid, 0.25);
+    border-radius: 6px;
+    padding: 10px 14px;
+    color: $white;
+    font-size: 0.88rem;
+    font-family: inherit;
+    cursor: pointer;
+    transition: border-color 0.2s;
+
+    &:hover { border-color: rgba($orange, 0.4); }
+
+    i {
+      font-size: 0.7rem;
+      color: $gray-mid;
+      transition: transform 0.2s;
+      flex-shrink: 0;
+
+      &.is-open { transform: rotate(180deg); }
+    }
+  }
+
+  &__placeholder { color: rgba($gray-mid, 0.7); }
+
+  &__panel {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    right: 0;
+    z-index: 20;
+    max-height: 180px;
+    overflow-y: auto;
+    background: $gray-dark;
+    border: 1px solid rgba($orange, 0.3);
+    border-radius: 8px;
+    box-shadow: 0 10px 30px rgba($black, 0.6);
+    padding: 6px;
+  }
+
+  &__empty {
+    font-size: 0.8rem;
+    color: $gray-mid;
+    padding: 8px 6px;
+    margin: 0;
+  }
+
+  &__option {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 8px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    color: $gray-light;
+    transition: background 0.15s;
+
+    &:hover { background: rgba($orange, 0.08); }
+
+    input[type="checkbox"] {
+      width: 15px;
+      height: 15px;
+      accent-color: $orange;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+  }
+}
+
 .form-actions {
   display: flex; justify-content: flex-end; gap: 8px; margin-top: 4px;
 }

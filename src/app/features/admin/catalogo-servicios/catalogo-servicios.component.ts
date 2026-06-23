@@ -11,6 +11,11 @@ interface ServiceResponseDTO {
   active: boolean;
 }
 
+interface ServiceHistoryCheckResponseDTO {
+  tieneGarantias: boolean;
+  cantidadGarantias: number;
+}
+
 @Component({
   selector: 'app-catalogo-servicios',
   standalone: false,
@@ -41,6 +46,8 @@ export class CatalogoServiciosComponent implements OnInit {
   // Modal eliminar
   modalEliminar = false;
   idAEliminar: number | null = null;
+  historialEliminar: ServiceHistoryCheckResponseDTO | null = null;
+  verificandoHistorial = false;
 
   constructor(
     private fb: FormBuilder,
@@ -162,7 +169,22 @@ export class CatalogoServiciosComponent implements OnInit {
   }
 
   // ── Eliminar ──────────────────────────────────────────────
-  confirmarEliminar(id: number): void { this.idAEliminar = id; this.modalEliminar = true; }
+  confirmarEliminar(id: number): void {
+    this.idAEliminar = id;
+    this.historialEliminar = null;
+    this.verificandoHistorial = true;
+    this.modalEliminar = true;
+
+    this.http.get<ServiceHistoryCheckResponseDTO>(`${this.apiUrl}/${id}/historial-check`, this.getHeaders()).subscribe({
+      next: (data) => { this.historialEliminar = data; this.verificandoHistorial = false; },
+      // Si falla la verificación, no bloqueamos el flujo: se sigue pudiendo eliminar
+      error: () => { this.verificandoHistorial = false; }
+    });
+  }
+
+  get tieneHistorial(): boolean {
+    return !!this.historialEliminar && this.historialEliminar.tieneGarantias;
+  }
 
   eliminar(): void {
     if (!this.idAEliminar) return;
@@ -172,9 +194,17 @@ export class CatalogoServiciosComponent implements OnInit {
         this.cargar();
         this.modalEliminar = false;
         this.idAEliminar = null;
+        this.historialEliminar = null;
       },
-      error: () => this.toast.error('Error al eliminar el servicio.')
+      error: (err: { error?: { message?: string } }) =>
+        this.toast.error(err.error?.message || 'Error al eliminar el servicio.')
     });
+  }
+
+  cancelarEliminar(): void {
+    this.modalEliminar = false;
+    this.idAEliminar = null;
+    this.historialEliminar = null;
   }
 
   // ── Helpers ───────────────────────────────────────────────

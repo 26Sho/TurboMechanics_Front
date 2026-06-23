@@ -158,16 +158,29 @@
 
 <!-- Modal Eliminar -->
 <div class="inv-modal" [class.open]="modalEliminar">
-  <div class="inv-modal__overlay" (click)="modalEliminar = false"></div>
+  <div class="inv-modal__overlay" (click)="cancelarEliminar()"></div>
   <div class="inv-modal__box inv-modal__box--sm">
     <div class="inv-modal__header inv-modal__header--danger">
       <h2><i class="fas fa-exclamation-triangle"></i> Confirmar eliminación</h2>
     </div>
     <div class="inv-modal__body">
+      <p *ngIf="verificandoHistorial" class="inv-modal__checking">
+        <i class="fas fa-spinner fa-spin"></i> Verificando historial del servicio...
+      </p>
+
+      <div *ngIf="!verificandoHistorial && tieneHistorial" class="inv-modal__alert inv-modal__alert--warning">
+        <i class="fas fa-exclamation-circle"></i>
+        <span>
+          Este servicio ya tiene <strong>{{ historialEliminar?.cantidadGarantias }} garantía(s)</strong> registrada(s).
+          Esos registros se conservarán, pero quedarán sin el servicio vinculado.
+        </span>
+      </div>
+
       <p>¿Estás seguro de eliminar este servicio? Esta acción no se puede deshacer.</p>
+      <p *ngIf="!verificandoHistorial && tieneHistorial"><strong>¿Estás seguro que deseas eliminarlo de todas formas?</strong></p>
     </div>
     <div class="inv-modal__footer">
-      <button class="inv-btn inv-btn--ghost" (click)="modalEliminar = false">Cancelar</button>
+      <button class="inv-btn inv-btn--ghost" (click)="cancelarEliminar()">Cancelar</button>
       <button class="inv-btn inv-btn--danger" (click)="eliminar()">
         <i class="fas fa-trash"></i> Eliminar
       </button>

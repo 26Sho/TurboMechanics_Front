@@ -132,22 +132,25 @@
         <!-- Imagen del repuesto -->
         <div class="inv-form-group inv-form-group--full">
           <label>Imagen del repuesto</label>
-          <div class="inv-file-row">
-            <input type="file" accept="image/*" class="inv-file-input"
+          <div class="inv-dropzone" [class.has-preview]="imagenPreview" (click)="fileInput.click()">
+            <input type="file" accept="image/*" class="inv-dropzone__input"
                    (change)="onImageSelected($event)" #fileInput />
-            <button type="button" class="inv-btn-remove-img"
-                    *ngIf="imagenPreview"
-                    (click)="quitarImagen(fileInput)">
-              <i class="fas fa-trash"></i> Quitar
-            </button>
-          </div>
-          <span class="inv-form-hint">Formatos: JPG, PNG, WEBP. Máx 5MB</span>
-        </div>
 
-        <!-- Preview imagen -->
-        <div class="inv-form-group inv-form-group--full inv-img-preview" *ngIf="imagenPreview">
-          <label>Vista previa</label>
-          <img [src]="imagenPreview" alt="Preview" class="inv-img-preview__img" />
+            <ng-container *ngIf="!imagenPreview">
+              <i class="fas fa-image inv-dropzone__icon"></i>
+              <span>Haz clic para seleccionar una imagen</span>
+              <small>Formatos: JPG, PNG, WEBP. Máx 5MB</small>
+            </ng-container>
+
+            <ng-container *ngIf="imagenPreview">
+              <img [src]="imagenPreview" alt="Vista previa" class="inv-dropzone__img" />
+            </ng-container>
+          </div>
+
+          <button type="button" class="inv-dropzone__remove" *ngIf="imagenPreview"
+                  (click)="quitarImagen(fileInput)">
+            <i class="fas fa-trash"></i> Quitar archivo
+          </button>
         </div>
 
       </div>

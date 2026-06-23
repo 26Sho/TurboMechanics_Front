@@ -258,7 +258,8 @@ export class InventarioRepuestosComponent implements OnInit {
         this.idAEliminar = null;
         this.historialEliminar = null;
       },
-      error: () => this.toast.error('Error al eliminar.')
+      error: (err: { error?: { message?: string } }) =>
+        this.toast.error(err.error?.message || 'Error al eliminar.')
     });
   }
 
