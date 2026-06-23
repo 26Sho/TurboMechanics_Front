@@ -26,6 +26,13 @@ interface MovementsResponseDTO {
   motive: string;
 }
 
+interface HistoryCheckResponseDTO {
+  tieneVentas: boolean;
+  tieneGarantias: boolean;
+  cantidadVentas: number;
+  cantidadGarantias: number;
+}
+
 @Component({
   selector: 'app-inventario-repuestos',
   standalone: false,
@@ -70,6 +77,8 @@ export class InventarioRepuestosComponent implements OnInit {
   // Modal eliminar
   modalEliminar = false;
   idAEliminar: number | null = null;
+  verificandoHistorial = false;
+  historialEliminar: HistoryCheckResponseDTO | null = null;
 
   constructor(
     private fb: FormBuilder,
@@ -222,14 +231,41 @@ export class InventarioRepuestosComponent implements OnInit {
     });
   }
 
-  confirmarEliminar(id: number): void { this.idAEliminar = id; this.modalEliminar = true; }
+  confirmarEliminar(id: number): void {
+    this.idAEliminar = id;
+    this.historialEliminar = null;
+    this.verificandoHistorial = true;
+    this.modalEliminar = true;
+
+    this.http.get<HistoryCheckResponseDTO>(`${this.apiUrl}/${id}/historial-check`, this.getHeaders()).subscribe({
+      next: (data) => { this.historialEliminar = data; this.verificandoHistorial = false; },
+      // Si falla la verificación, no bloqueamos el flujo: se sigue pudiendo eliminar
+      error: () => { this.verificandoHistorial = false; }
+    });
+  }
+
+  get tieneHistorial(): boolean {
+    return !!this.historialEliminar && (this.historialEliminar.tieneVentas || this.historialEliminar.tieneGarantias);
+  }
 
   eliminar(): void {
     if (!this.idAEliminar) return;
     this.http.delete(`${this.apiUrl}/${this.idAEliminar}`, this.getHeaders()).subscribe({
-      next: () => { this.toast.success('Repuesto eliminado.'); this.cargar(); this.modalEliminar = false; this.idAEliminar = null; },
+      next: () => {
+        this.toast.success('Repuesto eliminado.');
+        this.cargar();
+        this.modalEliminar = false;
+        this.idAEliminar = null;
+        this.historialEliminar = null;
+      },
       error: () => this.toast.error('Error al eliminar.')
     });
+  }
+
+  cancelarEliminar(): void {
+    this.modalEliminar = false;
+    this.idAEliminar = null;
+    this.historialEliminar = null;
   }
 
   abrirMovimiento(r: SparePartsResponseDTO): void {

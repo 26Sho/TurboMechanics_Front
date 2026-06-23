@@ -290,6 +290,37 @@ $font-body:    'Inter', sans-serif;
 }
 
 
+.inv-modal__checking {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: $gray-mid;
+  font-size: 0.9rem;
+  margin-bottom: 14px;
+}
+
+.inv-modal__alert {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 12px 14px;
+  border-radius: 8px;
+  font-size: 0.88rem;
+  line-height: 1.4;
+  margin-bottom: 14px;
+
+  i { margin-top: 2px; }
+
+  &--warning {
+    background: rgba($yellow, 0.12);
+    color: $yellow;
+    border: 1px solid rgba($yellow, 0.3);
+
+    strong { color: $white; }
+    span { color: $gray-light; }
+  }
+}
+
 .inv-footer-info {
   font-size: 0.82rem;
   color: $gray-mid;
