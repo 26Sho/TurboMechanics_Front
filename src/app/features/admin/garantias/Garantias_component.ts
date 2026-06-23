@@ -59,6 +59,16 @@ export class GarantiasComponent implements OnInit {
   loadingServiceCatalog = false;
   loadingSpareParts = false;
 
+  // Selección múltiple de servicios/repuestos al REGISTRAR una garantía nueva
+  // (permite cubrir varios servicios y/o repuestos de una sola orden sin tener
+  // que repetir el formulario; cada combinación genera su propia garantía)
+  selectedServiceIds: number[] = [];
+  selectedSparePartIds: number[] = [];
+  serviceSearchTerm = '';
+  sparePartSearchTerm = '';
+  showServiceDropdown = false;
+  showSparePartDropdown = false;
+
   // ── TALLERES ──────────────────────────────────────────────────────────────
   workshopForm!: FormGroup;
   workshops: Workshop[] = [];
@@ -140,8 +150,6 @@ export class GarantiasComponent implements OnInit {
   private buildForms(): void {
     this.warrantyForm = this.fb.group({
       workOrderId:  [null, [Validators.required]],
-      serviceId:    [null],
-      sparePartId:  [null],
       startDate:    ['', Validators.required],
       endDate:      ['', Validators.required],
       observations: ['']
@@ -196,39 +204,128 @@ export class GarantiasComponent implements OnInit {
 
   openWarrantyForm(warranty?: Warranty): void {
     this.editingWarranty = warranty || null;
+    this.serviceSearchTerm = '';
+    this.sparePartSearchTerm = '';
+    this.showServiceDropdown = false;
+    this.showSparePartDropdown = false;
     if (warranty) {
+      // Edición: se precargan todos los servicios/repuestos que ya cubre
+      this.selectedServiceIds = (warranty.services || []).map(s => s.id);
+      this.selectedSparePartIds = (warranty.spareParts || [])
+        .filter(p => !p.deleted && p.id != null)
+        .map(p => p.id as number);
       this.warrantyForm.patchValue({
         workOrderId: warranty.workOrderId,
-        serviceId: warranty.serviceId,
-        sparePartId: warranty.sparePartId,
         startDate: warranty.startDate,
         endDate: warranty.endDate,
         observations: warranty.observations
       });
     } else {
+      this.selectedServiceIds = [];
+      this.selectedSparePartIds = [];
       this.warrantyForm.reset();
     }
     this.showWarrantyForm = true;
   }
 
+  /** Alterna la selección de un servicio en el formulario de registro/edición */
+  toggleServiceSelection(id: number): void {
+    const idx = this.selectedServiceIds.indexOf(id);
+    if (idx >= 0) this.selectedServiceIds.splice(idx, 1);
+    else this.selectedServiceIds.push(id);
+  }
+
+  /** Alterna la selección de un repuesto en el formulario de registro/edición */
+  toggleSparePartSelection(id: number): void {
+    const idx = this.selectedSparePartIds.indexOf(id);
+    if (idx >= 0) this.selectedSparePartIds.splice(idx, 1);
+    else this.selectedSparePartIds.push(id);
+  }
+
+  isServiceSelected(id: number): boolean {
+    return this.selectedServiceIds.includes(id);
+  }
+
+  isSparePartSelected(id: number): boolean {
+    return this.selectedSparePartIds.includes(id);
+  }
+
+  /** Servicios que coinciden con el texto buscado y aún no han sido seleccionados */
+  get filteredServiceOptions(): ServiceOption[] {
+    const term = this.serviceSearchTerm.trim().toLowerCase();
+    return this.serviceCatalog.filter(s =>
+      !this.isServiceSelected(s.id) &&
+      (!term || s.name.toLowerCase().includes(term))
+    );
+  }
+
+  /** Repuestos que coinciden con el texto buscado y aún no han sido seleccionados */
+  get filteredSparePartOptions(): SparePartOption[] {
+    const term = this.sparePartSearchTerm.trim().toLowerCase();
+    return this.spareParts.filter(p =>
+      !this.isSparePartSelected(p.id) &&
+      (!term ||
+        p.name.toLowerCase().includes(term) ||
+        (p.reference && p.reference.toLowerCase().includes(term)))
+    );
+  }
+
+  get selectedServiceOptions(): ServiceOption[] {
+    return this.serviceCatalog.filter(s => this.isServiceSelected(s.id));
+  }
+
+  get selectedSparePartOptions(): SparePartOption[] {
+    return this.spareParts.filter(p => this.isSparePartSelected(p.id));
+  }
+
+  toggleServiceDropdown(): void {
+    this.showServiceDropdown = !this.showServiceDropdown;
+    this.showSparePartDropdown = false;
+  }
+
+  toggleSparePartDropdown(): void {
+    this.showSparePartDropdown = !this.showSparePartDropdown;
+    this.showServiceDropdown = false;
+  }
+
+  closeDropdowns(): void {
+    this.showServiceDropdown = false;
+    this.showSparePartDropdown = false;
+  }
+
   closeWarrantyFormPanel(): void {
     this.showWarrantyForm = false;
     this.editingWarranty = null;
+    this.selectedServiceIds = [];
+    this.selectedSparePartIds = [];
+    this.serviceSearchTerm = '';
+    this.sparePartSearchTerm = '';
+    this.showServiceDropdown = false;
+    this.showSparePartDropdown = false;
     this.warrantyForm.reset();
   }
 
   submitWarranty(): void {
     this.warrantyForm.markAllAsTouched();
-    const v = this.warrantyForm.value;
-    if (!v.serviceId && !v.sparePartId) {
-      this.toast.error('Debe asociar la garantía a un servicio o a un repuesto');
+
+    if (this.selectedServiceIds.length === 0 && this.selectedSparePartIds.length === 0) {
+      this.toast.error('Debe seleccionar al menos un servicio o un repuesto');
       return;
     }
     if (this.warrantyForm.invalid) return;
+
+    // Una sola garantía cubre todos los servicios y repuestos seleccionados
+    const payload = {
+      ...this.warrantyForm.value,
+      serviceIds: this.selectedServiceIds,
+      sparePartIds: this.selectedSparePartIds
+    };
+
     this.savingWarranty = true;
     const req$ = this.editingWarranty
-      ? this.svc.updateWarranty(this.editingWarranty.id, v)
-      : this.svc.registerWarranty(v);
+      ? this.svc.updateWarranty(this.editingWarranty.id, payload)
+      : this.svc.registerWarranty(payload);
+
     req$.subscribe({
       next: (_res: Warranty) => {
         this.toast.success(this.editingWarranty ? 'Garantía actualizada' : 'Garantía registrada');
@@ -237,7 +334,7 @@ export class GarantiasComponent implements OnInit {
         this.loadWarranties();
       },
       error: (err: HttpErr) => {
-        this.toast.error(err.error?.message || 'Error al guardar garantía');
+        this.toast.error(err.error?.message || 'Error al guardar la garantía');
         this.savingWarranty = false;
       }
     });

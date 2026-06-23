@@ -6,8 +6,8 @@ import { Observable } from 'rxjs';
 
 export interface WarrantyRequest {
   workOrderId: number;
-  serviceId?: number | null;
-  sparePartId?: number | null;
+  serviceIds?: number[];
+  sparePartIds?: number[];
   startDate: string;
   endDate: string;
   observations?: string;
@@ -15,6 +15,18 @@ export interface WarrantyRequest {
 
 export interface CloseWarrantyRequest {
   closureReason: string;
+}
+
+export interface ServiceCoverageItem {
+  id: number;
+  name: string;
+}
+
+export interface SparePartCoverageItem {
+  id: number | null;
+  name: string;
+  reference: string;
+  deleted: boolean;
 }
 
 export interface Warranty {
@@ -25,11 +37,9 @@ export interface Warranty {
   clientName: string;
   clientIdentification: string;
   vehiclePlate: string;
-  serviceId: number;
-  serviceName: string;
-  sparePartId: number;
-  sparePartName: string;
-  sparePartReference: string;
+  services: ServiceCoverageItem[];
+  spareParts: SparePartCoverageItem[];
+  coverageSummary: string;
   startDate: string;
   endDate: string;
   status: 'ACTIVA' | 'VENCIDA' | 'CERRADA';

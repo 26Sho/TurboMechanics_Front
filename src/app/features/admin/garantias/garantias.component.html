@@ -52,7 +52,7 @@
                 <td>{{ w.workOrderNumber || w.workOrderId }}</td>
                 <td>{{ w.clientName || '—' }}</td>
                 <td>{{ w.vehiclePlate || '—' }}</td>
-                <td>{{ w.serviceName || w.sparePartName || '—' }}</td>
+                <td>{{ w.coverageSummary || '—' }}</td>
                 <td>{{ w.startDate | date:'dd/MM/yyyy' }}</td>
                 <td>{{ w.endDate | date:'dd/MM/yyyy' }}</td>
                 <td><span class="badge" [class]="statusClass(w.status)">{{ statusLabel(w.status) }}</span></td>
@@ -439,7 +439,7 @@
       <button class="modal-close" (click)="closeWarrantyFormPanel()">✕</button>
     </div>
     <div class="modal-body">
-      <form [formGroup]="warrantyForm" novalidate>
+      <form [formGroup]="warrantyForm" novalidate (click)="closeDropdowns()">
         <div class="form-row">
           <div class="form-group flex-1">
             <label class="form-label required">Orden de trabajo</label>
@@ -454,31 +454,67 @@
             <span class="error-msg" *ngIf="isInvalid(warrantyForm, 'workOrderId')">Campo requerido</span>
           </div>
         </div>
+        <!-- Se pueden cubrir varios servicios y/o repuestos en UNA SOLA garantía,
+             tanto al crear como al editar. Dropdown estilo "select múltiple":
+             un botón que al hacer clic despliega la lista con checkboxes debajo. -->
         <div class="form-row">
           <div class="form-group flex-1">
-            <label class="form-label">Servicio (opcional)</label>
-            <select class="form-input" formControlName="serviceId">
-              <option [ngValue]="null">
-                {{ loadingServiceCatalog ? 'Cargando servicios...' : '— Ninguno —' }}
-              </option>
-              <option *ngFor="let s of serviceCatalog" [ngValue]="s.id">
-                {{ s.name }}
-              </option>
-            </select>
+            <label class="form-label">Servicios cubiertos</label>
+            <div class="ms-dropdown" (click)="$event.stopPropagation()">
+              <button type="button" class="ms-dropdown__trigger" (click)="toggleServiceDropdown()">
+                <span [class.ms-dropdown__placeholder]="selectedServiceOptions.length === 0">
+                  {{ selectedServiceOptions.length === 0
+                      ? 'Seleccionar servicios...'
+                      : selectedServiceOptions.length + ' servicio(s) seleccionado(s)' }}
+                </span>
+                <i class="fas fa-chevron-down" [class.is-open]="showServiceDropdown"></i>
+              </button>
+
+              <div class="ms-dropdown__panel" *ngIf="showServiceDropdown">
+                <p class="ms-dropdown__empty" *ngIf="loadingServiceCatalog">Cargando servicios...</p>
+                <p class="ms-dropdown__empty" *ngIf="!loadingServiceCatalog && serviceCatalog.length === 0">
+                  No hay servicios disponibles
+                </p>
+                <label class="ms-dropdown__option" *ngFor="let s of serviceCatalog">
+                  <input type="checkbox"
+                         [checked]="isServiceSelected(s.id)"
+                         (change)="toggleServiceSelection(s.id)" />
+                  <span>{{ s.name }}</span>
+                </label>
+              </div>
+            </div>
           </div>
+
           <div class="form-group flex-1">
-            <label class="form-label">Repuesto (opcional)</label>
-            <select class="form-input" formControlName="sparePartId">
-              <option [ngValue]="null">
-                {{ loadingSpareParts ? 'Cargando repuestos...' : '— Ninguno —' }}
-              </option>
-              <option *ngFor="let p of spareParts" [ngValue]="p.id">
-                {{ p.name }}{{ p.reference ? ' (' + p.reference + ')' : '' }}
-              </option>
-            </select>
+            <label class="form-label">Repuestos cubiertos</label>
+            <div class="ms-dropdown" (click)="$event.stopPropagation()">
+              <button type="button" class="ms-dropdown__trigger" (click)="toggleSparePartDropdown()">
+                <span [class.ms-dropdown__placeholder]="selectedSparePartOptions.length === 0">
+                  {{ selectedSparePartOptions.length === 0
+                      ? 'Seleccionar repuestos...'
+                      : selectedSparePartOptions.length + ' repuesto(s) seleccionado(s)' }}
+                </span>
+                <i class="fas fa-chevron-down" [class.is-open]="showSparePartDropdown"></i>
+              </button>
+
+              <div class="ms-dropdown__panel" *ngIf="showSparePartDropdown">
+                <p class="ms-dropdown__empty" *ngIf="loadingSpareParts">Cargando repuestos...</p>
+                <p class="ms-dropdown__empty" *ngIf="!loadingSpareParts && spareParts.length === 0">
+                  No hay repuestos disponibles
+                </p>
+                <label class="ms-dropdown__option" *ngFor="let p of spareParts">
+                  <input type="checkbox"
+                         [checked]="isSparePartSelected(p.id)"
+                         (change)="toggleSparePartSelection(p.id)" />
+                  <span>{{ p.name }}{{ p.reference ? ' (' + p.reference + ')' : '' }}</span>
+                </label>
+              </div>
+            </div>
           </div>
         </div>
-        <p class="hint">Debe especificar al menos un servicio o repuesto.</p>
+        <p class="hint">
+          Puedes seleccionar varios servicios y/o repuestos: todos quedarán cubiertos por esta misma garantía.
+        </p>
         <div class="form-row">
           <div class="form-group flex-1">
             <label class="form-label required">Fecha inicio</label>
