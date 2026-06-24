@@ -39,7 +39,6 @@
         <form [formGroup]="generateForm" (ngSubmit)="submitGenerate()" novalidate>
 
           <div class="form-row">
-            <!-- Orden de trabajo -->
             <div class="form-group">
               <label class="form-label required">Orden de trabajo</label>
               <select class="form-input" formControlName="workOrderID"
@@ -52,20 +51,6 @@
               <span class="field-error" *ngIf="isInvalid(generateForm, 'workOrderID')">Obligatorio</span>
             </div>
 
-            <!-- Método de pago -->
-            <div class="form-group">
-              <label class="form-label required">Método de pago</label>
-              <select class="form-input" formControlName="payMethodId"
-                      [class.input-error]="isInvalid(generateForm, 'payMethodId')">
-                <option [ngValue]="null">Selecciona...</option>
-                <option *ngFor="let pm of payMethods" [ngValue]="pm.id">{{ pm.name }}</option>
-              </select>
-              <span class="field-error" *ngIf="isInvalid(generateForm, 'payMethodId')">Obligatorio</span>
-            </div>
-          </div>
-
-          <div class="form-row">
-            <!-- Identificación cliente -->
             <div class="form-group">
               <label class="form-label required">Identificación del cliente</label>
               <input type="number" class="form-input" formControlName="identification"
@@ -73,8 +58,9 @@
                      [class.input-error]="isInvalid(generateForm, 'identification')" />
               <span class="field-error" *ngIf="isInvalid(generateForm, 'identification')">Obligatorio</span>
             </div>
+          </div>
 
-            <!-- Placa -->
+          <div class="form-row">
             <div class="form-group">
               <label class="form-label required">Placa del vehículo</label>
               <input type="text" class="form-input" formControlName="plate"
@@ -82,10 +68,7 @@
                      [class.input-error]="isInvalid(generateForm, 'plate')" />
               <span class="field-error" *ngIf="isInvalid(generateForm, 'plate')">Obligatorio</span>
             </div>
-          </div>
 
-          <div class="form-row">
-            <!-- Subtotal -->
             <div class="form-group">
               <label class="form-label required">Subtotal</label>
               <input type="number" class="form-input" formControlName="subtotal"
@@ -94,8 +77,9 @@
               <span class="field-hint">El IVA (19%) se calcula automáticamente</span>
               <span class="field-error" *ngIf="isInvalid(generateForm, 'subtotal')">Debe ser mayor a 0</span>
             </div>
+          </div>
 
-            <!-- Creado por -->
+          <div class="form-row">
             <div class="form-group">
               <label class="form-label required">Creado por</label>
               <input type="text" class="form-input" formControlName="createdBy"
@@ -221,7 +205,7 @@
                   </span>
                 </td>
                 <td class="bill-actions-col">
-                  <button class="btn-action btn-download" (click)="downloadPdf(b)"
+                  <button class="btn-action btn-download" (click)="downloadPdf(b, $event)"
                           [disabled]="downloadingId === b.id" title="Descargar PDF">
                     <span *ngIf="downloadingId !== b.id">⬇</span>
                     <span *ngIf="downloadingId === b.id" class="spinner-xs"></span>
@@ -240,7 +224,7 @@
   </div>
 </div>
 
-<!-- Modal: Asignar cliente -->
+<!-- ══ Modal: Asignar cliente ════════════════════════════════════════════════ -->
 <div class="modal-overlay" *ngIf="showAssignModal" (click)="closeAssign()">
   <div class="modal-card" (click)="$event.stopPropagation()">
     <div class="modal-header">
@@ -274,7 +258,7 @@
   </div>
 </div>
 
-<!-- Modal: Enviar comprobante -->
+<!-- ══ Modal: Enviar comprobante ════════════════════════════════════════════ -->
 <div class="modal-overlay" *ngIf="showSendModal" (click)="closeSend()">
   <div class="modal-card" (click)="$event.stopPropagation()">
     <div class="modal-header">

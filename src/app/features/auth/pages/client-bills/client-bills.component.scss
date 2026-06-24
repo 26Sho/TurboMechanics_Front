@@ -1,0 +1,381 @@
+$orange:     #F45D01;
+$black:      #0D0D0D;
+$gray-dark:  #2B2B2B;
+$gray-mid:   #6E6E6E;
+$gray-light: #CFCFCF;
+$white:      #FFFFFF;
+$green:      #22C55E;
+$yellow:     #F59E0B;
+$red:        #DC2626;
+$mp-blue:    #009ee3;
+$border:     rgba(244, 93, 1, 0.25);
+
+// ── Layout ────────────────────────────────────────────────────────────────
+.bills-wrapper {
+  min-height: 100vh;
+  background: $black;
+  padding: 32px 24px 64px;
+}
+
+.bills-page {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+// ── Header ────────────────────────────────────────────────────────────────
+.page-header {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 32px;
+
+  &__icon {
+    font-size: 2rem;
+    background: rgba($orange, 0.15);
+    border: 1px solid $border;
+    border-radius: 12px;
+    padding: 12px;
+    line-height: 1;
+  }
+}
+
+.page-title {
+  color: $white;
+  font-size: 1.6rem;
+  font-weight: 700;
+  margin: 0 0 4px;
+}
+
+.page-sub {
+  color: $gray-mid;
+  font-size: 0.9rem;
+  margin: 0;
+}
+
+// ── States ────────────────────────────────────────────────────────────────
+.loading-state,
+.empty-state {
+  text-align: center;
+  padding: 64px 0;
+  color: $gray-mid;
+
+  .empty-icon { font-size: 3rem; margin-bottom: 12px; }
+  .empty-text { font-size: 1rem; }
+}
+
+.spinner {
+  display: inline-block;
+  width: 32px;
+  height: 32px;
+  border: 3px solid rgba($orange, 0.3);
+  border-top-color: $orange;
+  border-radius: 50%;
+  animation: spin .7s linear infinite;
+  margin-bottom: 12px;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+// ── Table ─────────────────────────────────────────────────────────────────
+.bills-table-wrap {
+  overflow-x: auto;
+  border-radius: 12px;
+  border: 1px solid $border;
+}
+
+.bills-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #111;
+
+  th {
+    background: $gray-dark;
+    color: $gray-light;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: .05em;
+    padding: 12px 16px;
+    text-align: left;
+    white-space: nowrap;
+  }
+
+  td {
+    padding: 14px 16px;
+    color: $white;
+    font-size: 0.9rem;
+    border-bottom: 1px solid rgba(255,255,255,.05);
+    vertical-align: middle;
+  }
+
+  tbody tr:last-child td { border-bottom: none; }
+
+  tbody tr:hover td { background: rgba($orange, .04); }
+
+  .num-bill { color: $orange; font-weight: 600; }
+  .total    { font-weight: 700; }
+}
+
+// ── Badge ─────────────────────────────────────────────────────────────────
+.badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+
+  &--pending  { background: rgba($yellow, .15); color: $yellow; }
+  &--paid     { background: rgba($green,  .15); color: $green;  }
+  &--annulled { background: rgba($red,    .15); color: $red;    }
+}
+
+// ── Botón pagar ───────────────────────────────────────────────────────────
+.btn-pay {
+  background: $mp-blue;
+  color: $white;
+  border: none;
+  border-radius: 8px;
+  padding: 7px 14px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity .2s;
+  white-space: nowrap;
+
+  &:hover { opacity: .85; }
+}
+
+.no-action { color: $gray-mid; }
+
+// ── Modal ─────────────────────────────────────────────────────────────────
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 16px;
+}
+
+.modal-card {
+  background: #1a1a1a;
+  border: 1px solid $border;
+  border-radius: 16px;
+  width: 100%;
+  max-width: 520px;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modal-header {
+  text-align: center;
+  padding: 28px 24px 0;
+
+  .modal-icon  { font-size: 2rem; margin-bottom: 8px; }
+  .modal-title { color: $white; font-size: 1.2rem; font-weight: 700; margin: 0 0 4px; }
+  .modal-sub   { color: $gray-mid; font-size: 0.9rem; margin: 0; }
+  .mp-amount   { color: $mp-blue; }
+}
+
+.modal-body { padding: 20px 24px; }
+
+// ── Form ──────────────────────────────────────────────────────────────────
+.form-group { display: flex; flex-direction: column; gap: 6px; margin-bottom: 16px; }
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.form-label {
+  color: $gray-light;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+
+  &.required::after { content: ' *'; color: $orange; }
+}
+
+.form-input {
+  background: #2a2a2a;
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: 8px;
+  color: $white;
+  padding: 10px 12px;
+  font-size: 0.9rem;
+  outline: none;
+  transition: border-color .2s;
+
+  &:focus         { border-color: $orange; }
+  &.input-error   { border-color: $red; }
+
+  option { background: #2a2a2a; }
+}
+
+.field-error { color: $red; font-size: 0.75rem; }
+
+// ── Pay methods ───────────────────────────────────────────────────────────
+.pay-methods {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.pay-method-opt {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 10px 14px;
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: 10px;
+  cursor: pointer;
+  transition: border-color .2s, background .2s;
+  min-width: 80px;
+
+  &.active {
+    border-color: $mp-blue;
+    background: rgba($mp-blue, .1);
+  }
+
+  &:hover:not(.active) { border-color: rgba(255,255,255,.25); }
+
+  .pm-icon  { font-size: 1.4rem; }
+  .pm-label { font-size: 0.72rem; color: $gray-light; text-align: center; }
+}
+
+// ── Modal footer ──────────────────────────────────────────────────────────
+.modal-footer {
+  display: flex;
+  gap: 12px;
+  justify-content: flex-end;
+  padding-top: 8px;
+}
+
+.btn-cancel {
+  background: transparent;
+  border: 1px solid rgba(255,255,255,.15);
+  color: $gray-light;
+  border-radius: 8px;
+  padding: 10px 20px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: border-color .2s;
+
+  &:hover { border-color: rgba(255,255,255,.35); }
+}
+
+.btn-submit {
+  background: $mp-blue;
+  border: none;
+  color: $white;
+  border-radius: 8px;
+  padding: 10px 24px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity .2s;
+
+  &:hover:not(:disabled) { opacity: .85; }
+  &:disabled { opacity: .5; cursor: not-allowed; }
+}
+
+.spinner-sm {
+  display: inline-block;
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255,255,255,.3);
+  border-top-color: $white;
+  border-radius: 50%;
+  animation: spin .7s linear infinite;
+}
+
+// ── Search card ───────────────────────────────────────────────────────────
+.search-card {
+  background: #111;
+  border: 1px solid $border;
+  border-radius: 12px;
+  padding: 20px 24px;
+  margin-bottom: 24px;
+}
+
+.search-form {
+  display: flex;
+  align-items: flex-end;
+  gap: 16px;
+  flex-wrap: wrap;
+
+  .form-group { flex: 1; min-width: 200px; margin-bottom: 0; }
+}
+
+.btn-search {
+  background: $orange;
+  color: $white;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 24px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: opacity .2s;
+  height: 42px;
+
+  &:hover:not(:disabled) { opacity: .85; }
+  &:disabled { opacity: .5; cursor: not-allowed; }
+}
+
+.btn-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: rgba($orange, 0.1);
+  border: 1px solid $border;
+  color: $orange;
+  border-radius: 8px;
+  padding: 8px 16px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  margin-bottom: 24px;
+  transition: background .2s;
+
+  &:hover { background: rgba($orange, 0.2); }
+}
+
+// ── Responsive ────────────────────────────────────────────────────────────
+.bills-wrapper {
+  min-height: 100vh;
+  background: $black;
+  padding: 92px 24px 64px;
+
+  @media (max-width: 768px) { padding: 80px 16px 48px; }
+  @media (max-width: 480px) { padding: 72px 12px 40px; }
+}
+
+.bills-table { min-width: 600px; }
+
+.bills-table-wrap { -webkit-overflow-scrolling: touch; }
+
+.form-row {
+  @media (max-width: 480px) { grid-template-columns: 1fr; }
+}
+
+.search-form {
+  @media (max-width: 480px) {
+    flex-direction: column;
+    .form-group { min-width: 100%; }
+    .btn-search { width: 100%; }
+  }
+}
+
+.modal-footer {
+  @media (max-width: 480px) {
+    flex-direction: column;
+    .btn-cancel, .btn-submit { width: 100%; text-align: center; }
+  }
+}

@@ -1,12 +1,12 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { BillingService } from '../service/billing.service';
-import { PaymentMethodService } from '../service/payment-method.service';
 import { WorkOrderService } from '../../../core/services/work-order.service';
 import { ToastService } from '../../../shared/services/toast.service';
 import { AuthService } from '../../../core/services/auth.service';
-import { Bill, PayMethod } from '../../../core/models/billing.model';
+import { Bill, CreatePaymentRequest } from '../../../core/models/billing.model';
 import { WorkOrderResponse } from '../../../core/models/work-order';
+import { MercadoPagoService } from 'src/app/core/services/mercado-pagos-service.service';
 
 type TabType = 'generate' | 'history';
 
@@ -21,10 +21,9 @@ export class BillingComponent implements OnInit {
 
   // ── Generate form ─────────────────────────────────────────────────────────
   generateForm!: FormGroup;
-  saving        = false;
+  saving         = false;
   generatedBill: Bill | null = null;
 
-  payMethods:   PayMethod[]        = [];
   orders:       WorkOrderResponse[] = [];
   loadingOrders = false;
 
@@ -35,32 +34,45 @@ export class BillingComponent implements OnInit {
   assigning       = false;
 
   // ── Send proof ────────────────────────────────────────────────────────────
-  showSendModal  = false;
-  sendBill:      Bill | null = null;
-  sendingProof   = false;
-  selectedCanal  = 'EMAIL';
+  showSendModal = false;
+  sendBill:     Bill | null = null;
+  sendingProof  = false;
+  selectedCanal = 'EMAIL';
 
   // ── Download ──────────────────────────────────────────────────────────────
   downloadingId: number | null = null;
 
   // ── History ───────────────────────────────────────────────────────────────
-  historyForm!:  FormGroup;
-  historyBills:  Bill[]   = [];
-  loadingHistory = false;
-  historySearched = false;
+  historyForm!:    FormGroup;
+  historyBills:    Bill[] = [];
+  loadingHistory   = false;
+  historySearched  = false;
+
+  // ── Mercado Pago ──────────────────────────────────────────────────────────
+  showPayModal = false;
+  payBill:     Bill | null = null;
+  payForm!:    FormGroup;
+  payingId:    number | null = null;
+
+  readonly payMethodOptions = [
+    { value: 'credit_card',   icon: '💳', label: 'Tarjeta crédito' },
+    { value: 'debit_card',    icon: '🏧', label: 'Tarjeta débito'  },
+    { value: 'pse',           icon: '🏦', label: 'PSE'             },
+    { value: 'efecty',        icon: '💵', label: 'Efecty'          },
+    { value: 'bank_transfer', icon: '🔁', label: 'Transferencia'   },
+  ];
 
   constructor(
-    private fb:         FormBuilder,
-    private billing:    BillingService,
-    private pmService:  PaymentMethodService,
-    private woService:  WorkOrderService,
-    private toast:      ToastService,
-    private auth:       AuthService
+    private fb:        FormBuilder,
+    private billing:   BillingService,
+    private mp:        MercadoPagoService,
+    private woService: WorkOrderService,
+    private toast:     ToastService,
+    private auth:      AuthService
   ) {}
 
   ngOnInit(): void {
     this.buildForms();
-    this.loadPayMethods();
     this.loadOrders();
   }
 
@@ -68,8 +80,7 @@ export class BillingComponent implements OnInit {
     this.generateForm = this.fb.group({
       workOrderID:    [null, Validators.required],
       identification: [null, [Validators.required, Validators.min(1)]],
-      plate:          ['',  Validators.required],
-      payMethodId:    [null, Validators.required],
+      plate:          ['',   Validators.required],
       subtotal:       [null, [Validators.required, Validators.min(1)]],
       createdBy:      [this.auth.getUsername(), Validators.required],
     });
@@ -83,12 +94,14 @@ export class BillingComponent implements OnInit {
       identification: [null, [Validators.required, Validators.min(1)]],
       plate:          [''],
     });
-  }
 
-  private loadPayMethods(): void {
-    this.pmService.list().subscribe({
-      next: (list) => { this.payMethods = (list ?? []).filter(p => p.active); },
-      error: () => {}
+    this.payForm = this.fb.group({
+      payerEmail:                ['', [Validators.required, Validators.email]],
+      payerFirstName:            [''],
+      payerLastName:             [''],
+      payerIdentificationType:   [''],
+      payerIdentificationNumber: [''],
+      paymentMethod:             [''],
     });
   }
 
@@ -172,7 +185,7 @@ export class BillingComponent implements OnInit {
 
   // ── Send proof ────────────────────────────────────────────────────────────
   openSend(bill: Bill): void {
-    this.sendBill   = bill;
+    this.sendBill      = bill;
     this.selectedCanal = 'EMAIL';
     this.showSendModal = true;
   }
@@ -200,13 +213,13 @@ export class BillingComponent implements OnInit {
     this.historyForm.markAllAsTouched();
     if (this.historyForm.invalid) return;
 
-    this.loadingHistory = true;
+    this.loadingHistory  = true;
     this.historySearched = false;
     const { identification, plate } = this.historyForm.value;
     this.billing.history(identification, plate || undefined).subscribe({
       next: (bills) => {
-        this.historyBills   = bills ?? [];
-        this.loadingHistory = false;
+        this.historyBills    = bills ?? [];
+        this.loadingHistory  = false;
         this.historySearched = true;
       },
       error: () => {
@@ -217,6 +230,57 @@ export class BillingComponent implements OnInit {
     });
   }
 
+  // ── Mercado Pago ──────────────────────────────────────────────────────────
+  canPay(status: string): boolean {
+    return !!status && status.trim() === 'Pending';
+  }
+
+  openPayModal(bill: Bill, event?: Event): void {
+    event?.stopPropagation();
+    this.payBill = bill;
+    this.payForm.reset();
+    this.showPayModal = true;
+  }
+
+  closePayModal(): void {
+    this.showPayModal = false;
+    this.payBill = null;
+  }
+
+  submitPay(): void {
+    this.payForm.markAllAsTouched();
+    if (this.payForm.invalid || !this.payBill) return;
+
+    this.payingId = this.payBill.id;
+
+    const req: CreatePaymentRequest = {
+      billId:                    this.payBill.id,
+      payerEmail:                this.payForm.value.payerEmail,
+      payerFirstName:            this.payForm.value.payerFirstName            || undefined,
+      payerLastName:             this.payForm.value.payerLastName             || undefined,
+      payerIdentificationType:   this.payForm.value.payerIdentificationType   || undefined,
+      payerIdentificationNumber: this.payForm.value.payerIdentificationNumber || undefined,
+      paymentMethod:             this.payForm.value.paymentMethod             || undefined,
+    };
+
+    this.mp.createPreference(req).subscribe({
+      next: (res) => {
+        this.payingId = null;
+        this.closePayModal();
+        if (res.initPoint) {
+          window.location.href = res.initPoint;
+        } else {
+          this.toast.error('No se recibió la URL de pago');
+        }
+      },
+      error: (err) => {
+        this.payingId = null;
+        this.toast.error(err.error?.message || 'Error al iniciar el pago con Mercado Pago');
+      }
+    });
+  }
+
+  // ── Helpers ───────────────────────────────────────────────────────────────
   statusLabel(status: string): string {
     const map: Record<string, string> = {
       Pending:  'Pendiente',

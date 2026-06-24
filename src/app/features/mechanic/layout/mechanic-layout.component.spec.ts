@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { AuthComponent } from './auth.component';
+import { MechanicLayoutComponent } from './mechanic-layout.component';
 
-describe('AuthComponent', () => {
-  let component: AuthComponent;
-  let fixture: ComponentFixture<AuthComponent>;
+describe('MechanicLayoutComponent', () => {
+  let component: MechanicLayoutComponent;
+  let fixture: ComponentFixture<MechanicLayoutComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [AuthComponent]
+      declarations: [MechanicLayoutComponent]
     })
     .compileComponents();
     
-    fixture = TestBed.createComponent(AuthComponent);
+    fixture = TestBed.createComponent(MechanicLayoutComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

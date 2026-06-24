@@ -1,14 +1,19 @@
 import { Component, OnInit } from '@angular/core';
+import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import {
-  GarantiasService, Warranty, WarrantyValidation, Workshop, QualityCheck, QualityCheckItem, WorkEvidence
+  GarantiasService, Warranty, WarrantyValidation, Workshop, QualityCheck, QualityCheckItem, WorkEvidence,
+  WorkOrderOption, ServiceOption, SparePartOption
 } from '../service/garantias.service';
 import { ToastService } from '../../../shared/services/toast.service';
 
 type TabType = 'garantias' | 'talleres' | 'calidad' | 'evidencias';
-
-// Tipo reutilizable para errores HTTP de Angular/Spring
 type HttpErr = { error?: { message?: string } };
+
+interface WorkEvidenceWithPreview extends WorkEvidence {
+  previewUrl?: SafeUrl;
+  rawUrl?: string;
+}
 
 @Component({
   selector: 'app-garantias',
@@ -20,7 +25,6 @@ export class GarantiasComponent implements OnInit {
   activeTab: TabType = 'garantias';
 
   // ── GARANTÍAS ─────────────────────────────────────────────────────────────
-
   warrantyForm!: FormGroup;
   closeForm!: FormGroup;
   historyForm!: FormGroup;
@@ -47,8 +51,25 @@ export class GarantiasComponent implements OnInit {
   showValidateModal = false;
   showValidationsModal = false;
 
-  // ── TALLERES ──────────────────────────────────────────────────────────────
+  // ── DROPDOWNS ─────────────────────────────────────────────────────────────
+  workOrders: WorkOrderOption[] = [];
+  serviceCatalog: ServiceOption[] = [];
+  spareParts: SparePartOption[] = [];
+  loadingWorkOrders = false;
+  loadingServiceCatalog = false;
+  loadingSpareParts = false;
 
+  // Selección múltiple de servicios/repuestos al REGISTRAR una garantía nueva
+  // (permite cubrir varios servicios y/o repuestos de una sola orden sin tener
+  // que repetir el formulario; cada combinación genera su propia garantía)
+  selectedServiceIds: number[] = [];
+  selectedSparePartIds: number[] = [];
+  serviceSearchTerm = '';
+  sparePartSearchTerm = '';
+  showServiceDropdown = false;
+  showSparePartDropdown = false;
+
+  // ── TALLERES ──────────────────────────────────────────────────────────────
   workshopForm!: FormGroup;
   workshops: Workshop[] = [];
   loadingWorkshops = false;
@@ -59,7 +80,6 @@ export class GarantiasComponent implements OnInit {
   deletingWorkshopId: number | null = null;
 
   // ── CONTROL DE CALIDAD ────────────────────────────────────────────────────
-
   qualitySearchForm!: FormGroup;
   qualityCheck: QualityCheck | null = null;
   loadingQuality = false;
@@ -71,51 +91,79 @@ export class GarantiasComponent implements OnInit {
   showRejectModal = false;
 
   // ── EVIDENCIAS ────────────────────────────────────────────────────────────
-
   evidenceSearchForm!: FormGroup;
-  evidences: WorkEvidence[] = [];
+  evidences: WorkEvidenceWithPreview[] = [];
   loadingEvidences = false;
   uploadingEvidence = false;
   selectedFile: File | null = null;
+  previewUrl: SafeUrl | null = null;
+  imageModalUrl: SafeUrl | null = null;
   evidenceDescription = '';
   evidenceTipo = '';
   deletingEvidenceId: number | null = null;
 
+  // Modal confirmar eliminar evidencia
+  showDeleteEvidenceModal = false;
+  pendingDeleteEvidenceId: number | null = null;
+
+  // Modal confirmar eliminar taller
+  showDeleteWorkshopModal = false;
+  pendingDeleteWorkshopId: number | null = null;
+
+  private previewCache: Map<number, SafeUrl> = new Map();
+
   constructor(
     private fb: FormBuilder,
     private svc: GarantiasService,
-    private toast: ToastService
+    private toast: ToastService,
+    private sanitizer: DomSanitizer
   ) {}
 
   ngOnInit(): void {
     this.buildForms();
     this.loadWarranties();
     this.loadWorkshops();
+    this.loadDropdownData();
+  }
+
+  /** Carga en paralelo las listas para los dropdowns */
+  private loadDropdownData(): void {
+    this.loadingWorkOrders = true;
+    this.svc.getWorkOrders().subscribe({
+      next: (data: WorkOrderOption[]) => { this.workOrders = data; this.loadingWorkOrders = false; },
+      error: () => { this.loadingWorkOrders = false; }
+    });
+
+    this.loadingServiceCatalog = true;
+    this.svc.getServiceCatalog().subscribe({
+      next: (data: ServiceOption[]) => { this.serviceCatalog = data; this.loadingServiceCatalog = false; },
+      error: () => { this.loadingServiceCatalog = false; }
+    });
+
+    this.loadingSpareParts = true;
+    this.svc.getSpareParts().subscribe({
+      next: (data: SparePartOption[]) => { this.spareParts = data; this.loadingSpareParts = false; },
+      error: () => { this.loadingSpareParts = false; }
+    });
   }
 
   private buildForms(): void {
     this.warrantyForm = this.fb.group({
-      workOrderId:  [null, [Validators.required, Validators.min(1)]],
-      serviceId:    [null],
-      sparePartId:  [null],
+      workOrderId:  [null, [Validators.required]],
       startDate:    ['', Validators.required],
       endDate:      ['', Validators.required],
       observations: ['']
     });
-
     this.closeForm = this.fb.group({
       closureReason: ['', Validators.required]
     });
-
     this.historyForm = this.fb.group({
       tipo:  ['cliente'],
       valor: ['', Validators.required]
     });
-
     this.validateForm = this.fb.group({
-      warrantyId: [null, [Validators.required, Validators.min(1)]]
+      warrantyId: [null, [Validators.required]]
     });
-
     this.workshopForm = this.fb.group({
       name:      ['', Validators.required],
       address:   ['', Validators.required],
@@ -128,13 +176,11 @@ export class GarantiasComponent implements OnInit {
       schedule:  [''],
       active:    [true]
     });
-
     this.qualitySearchForm = this.fb.group({
-      ordenId: [null, [Validators.required, Validators.min(1)]]
+      ordenId: [null, [Validators.required]]
     });
-
     this.evidenceSearchForm = this.fb.group({
-      ordenId: [null, [Validators.required, Validators.min(1)]]
+      ordenId: [null, [Validators.required]]
     });
   }
 
@@ -158,40 +204,127 @@ export class GarantiasComponent implements OnInit {
 
   openWarrantyForm(warranty?: Warranty): void {
     this.editingWarranty = warranty || null;
+    this.serviceSearchTerm = '';
+    this.sparePartSearchTerm = '';
+    this.showServiceDropdown = false;
+    this.showSparePartDropdown = false;
     if (warranty) {
+      // Edición: se precargan todos los servicios/repuestos que ya cubre
+      this.selectedServiceIds = (warranty.services || []).map(s => s.id);
+      this.selectedSparePartIds = (warranty.spareParts || [])
+        .filter(p => !p.deleted && p.id != null)
+        .map(p => p.id as number);
       this.warrantyForm.patchValue({
         workOrderId: warranty.workOrderId,
-        serviceId: warranty.serviceId,
-        sparePartId: warranty.sparePartId,
         startDate: warranty.startDate,
         endDate: warranty.endDate,
         observations: warranty.observations
       });
     } else {
+      this.selectedServiceIds = [];
+      this.selectedSparePartIds = [];
       this.warrantyForm.reset();
     }
     this.showWarrantyForm = true;
   }
 
+  /** Alterna la selección de un servicio en el formulario de registro/edición */
+  toggleServiceSelection(id: number): void {
+    const idx = this.selectedServiceIds.indexOf(id);
+    if (idx >= 0) this.selectedServiceIds.splice(idx, 1);
+    else this.selectedServiceIds.push(id);
+  }
+
+  /** Alterna la selección de un repuesto en el formulario de registro/edición */
+  toggleSparePartSelection(id: number): void {
+    const idx = this.selectedSparePartIds.indexOf(id);
+    if (idx >= 0) this.selectedSparePartIds.splice(idx, 1);
+    else this.selectedSparePartIds.push(id);
+  }
+
+  isServiceSelected(id: number): boolean {
+    return this.selectedServiceIds.includes(id);
+  }
+
+  isSparePartSelected(id: number): boolean {
+    return this.selectedSparePartIds.includes(id);
+  }
+
+  /** Servicios que coinciden con el texto buscado y aún no han sido seleccionados */
+  get filteredServiceOptions(): ServiceOption[] {
+    const term = this.serviceSearchTerm.trim().toLowerCase();
+    return this.serviceCatalog.filter(s =>
+      !this.isServiceSelected(s.id) &&
+      (!term || s.name.toLowerCase().includes(term))
+    );
+  }
+
+  /** Repuestos que coinciden con el texto buscado y aún no han sido seleccionados */
+  get filteredSparePartOptions(): SparePartOption[] {
+    const term = this.sparePartSearchTerm.trim().toLowerCase();
+    return this.spareParts.filter(p =>
+      !this.isSparePartSelected(p.id) &&
+      (!term ||
+        p.name.toLowerCase().includes(term) ||
+        (p.reference && p.reference.toLowerCase().includes(term)))
+    );
+  }
+
+  get selectedServiceOptions(): ServiceOption[] {
+    return this.serviceCatalog.filter(s => this.isServiceSelected(s.id));
+  }
+
+  get selectedSparePartOptions(): SparePartOption[] {
+    return this.spareParts.filter(p => this.isSparePartSelected(p.id));
+  }
+
+  toggleServiceDropdown(): void {
+    this.showServiceDropdown = !this.showServiceDropdown;
+    this.showSparePartDropdown = false;
+  }
+
+  toggleSparePartDropdown(): void {
+    this.showSparePartDropdown = !this.showSparePartDropdown;
+    this.showServiceDropdown = false;
+  }
+
+  closeDropdowns(): void {
+    this.showServiceDropdown = false;
+    this.showSparePartDropdown = false;
+  }
+
   closeWarrantyFormPanel(): void {
     this.showWarrantyForm = false;
     this.editingWarranty = null;
+    this.selectedServiceIds = [];
+    this.selectedSparePartIds = [];
+    this.serviceSearchTerm = '';
+    this.sparePartSearchTerm = '';
+    this.showServiceDropdown = false;
+    this.showSparePartDropdown = false;
     this.warrantyForm.reset();
   }
 
   submitWarranty(): void {
     this.warrantyForm.markAllAsTouched();
-    const v = this.warrantyForm.value;
-    if (!v.serviceId && !v.sparePartId) {
-      this.toast.error('Debe asociar la garantía a un servicio o a un repuesto');
+
+    if (this.selectedServiceIds.length === 0 && this.selectedSparePartIds.length === 0) {
+      this.toast.error('Debe seleccionar al menos un servicio o un repuesto');
       return;
     }
     if (this.warrantyForm.invalid) return;
-    this.savingWarranty = true;
 
+    // Una sola garantía cubre todos los servicios y repuestos seleccionados
+    const payload = {
+      ...this.warrantyForm.value,
+      serviceIds: this.selectedServiceIds,
+      sparePartIds: this.selectedSparePartIds
+    };
+
+    this.savingWarranty = true;
     const req$ = this.editingWarranty
-      ? this.svc.updateWarranty(this.editingWarranty.id, v)
-      : this.svc.registerWarranty(v);
+      ? this.svc.updateWarranty(this.editingWarranty.id, payload)
+      : this.svc.registerWarranty(payload);
 
     req$.subscribe({
       next: (_res: Warranty) => {
@@ -201,7 +334,7 @@ export class GarantiasComponent implements OnInit {
         this.loadWarranties();
       },
       error: (err: HttpErr) => {
-        this.toast.error(err.error?.message || 'Error al guardar garantía');
+        this.toast.error(err.error?.message || 'Error al guardar la garantía');
         this.savingWarranty = false;
       }
     });
@@ -302,11 +435,7 @@ export class GarantiasComponent implements OnInit {
 
   openWorkshopForm(w?: Workshop): void {
     this.editingWorkshop = w || null;
-    if (w) {
-      this.workshopForm.patchValue(w);
-    } else {
-      this.workshopForm.reset({ active: true });
-    }
+    if (w) { this.workshopForm.patchValue(w); } else { this.workshopForm.reset({ active: true }); }
     this.showWorkshopForm = true;
   }
 
@@ -320,11 +449,9 @@ export class GarantiasComponent implements OnInit {
     this.workshopForm.markAllAsTouched();
     if (this.workshopForm.invalid) return;
     this.savingWorkshop = true;
-
     const req$ = this.editingWorkshop
       ? this.svc.updateWorkshop(this.editingWorkshop.id, this.workshopForm.value)
       : this.svc.registerWorkshop(this.workshopForm.value);
-
     req$.subscribe({
       next: (_res: Workshop) => {
         this.toast.success(this.editingWorkshop ? 'Taller actualizado' : 'Taller registrado');
@@ -339,9 +466,22 @@ export class GarantiasComponent implements OnInit {
     });
   }
 
-  deleteWorkshop(id: number): void {
-    if (!confirm('¿Confirma eliminar este taller?')) return;
+  confirmDeleteWorkshop(id: number): void {
+    this.pendingDeleteWorkshopId = id;
+    this.showDeleteWorkshopModal = true;
+  }
+
+  cancelDeleteWorkshop(): void {
+    this.pendingDeleteWorkshopId = null;
+    this.showDeleteWorkshopModal = false;
+  }
+
+  deleteWorkshop(): void {
+    if (this.pendingDeleteWorkshopId === null) return;
+    const id = this.pendingDeleteWorkshopId;
     this.deletingWorkshopId = id;
+    this.showDeleteWorkshopModal = false;
+    this.pendingDeleteWorkshopId = null;
     this.svc.deleteWorkshop(id).subscribe({
       next: (_res: unknown) => {
         this.toast.success('Taller eliminado');
@@ -469,7 +609,14 @@ export class GarantiasComponent implements OnInit {
     this.loadingEvidences = true;
     this.evidences = [];
     this.svc.getEvidences(this.evidenceSearchForm.value.ordenId, this.evidenceTipo || undefined).subscribe({
-      next: (data: WorkEvidence[]) => { this.evidences = data; this.loadingEvidences = false; },
+      next: (data: WorkEvidence[]) => {
+        this.evidences = data.map(e => ({
+          ...e,
+          previewUrl: e.fileUrl ? this.sanitizer.bypassSecurityTrustUrl(e.fileUrl) : this.previewCache.get(e.id),
+          rawUrl: e.fileUrl
+        }));
+        this.loadingEvidences = false;
+      },
       error: (_err: unknown) => { this.loadingEvidences = false; this.toast.error('Error al cargar evidencias'); }
     });
   }
@@ -477,6 +624,12 @@ export class GarantiasComponent implements OnInit {
   onFileSelected(event: Event): void {
     const input = event.target as HTMLInputElement;
     this.selectedFile = input.files?.[0] || null;
+    this.previewUrl = null;
+    if (this.selectedFile && this.selectedFile.type.startsWith('image/')) {
+      const reader = new FileReader();
+      reader.onload = (e) => { this.previewUrl = this.sanitizer.bypassSecurityTrustUrl(e.target?.result as string); };
+      reader.readAsDataURL(this.selectedFile);
+    }
   }
 
   uploadEvidence(): void {
@@ -486,12 +639,17 @@ export class GarantiasComponent implements OnInit {
       return;
     }
     this.uploadingEvidence = true;
+    const savedPreview = this.previewUrl;
     this.svc.uploadEvidence(this.evidenceSearchForm.value.ordenId, this.selectedFile, this.evidenceDescription).subscribe({
-      next: (_res: WorkEvidence) => {
+      next: (res: WorkEvidence) => {
         this.toast.success('Evidencia adjuntada');
         this.uploadingEvidence = false;
         this.selectedFile = null;
+        this.previewUrl = null;
         this.evidenceDescription = '';
+        if (savedPreview && res.id) {
+          this.previewCache.set(res.id, savedPreview);
+        }
         this.loadEvidences();
       },
       error: (err: HttpErr) => {
@@ -501,12 +659,26 @@ export class GarantiasComponent implements OnInit {
     });
   }
 
-  deleteEvidence(id: number): void {
-    if (!confirm('¿Eliminar esta evidencia?')) return;
+  confirmDeleteEvidence(id: number): void {
+    this.pendingDeleteEvidenceId = id;
+    this.showDeleteEvidenceModal = true;
+  }
+
+  cancelDeleteEvidence(): void {
+    this.pendingDeleteEvidenceId = null;
+    this.showDeleteEvidenceModal = false;
+  }
+
+  deleteEvidence(): void {
+    if (this.pendingDeleteEvidenceId === null) return;
+    const id = this.pendingDeleteEvidenceId;
     this.deletingEvidenceId = id;
+    this.showDeleteEvidenceModal = false;
+    this.pendingDeleteEvidenceId = null;
     this.svc.deleteEvidence(id).subscribe({
       next: (_res: unknown) => {
         this.toast.success('Evidencia eliminada');
+        this.previewCache.delete(id);
         this.deletingEvidenceId = null;
         this.loadEvidences();
       },
@@ -516,6 +688,11 @@ export class GarantiasComponent implements OnInit {
       }
     });
   }
+
+  openImageModal(url: string | SafeUrl): void {
+    this.imageModalUrl = typeof url === 'string' ? this.sanitizer.bypassSecurityTrustUrl(url) : url;
+  }
+  closeImageModal(): void { this.imageModalUrl = null; }
 
   fileSizeLabel(bytes: number): string {
     if (bytes < 1024) return bytes + ' B';
@@ -529,14 +706,9 @@ export class GarantiasComponent implements OnInit {
 
   statusClass(status: string): string {
     const map: Record<string, string> = {
-      ACTIVA: 'badge--active',
-      VENCIDA: 'badge--expired',
-      CERRADA: 'badge--closed',
-      VIGENTE: 'badge--active',
-      EN_PROCESO: 'badge--process',
-      COMPLETADO: 'badge--completed',
-      APROBADO: 'badge--active',
-      RECHAZADO: 'badge--expired'
+      ACTIVA: 'badge--active', VENCIDA: 'badge--expired', CERRADA: 'badge--closed',
+      VIGENTE: 'badge--active', EN_PROCESO: 'badge--process',
+      COMPLETADO: 'badge--completed', APROBADO: 'badge--active', RECHAZADO: 'badge--expired'
     };
     return map[status] ?? '';
   }

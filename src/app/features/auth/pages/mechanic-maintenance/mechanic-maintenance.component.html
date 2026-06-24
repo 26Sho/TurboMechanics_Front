@@ -82,6 +82,7 @@
             <button class="apt-tab" [class.active]="activeTab === 'status'"   (click)="activeTab = 'status'">Tiempos</button>
             <button class="apt-tab" [class.active]="activeTab === 'progress'" (click)="activeTab = 'progress'">Avances</button>
             <button class="apt-tab" [class.active]="activeTab === 'issues'"   (click)="activeTab = 'issues'">Inconvenientes</button>
+            <button class="apt-tab" [class.active]="activeTab === 'evidencias'" (click)="activeTab = 'evidencias'; loadEvidences()">Evidencias</button>
           </div>
 
           <!-- ══ TAB: TIEMPOS (HU 9.4) ═══════════════════════════════════════ -->
@@ -202,6 +203,130 @@
               </div>
             </ng-container>
           </ng-container>
+
+
+          <!-- ══ TAB: EVIDENCIAS (HU 8.5) ══════════════════════════════════════ -->
+          <ng-container *ngIf="activeTab === 'evidencias'">
+
+            <!-- Subir evidencia -->
+            <div class="apt-card">
+              <h2 class="section-title">Adjuntar Evidencia</h2>
+              <div class="form-row">
+                <div class="form-group">
+                  <label class="form-label">Archivo (imagen, video, PDF, DOC)</label>
+                  <input id="evidenceFileInput" type="file" class="form-input"
+                         accept="image/*,video/mp4,video/avi,video/quicktime,application/pdf,application/msword,application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+                         (change)="onFileSelected($event)" />
+                  <span class="field-hint" *ngIf="selectedFile">
+                    Seleccionado: {{ selectedFile.name }} ({{ formatFileSize(selectedFile.size) }})
+                  </span>
+                </div>
+                <div class="form-group">
+                  <label class="form-label">Descripción (opcional)</label>
+                  <input type="text" class="form-input"
+                         [(ngModel)]="evidenceDescription"
+                         placeholder="Ej: Foto del motor antes del cambio" />
+                </div>
+              </div>
+              <div class="form-actions">
+                <button class="btn btn-primary"
+                        (click)="uploadEvidence()"
+                        [disabled]="!selectedFile || uploadingEvidence">
+                  <span *ngIf="!uploadingEvidence">Subir evidencia</span>
+                  <span *ngIf="uploadingEvidence" class="spinner-sm"></span>
+                </button>
+              </div>
+            </div>
+
+            <!-- Filtro -->
+            <div class="apt-card" style="padding: 14px 24px;">
+              <div class="evidence-filter-row">
+                <span class="form-label" style="margin:0">Filtrar por tipo:</span>
+                <button class="type-btn" [class.active]="evidenceFilterType === ''"
+                        (click)="evidenceFilterType = ''; onFilterChange()">Todos</button>
+                <button class="type-btn" [class.active]="evidenceFilterType === 'IMAGEN'"
+                        (click)="evidenceFilterType = 'IMAGEN'; onFilterChange()">Imágenes</button>
+                <button class="type-btn" [class.active]="evidenceFilterType === 'VIDEO'"
+                        (click)="evidenceFilterType = 'VIDEO'; onFilterChange()">Videos</button>
+                <button class="type-btn" [class.active]="evidenceFilterType === 'DOCUMENTO'"
+                        (click)="evidenceFilterType = 'DOCUMENTO'; onFilterChange()">Documentos</button>
+              </div>
+            </div>
+
+            <!-- Lista de evidencias -->
+            <div *ngIf="loadingEvidences" style="text-align:center; padding: 20px;">
+              <span class="spinner-sm"></span>
+            </div>
+
+            <ng-container *ngIf="!loadingEvidences">
+              <div class="apt-card empty-state" *ngIf="evidences.length === 0">
+                No hay evidencias adjuntas para esta orden.
+              </div>
+
+              <!-- Grid de evidencias -->
+              <div class="evidence-grid" *ngIf="evidences.length > 0">
+                <div class="evidence-card" *ngFor="let ev of evidences">
+
+                  <!-- Preview -->
+                  <div class="evidence-preview" (click)="isImage(ev) ? openLightbox(ev) : null"
+                       [class.clickable]="isImage(ev)">
+                    <img *ngIf="isImage(ev)"
+                         [src]="ev.fileUrl"
+                         [alt]="ev.fileName"
+                         class="evidence-img" />
+                    <video *ngIf="isVideo(ev)"
+                           [src]="ev.fileUrl"
+                           class="evidence-video"
+                           controls
+                           preload="metadata"></video>
+                    <div *ngIf="!isImage(ev) && !isVideo(ev)" class="evidence-doc-icon">
+                      <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                        <polyline points="14,2 14,8 20,8"/>
+                        <line x1="16" y1="13" x2="8" y2="13"/>
+                        <line x1="16" y1="17" x2="8" y2="17"/>
+                        <polyline points="10,9 9,9 8,9"/>
+                      </svg>
+                    </div>
+                  </div>
+
+                  <!-- Info -->
+                  <div class="evidence-info">
+                    <div class="evidence-name" [title]="ev.fileName">{{ ev.fileName }}</div>
+                    <div class="evidence-meta">
+                      <span class="badge evidence-type-badge"
+                            [class]="ev.evidenceType === 'IMAGEN' ? 'badge--completed' : ev.evidenceType === 'VIDEO' ? 'badge--reprogrammed' : 'badge--scheduled'">
+                        {{ ev.evidenceType }}
+                      </span>
+                      <span class="evidence-size">{{ formatFileSize(ev.fileSizeBytes) }}</span>
+                    </div>
+                    <div class="evidence-desc" *ngIf="ev.description">{{ ev.description }}</div>
+                    <div class="evidence-footer">
+                      <span class="evidence-date">{{ ev.uploadedAt | date:'dd/MM/yyyy HH:mm' }}</span>
+                      <span class="evidence-by">por {{ ev.uploadedBy }}</span>
+                    </div>
+                    <div class="evidence-actions">
+                      <a [href]="ev.fileUrl" target="_blank" class="btn-action btn-view-ev" title="Abrir en nueva pestaña">⬡ Ver</a>
+                      <button class="btn-action btn-cancel-apt"
+                              (click)="deleteEvidence(ev.id)"
+                              [disabled]="deletingEvidenceId === ev.id"
+                              title="Eliminar evidencia">✕</button>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            </ng-container>
+
+          </ng-container>
+
+          <!-- Lightbox para imágenes -->
+          <div class="lightbox-overlay" *ngIf="lightboxUrl" (click)="closeLightbox()">
+            <div class="lightbox-box" (click)="$event.stopPropagation()">
+              <button class="lightbox-close" (click)="closeLightbox()">✕</button>
+              <img [src]="lightboxUrl" class="lightbox-img" />
+            </div>
+          </div>
 
         </ng-container>
       </ng-container>

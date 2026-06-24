@@ -1,0 +1,61 @@
+<!-- ─── Botón flotante ─── -->
+<div class="turbo-bot-fab" (click)="toggleChat()" [class.open]="isOpen" title="Turbo Bot">
+  <span class="fab-icon" *ngIf="!isOpen">🤖</span>
+  <span class="fab-icon" *ngIf="isOpen">✕</span>
+  <span class="fab-badge" *ngIf="!isOpen && messages.length > 1">{{ messages.length - 1 }}</span>
+</div>
+
+<!-- ─── Panel del chat ─── -->
+<div class="turbo-bot-panel" [class.visible]="isOpen">
+
+  <!-- Header -->
+  <div class="bot-header">
+    <div class="bot-avatar">🤖</div>
+    <div class="bot-info">
+      <span class="bot-name">Turbo Bot</span>
+      <span class="bot-role">{{ rolLabel }}</span>
+    </div>
+    <button class="btn-clear" (click)="clearChat()" title="Limpiar chat">🗑️</button>
+  </div>
+
+  <!-- Mensajes -->
+  <div class="bot-messages" #messagesContainer>
+    <div
+      *ngFor="let msg of messages"
+      class="message"
+      [class.user-msg]="msg.role === 'user'"
+      [class.bot-msg]="msg.role === 'bot'"
+    >
+      <div class="bubble">{{ msg.text }}</div>
+      <span class="msg-time">{{ msg.timestamp | date:'HH:mm' }}</span>
+    </div>
+
+    <!-- Indicador de carga -->
+    <div class="message bot-msg" *ngIf="isLoading">
+      <div class="bubble typing-indicator">
+        <span></span><span></span><span></span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Input -->
+  <div class="bot-input-area">
+    <textarea
+      [(ngModel)]="userInput"
+      (keydown)="onKeyDown($event)"
+      placeholder="Escribe tu consulta..."
+      rows="1"
+      [disabled]="isLoading"
+      maxlength="1000"
+    ></textarea>
+    <button
+      class="btn-send"
+      (click)="sendMessage()"
+      [disabled]="!userInput.trim() || isLoading"
+      title="Enviar"
+    >
+      ➤
+    </button>
+  </div>
+
+</div>

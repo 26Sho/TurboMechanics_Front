@@ -1,5 +1,7 @@
 import { Component, OnInit, signal } from '@angular/core';
-import { OrdersService } from '../service/orders.service';
+import { HttpClient } from '@angular/common/http';
+import { AdminService } from '../service/admin.service';
+import { forkJoin } from 'rxjs';
 
 @Component({
   selector: 'app-dashboard',
@@ -8,57 +10,105 @@ import { OrdersService } from '../service/orders.service';
 })
 export class DashboardComponent implements OnInit {
   Math = Math;
-  
-  // Usamos signals para que el dashboard sea reactivo
-  orders = signal<any[]>([]);
-  
-  stats: any[] = [];
-  alerts: any[] = [];
-  topServices: any[] = [];
 
-  constructor(private _ordersService: OrdersService) {}
+  orders = signal<any[]>([]);
+
+  totalClientes    = 0;
+  totalOrdenes     = 0;
+  totalMecanicos   = 0;
+  stockCritico: any[] = [];
+  loadingStats     = true;
+
+  stats: any[] = [];
+
+  private apiUrl = 'http://localhost:9090';
+
+  constructor(
+    private _adminService: AdminService,
+    private http: HttpClient
+  ) {}
 
   ngOnInit(): void {
     this.cargarDatosDashboard();
   }
 
-  cargarDatosDashboard() {
-    // 1. Cargar órdenes reales desde la base de datos
-    this._ordersService.getOrders().subscribe({
-      next: (data) => {
-        // Tomamos solo las últimas 5 para el dashboard
-        this.orders.set(data.slice(0, 5));
+  cargarDatosDashboard(): void {
+    forkJoin({
+      clientes:     this.http.get<any[]>(`${this.apiUrl}/admin/users`),
+      ordenes:      this.http.get<any[]>(`${this.apiUrl}/orders`),
+      mecanicos:    this.http.get<any[]>(`${this.apiUrl}/mecanicos`),
+      stockCritico: this.http.get<any[]>(`${this.apiUrl}/admin/inventario/reportes/stock-critico`)
+    }).subscribe({
+      next: ({ clientes, ordenes, mecanicos, stockCritico }) => {
+        this.totalClientes  = clientes.length;
+        this.totalOrdenes   = ordenes.length;
+        this.totalMecanicos = mecanicos.filter((m: any) => m.laborStatus === 'ACTIVO').length;
+        this.stockCritico   = stockCritico;
+        this.orders.set(ordenes.slice(-5).reverse());
+        this.loadingStats   = false;
+        this.construirStats();
       },
-      error: (err) => console.error('Error en Dashboard:', err)
+      error: (err) => {
+        console.error('Error cargando dashboard:', err);
+        this.loadingStats = false;
+      }
     });
+  }
 
-    // 2. Datos estáticos de soporte (puedes crear un DashboardService después)
+  construirStats(): void {
     this.stats = [
-      { label: 'Ingresos del Mes', value: '$14.820.000', sub: 'vs mes anterior', change: 12.4, accent: '#F45D01', icon: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>` },
-      { label: 'Órdenes Activas', value: '23', sub: 'en proceso hoy', change: 5.2, accent: '#FFD60A', icon: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>` },
-      { label: 'Clientes Nuevos', value: '48', sub: 'este mes', change: 8.1, accent: '#2ECC71', icon: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>` },
-      { label: 'Satisfacción', value: '96%', sub: 'promedio reseñas', change: -1.3, accent: '#FF8C00', icon: `<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>` },
-    ];
-
-    this.alerts = [
-      { title: 'Stock bajo: Filtros de aire', desc: 'Quedan 4 unidades', icon: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>` },
-      { title: 'Orden vencida', desc: 'Llevan 3 días sin retirar', icon: `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/></svg>` }
-    ];
-
-    this.topServices = [
-      { name: 'Cambio de aceite y filtros', count: 87, pct: 100, color: '#F45D01' },
-      { name: 'Alineación y balanceo', count: 64, pct: 74, color: '#FF8C00' },
-      { name: 'Mantenimiento preventivo', count: 58, pct: 67, color: '#FFD60A' }
+      {
+        label: 'Clientes',
+        value: this.totalClientes,
+        sub: 'registrados',
+        accent: '#F45D01',
+        icon: 'fas fa-users'
+      },
+      {
+        label: 'Órdenes de Trabajo',
+        value: this.totalOrdenes,
+        sub: 'en total',
+        accent: '#FFD60A',
+        icon: 'fas fa-tools'
+      },
+      {
+        label: 'Stock Crítico',
+        value: this.stockCritico.length,
+        sub: this.stockCritico.length > 0 ? 'repuestos en alerta' : 'todo en orden',
+        accent: this.stockCritico.length > 0 ? '#DC2626' : '#22C55E',
+        icon: 'fas fa-boxes'
+      },
+      {
+        label: 'Mecánicos',
+        value: this.totalMecanicos,
+        sub: 'activos',
+        accent: '#22C55E',
+        icon: 'fas fa-user-cog'
+      },
     ];
   }
 
-  statusClass(status: string) {
+  stateLabel(status: string): string {
     const map: Record<string, string> = {
-      'En proceso': 'badge--accent',
-      'Pendiente':  'badge--warning',
-      'Listo':      'badge--success',
-      'Entregado':  'badge--neutral',
+      RECIBIDO: 'Recibido',
+      EN_DIAGNOSTICO: 'En diagnóstico',
+      EN_REPARACION: 'En reparación',
+      LISTO: 'Listo',
+      ENTREGADO: 'Entregado',
+      CANCELADO: 'Cancelado'
     };
-    return map[status] ?? 'badge--neutral';
+    return map[status] ?? status;
+  }
+
+  statusClass(status: string): string {
+    if (!status) return 'badge--neutral';
+    const s = status.toUpperCase().replace(/_/g, '');
+    if (s === 'RECIBIDO')      return 'badge--recibido';
+    if (s === 'ENDIAGNOSTICO') return 'badge--diagnostico';
+    if (s === 'ENREPARACION')  return 'badge--reparacion';
+    if (s === 'LISTO')         return 'badge--listo';
+    if (s === 'ENTREGADO')     return 'badge--entregado';
+    if (s === 'CANCELADO')     return 'badge--cancelado';
+    return 'badge--neutral';
   }
 }

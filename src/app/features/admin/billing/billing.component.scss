@@ -7,6 +7,7 @@ $gray-light:   #CFCFCF;
 $white:        #FFFFFF;
 $red:          #DC2626;
 $green:        #22C55E;
+$mp-blue:      #009ee3;
 $border:       rgba(244, 93, 1, 0.25);
 
 .bill-wrapper {
@@ -82,6 +83,8 @@ $border:       rgba(244, 93, 1, 0.25);
   border: 1px solid $border;
   border-radius: 12px;
   padding: 24px;
+  @media (max-width: 768px) { padding: 16px; }
+  @media (max-width: 480px) { padding: 12px; }
 
   &--success {
     border-color: rgba($green, 0.4);
@@ -217,7 +220,8 @@ $border:       rgba(244, 93, 1, 0.25);
 }
 
 // ── Table ─────────────────────────────────────────────────────────────────────
-.bill-table-wrap { overflow-x: auto; }
+.bill-table-wrap { overflow-x: auto;
+  -webkit-overflow-scrolling: touch; }
 
 .bill-table {
   width: 100%;
@@ -255,9 +259,10 @@ $border:       rgba(244, 93, 1, 0.25);
   &:hover { opacity: 0.8; transform: scale(1.08); }
   &:disabled { opacity: 0.4; cursor: not-allowed; transform: none; }
 
-  &.btn-download { background: rgba($orange, 0.12); color: $orange; }
-  &.btn-send     { background: rgba(59,130,246,0.12); color: #60A5FA; }
-  &.btn-assign   { background: rgba($green, 0.12); color: $green; }
+  &.btn-download { background: rgba($orange, 0.12);   color: $orange;  }
+  &.btn-send     { background: rgba(59,130,246,0.12); color: #60A5FA;  }
+  &.btn-assign   { background: rgba($green, 0.12);    color: $green;   }
+  &.btn-mp-sm    { background: rgba($mp-blue, 0.12);  color: $mp-blue; }
 }
 
 .spinner-xs {
@@ -299,6 +304,14 @@ $border:       rgba(244, 93, 1, 0.25);
   &:hover:not(:disabled) { background: rgba($orange, 0.08); }
 }
 
+.btn-mp {
+  background: $mp-blue;
+  color: $white;
+  border: none;
+  &:hover:not(:disabled) { background: darken($mp-blue, 10%); transform: translateY(-1px); }
+  &:disabled { opacity: 0.45; cursor: not-allowed; }
+}
+
 // ── Modal ─────────────────────────────────────────────────────────────────────
 .modal-overlay {
   position: fixed; inset: 0;
@@ -318,6 +331,8 @@ $border:       rgba(244, 93, 1, 0.25);
   width: 100%; max-width: 480px;
   max-height: 90vh; overflow-y: auto;
   animation: slideUp 0.25s ease;
+
+  &--wide { max-width: 560px; }
 }
 
 @keyframes slideUp {
@@ -331,9 +346,7 @@ $border:       rgba(244, 93, 1, 0.25);
   border-bottom: 1px solid rgba($white, 0.06);
 }
 
-.modal-icon {
-  font-size: 2rem; margin-bottom: 8px; display: block;
-}
+.modal-icon  { font-size: 2rem; margin-bottom: 8px; display: block; }
 
 .modal-title {
   font-family: 'Rajdhani', sans-serif;
@@ -382,6 +395,39 @@ $border:       rgba(244, 93, 1, 0.25);
 
 .canal-icon  { font-size: 1.8rem; }
 .canal-label { font-size: 0.82rem; color: $gray-light; text-align: center; }
+
+// ── Pay method grid (Mercado Pago) ────────────────────────────────────────────
+.pay-methods-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+  margin-top: 4px;
+
+  @media (max-width: 480px) { grid-template-columns: repeat(2, 1fr); }
+}
+
+.pay-method-option {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 8px;
+  border-radius: 8px;
+  border: 1px solid rgba($white, 0.08);
+  background: $gray-dark;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &.selected {
+    border-color: $mp-blue;
+    background: rgba($mp-blue, 0.1);
+  }
+
+  &:hover { border-color: rgba($mp-blue, 0.4); }
+}
+
+.pay-method-icon  { font-size: 1.5rem; }
+.pay-method-label { font-size: 0.75rem; color: $gray-light; text-align: center; }
 
 // ── Spinner ───────────────────────────────────────────────────────────────────
 .spinner-sm {

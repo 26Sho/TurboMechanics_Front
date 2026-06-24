@@ -8,15 +8,16 @@ import { AdminService, UserRequest, UserResponse, WorkOrderResponse } from '../s
   styleUrls: ['./clients.component.scss']
 })
 export class ClientsComponent implements OnInit {
-statusClass(arg0: string): string|string[]|Set<string>|{ [klass: string]: any; }|null|undefined {
-throw new Error('Method not implemented.');
-}
-verDetalles(_t23: UserResponse) {
-throw new Error('Method not implemented.');
-}
-nuevoCliente() {
-throw new Error('Method not implemented.');
-}
+
+  statusClass(arg0: string): string|string[]|Set<string>|{ [klass: string]: any; }|null|undefined {
+    throw new Error('Method not implemented.');
+  }
+  verDetalles(_t23: UserResponse) {
+    throw new Error('Method not implemented.');
+  }
+  nuevoCliente() {
+    throw new Error('Method not implemented.');
+  }
 
   search = '';
   clients: UserResponse[] = [];
@@ -32,6 +33,17 @@ throw new Error('Method not implemented.');
   showEdit = false;
   editForm: UserRequest = { username: '', identification: 0, phone: '', email: '' };
   savingEdit = false;
+
+  private emailPattern = /^[\w.+-]+@[\w-]+\.[a-zA-Z]{2,}$/;
+
+  get isEditEmailValid(): boolean {
+    return this.emailPattern.test((this.editForm.email || '').trim());
+  }
+
+  // Modal eliminar
+  showDeleteModal = false;
+  clientToDelete: UserResponse | null = null;
+  deleting = false;
 
   constructor(
     private adminService: AdminService,
@@ -82,6 +94,10 @@ throw new Error('Method not implemented.');
   }
 
   guardarEdicion(): void {
+    if (!this.isEditEmailValid) {
+      this.toast.error('El correo no tiene un formato válido (ej: nombre@dominio.com)');
+      return;
+    }
     this.savingEdit = true;
     this.adminService.updateClient(this.editForm.identification, this.editForm).subscribe({
       next: (updated) => {
@@ -97,18 +113,35 @@ throw new Error('Method not implemented.');
 
   eliminarCliente(client: UserResponse, event: Event): void {
     event.stopPropagation();
-    if (!confirm(`¿Eliminar a ${client.username}? Esta acción no se puede deshacer.`)) return;
-    this.adminService.deleteClient(client.identification).subscribe({
+    this.clientToDelete = client;
+    this.showDeleteModal = true;
+  }
+
+  confirmarEliminar(): void {
+    if (!this.clientToDelete) return;
+    this.deleting = true;
+    this.adminService.deleteClient(this.clientToDelete.identification).subscribe({
       next: () => {
-        this.clients = this.clients.filter(c => c.identification !== client.identification);
+        this.clients = this.clients.filter(c => c.identification !== this.clientToDelete!.identification);
         this.toast.success('Cliente eliminado correctamente');
+        this.showDeleteModal = false;
+        this.clientToDelete = null;
+        this.deleting = false;
       },
-      error: () => this.toast.error('Error al eliminar el cliente')
+      error: () => {
+        this.toast.error('Error al eliminar el cliente');
+        this.deleting = false;
+      }
     });
   }
 
+  cancelarEliminar(): void {
+    this.showDeleteModal = false;
+    this.clientToDelete = null;
+  }
+
   get esAdmin(): boolean {
-    const token = sessionStorage.getItem('token');  // ← cambiar por sessionStorage
+    const token = sessionStorage.getItem('token');
     if (!token) return false;
     try {
       const payload = JSON.parse(atob(token.split('.')[1]));
@@ -121,5 +154,6 @@ throw new Error('Method not implemented.');
   cerrarModales(): void {
     this.showHistory = false;
     this.showEdit = false;
+    this.showDeleteModal = false;
   }
 }

@@ -6,7 +6,7 @@ export type StateOrder =
   | 'RECIBIDO' | 'EN_DIAGNOSTICO' | 'EN_REPARACION'
   | 'LISTO' | 'ENTREGADO' | 'CANCELADO';
 
-export type NotificationChannel = 'Email' | 'Whastapp' | 'Both';
+export type NotificationChannel = 'Email' | 'Whatsapp' | 'Both';
 
 export interface MaintenanceStatusResponse {
   workOrderId:          number;

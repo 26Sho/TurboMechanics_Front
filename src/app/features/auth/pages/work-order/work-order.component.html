@@ -510,7 +510,7 @@
         (click)="openAsignar(detailOrder)">🔁 Reasignar mecánico</button>
       <button class="btn-warning" *ngIf="detailOrder && canEdit(detailOrder)" (click)="openEdit(detailOrder)">✏️
         Actualizar información</button>
-      <button class="btn-danger" *ngIf="detailOrder && isAdmin() && canEdit(detailOrder)"
+      <button class="btn-danger" *ngIf="detailOrder && (isAdmin() || isMechanic()) && canEdit(detailOrder)"
         (click)="openCancel(detailOrder)">✕ Cancelar orden</button>
     </div>
   </div>

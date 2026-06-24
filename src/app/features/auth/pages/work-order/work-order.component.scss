@@ -155,7 +155,10 @@ $muted:   #888888;   // color de texto secundario/apagado (labels, hints)
 // ── Grid ──────────────────────────────────────────────────────────────────────
 // Sistema de grilla para organizar campos del formulario en columnas
 .wo-grid   { display: grid; grid-template-columns: 1fr 1fr;          gap: 12px; }  // 2 columnas
-.wo-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr);   gap: 12px; }  // 3 columnas
+.wo-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr);
+  @media (max-width: 768px) { grid-template-columns: repeat(2, 1fr);
+  @media (max-width: 480px) { grid-template-columns: 1fr; } }
+  @media (max-width: 480px) { grid-template-columns: 1fr; }   gap: 12px; }  // 3 columnas
 .wo-full   { grid-column: 1 / -1; }  // campo que ocupa todo el ancho de la grilla
 
 // ── Labels ────────────────────────────────────────────────────────────────────
@@ -339,6 +342,72 @@ $muted:   #888888;   // color de texto secundario/apagado (labels, hints)
   &:hover { background: rgba(249, 115, 22, 0.08); }
 }
 
+// ── Autocomplete ───────────────────────────────────────────────────────────────
+.wo-dropdown-wrap {
+  position: relative;
+  flex: 1;
+
+  .wo-search-input { width: 100%; }
+}
+
+.wo-dropdown-spinner {
+  position: absolute;
+  right: 32px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 14px;
+  pointer-events: none;
+}
+
+// ── Search criteria cards ──────────────────────────────────────────────────────
+.wo-search-criteria {
+  margin-bottom: 1rem;
+
+  &__label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: $muted;
+    margin-bottom: 8px;
+  }
+}
+
+.wo-criteria-grid {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.wo-criteria-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 8px;
+  border: 1.5px solid rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.04);
+  color: $muted;
+  cursor: pointer;
+  font-size: 13px;
+  transition: all 0.18s ease;
+
+  .wo-criteria-icon { font-size: 15px; }
+  .wo-criteria-text { font-weight: 500; white-space: nowrap; }
+
+  &:hover {
+    border-color: rgba($orange, 0.5);
+    background: rgba($orange, 0.08);
+    color: #fff;
+  }
+
+  &--active {
+    border-color: $orange;
+    background: rgba($orange, 0.15);
+    color: $orange;
+    font-weight: 600;
+  }
+}
+
 // ── Search row ────────────────────────────────────────────────────────────────
 // Fila de búsqueda: select tipo + input valor + botón Buscar
 .wo-search-row {
@@ -347,7 +416,6 @@ $muted:   #888888;   // color de texto secundario/apagado (labels, hints)
   margin-bottom: 1rem;
   align-items: center;
 
-  .wo-select       { flex: 0 0 160px; }   // select fijo de 160px
   .wo-search-input { flex: 1; }            // input ocupa el resto del espacio
   .btn-primary     { flex-shrink: 0; padding: 10px 20px; font-size: 13px; }  // botón no se encoge
 }
@@ -368,7 +436,8 @@ $muted:   #888888;   // color de texto secundario/apagado (labels, hints)
 // ── Table ─────────────────────────────────────────────────────────────────────
 // Tabla de órdenes de trabajo
 .wo-table-wrap {
-  overflow-x: auto;                  // scroll horizontal si la tabla no cabe
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;                  // scroll horizontal si la tabla no cabe
 
   // Oculta la barra de scroll horizontal (era la barra naranja de abajo)
   &::-webkit-scrollbar { height: 0; display: none; }

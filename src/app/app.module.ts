@@ -1,11 +1,12 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
-import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 import { provideHttpClient, withInterceptors } from '@angular/common/http';
 
 import { SatisfactionSurveyComponent } from './components/satisfaction-survey/satisfaction-survey.component';
 import { AppComponent } from './app.component';
-import { NavbarComponent } from './components/navbar/navbar.component';
 import { HeroComponent } from './components/hero/hero.component';
 import { AboutComponent } from './components/about/about.component';
 import { ServicesComponent } from './components/services/services.component';
@@ -16,14 +17,18 @@ import { AppRoutingModule } from './app-routing.module';
 import { AuthModule } from './features/auth/auth.module';
 import { CoreModule } from './core/core.module';
 import { HomeComponent } from './components/home/home.component';
-import { ToastComponent } from './shared/components/toast/toast.component';
 import { AdminModule } from './features/admin/admin.module';
 import { authInterceptor } from './core/interceptors/auth.interceptor';
 import { SessionExpiredComponent } from './shared/components/sesion_expired/session.expired.component';
+import { EstimateResponseComponent } from './features/auth/pages/estimate-response/estimate-response.component';
+import { TurboBotComponent } from './shared/components/turbo-bot/turbo-bot.component';
+import { TiendaComponent } from './components/tienda/tienda.component';
+import { SharedModule } from './shared/shared.module';
+import { NavbarModule } from './components/navbar/navbar.module';
+
 @NgModule({
   declarations: [
     AppComponent,
-    NavbarComponent,
     HeroComponent,
     AboutComponent,
     ServicesComponent,
@@ -31,17 +36,24 @@ import { SessionExpiredComponent } from './shared/components/sesion_expired/sess
     ContactComponent,
     FooterComponent,
     HomeComponent,
-    ToastComponent,
     SatisfactionSurveyComponent,
-    SessionExpiredComponent          // ← nuevo
+    SessionExpiredComponent,
+    EstimateResponseComponent,
+    TurboBotComponent,
+    TiendaComponent
   ],
   imports: [
     BrowserModule,
+    CommonModule,
     FormsModule,
+    ReactiveFormsModule,
+    RouterModule,
     AppRoutingModule,
     AuthModule,
     CoreModule,
-    AdminModule
+    AdminModule,
+    SharedModule,
+    NavbarModule
   ],
   providers: [
     provideHttpClient(withInterceptors([authInterceptor]))

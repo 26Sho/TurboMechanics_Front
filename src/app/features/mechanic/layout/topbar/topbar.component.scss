@@ -1,0 +1,251 @@
+$orange:  #F45D01;
+$dark:    #0D0D0D;
+$card:    #1A1A1A;
+$border:  rgba(244, 93, 1, 0.25);
+$text:    #FFFFFF;
+$muted:   #6E6E6E;
+
+$sidebar-collapsed: 64px;
+$sidebar-width:     240px;
+
+.topbar {
+  position: fixed;
+  top: 0;
+  right: 0;
+  left: $sidebar-collapsed;
+
+  @media (max-width: 768px) {
+    left: 0 !important;
+    padding: 0 16px;
+  }
+  height: 60px;
+  background: rgba($card, 0.95);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid $border;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 24px;
+  z-index: 90;
+  transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+  &.expanded { left: $sidebar-width; }
+}
+
+.topbar__left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.topbar__right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.btn-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: rgba($text, 0.05);
+  border: 1px solid $border;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: $muted;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    background: rgba($orange, 0.08);
+    border-color: rgba($orange, 0.3);
+    color: $orange;
+  }
+}
+
+.topbar-home-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 7px 14px;
+  border-radius: 8px;
+  background: rgba($orange, 0.1);
+  border: 1px solid rgba($orange, 0.25);
+  color: $orange;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    background: rgba($orange, 0.2);
+    border-color: $orange;
+    transform: translateY(-1px);
+  }
+}
+
+// ── Agregar al final de topbar.component.scss (admin y mechanic) ──
+
+.user-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  padding: 5px 10px 5px 5px;
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid #2A2A2A;
+  cursor: pointer;
+  transition: border-color 0.2s, background 0.2s;
+  user-select: none;
+  position: relative;
+
+  &:hover, &.open {
+    border-color: rgba(244, 93, 1, 0.4);
+    background: rgba(244, 93, 1, 0.06);
+  }
+}
+
+.avatar-circle {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: #F45D01;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  font-weight: 700;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.chip-info {
+  @media (max-width: 480px) { display: none; }
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.chip-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: #FFFFFF;
+  line-height: 1;
+}
+
+.chip-status {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+  color: #2ECC71;
+  line-height: 1;
+}
+
+.status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #2ECC71;
+  animation: statusPulse 1.6s ease-in-out infinite;
+
+  @keyframes statusPulse {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0.3; }
+  }
+}
+
+.chevron {
+  color: #6E6E6E;
+  transition: transform 0.2s;
+  flex-shrink: 0;
+
+  &.rotated { transform: rotate(180deg); }
+}
+
+.user-dropdown {
+  display: none;
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  width: 220px;
+  background: #1A1A1A;
+  border: 1px solid #2A2A2A;
+  border-radius: 10px;
+  overflow: hidden;
+  z-index: 200;
+
+  &.open { display: block; }
+}
+
+.dropdown-header {
+  padding: 14px 16px;
+  border-bottom: 1px solid #2A2A2A;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.dropdown-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #F45D01;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  font-weight: 700;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+.dropdown-name {
+  font-size: 13px;
+  font-weight: 700;
+  color: #FFFFFF;
+}
+
+.dropdown-role {
+  font-size: 11px;
+  color: #6E6E6E;
+  margin-top: 2px;
+}
+
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 16px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #CCCCCC;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+  font-family: 'Rajdhani', sans-serif;
+
+  svg { color: #6E6E6E; transition: color 0.15s; flex-shrink: 0; }
+
+  &:hover {
+    background: rgba(244, 93, 1, 0.08);
+    color: #F45D01;
+    svg { color: #F45D01; }
+  }
+
+  &.danger:hover {
+    background: rgba(231, 76, 60, 0.08);
+    color: #E74C3C;
+    svg { color: #E74C3C; }
+  }
+}
+
+.dropdown-divider {
+  height: 1px;
+  background: #2A2A2A;
+  margin: 4px 0;
+}

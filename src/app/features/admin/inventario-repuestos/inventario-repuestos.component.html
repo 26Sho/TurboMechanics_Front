@@ -129,6 +129,30 @@
           <input type="number" formControlName="stockMin" min="0" />
         </div>
 
+        <!-- Imagen del repuesto -->
+        <div class="inv-form-group inv-form-group--full">
+          <label>Imagen del repuesto</label>
+          <div class="inv-dropzone" [class.has-preview]="imagenPreview" (click)="fileInput.click()">
+            <input type="file" accept="image/*" class="inv-dropzone__input"
+                   (change)="onImageSelected($event)" #fileInput />
+
+            <ng-container *ngIf="!imagenPreview">
+              <i class="fas fa-image inv-dropzone__icon"></i>
+              <span>Haz clic para seleccionar una imagen</span>
+              <small>Formatos: JPG, PNG, WEBP. Máx 5MB</small>
+            </ng-container>
+
+            <ng-container *ngIf="imagenPreview">
+              <img [src]="imagenPreview" alt="Vista previa" class="inv-dropzone__img" />
+            </ng-container>
+          </div>
+
+          <button type="button" class="inv-dropzone__remove" *ngIf="imagenPreview"
+                  (click)="quitarImagen(fileInput)">
+            <i class="fas fa-trash"></i> Quitar archivo
+          </button>
+        </div>
+
       </div>
       <div class="inv-modal__footer">
         <button type="button" class="inv-btn inv-btn--ghost" (click)="cerrarModal()">Cancelar</button>
@@ -234,16 +258,32 @@
 
 <!-- Modal Eliminar -->
 <div class="inv-modal" [class.open]="modalEliminar">
-  <div class="inv-modal__overlay" (click)="modalEliminar = false"></div>
+  <div class="inv-modal__overlay" (click)="cancelarEliminar()"></div>
   <div class="inv-modal__box inv-modal__box--sm">
     <div class="inv-modal__header inv-modal__header--danger">
       <h2><i class="fas fa-exclamation-triangle"></i> Confirmar eliminación</h2>
     </div>
     <div class="inv-modal__body">
+      <p *ngIf="verificandoHistorial" class="inv-modal__checking">
+        <i class="fas fa-spinner fa-spin"></i> Verificando historial del repuesto...
+      </p>
+
+      <div *ngIf="!verificandoHistorial && tieneHistorial" class="inv-modal__alert inv-modal__alert--warning">
+        <i class="fas fa-exclamation-circle"></i>
+        <span>
+          Este repuesto ya tiene historial registrado:
+          <strong *ngIf="historialEliminar?.tieneVentas">{{ historialEliminar?.cantidadVentas }} venta(s)</strong>
+          <strong *ngIf="historialEliminar?.tieneVentas && historialEliminar?.tieneGarantias"> y </strong>
+          <strong *ngIf="historialEliminar?.tieneGarantias">{{ historialEliminar?.cantidadGarantias }} garantía(s)</strong>.
+          Esos registros se conservarán, pero quedarán sin el repuesto vinculado.
+        </span>
+      </div>
+
       <p>¿Deseas eliminar este repuesto? Esta acción no se puede deshacer.</p>
+      <p *ngIf="!verificandoHistorial && tieneHistorial"><strong>¿Estás seguro que deseas eliminarlo de todas formas?</strong></p>
     </div>
     <div class="inv-modal__footer">
-      <button class="inv-btn inv-btn--ghost" (click)="modalEliminar = false">Cancelar</button>
+      <button class="inv-btn inv-btn--ghost" (click)="cancelarEliminar()">Cancelar</button>
       <button class="inv-btn inv-btn--danger" (click)="eliminar()"><i class="fas fa-trash"></i> Eliminar</button>
     </div>
   </div>

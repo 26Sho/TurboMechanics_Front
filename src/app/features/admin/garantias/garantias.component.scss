@@ -79,6 +79,8 @@ $border-dim:  rgba(255, 255, 255, 0.07);
   border: 1px solid $border;
   border-radius: 12px;
   padding: 24px;
+  @media (max-width: 768px) { padding: 16px; }
+  @media (max-width: 480px) { padding: 12px; }
 }
 
 .card-toolbar {
@@ -164,6 +166,88 @@ textarea.form-input { resize: vertical; }
 .error-msg { font-size: 0.74rem; color: $red; }
 .hint      { font-size: 0.76rem; color: $gray-mid; margin: -8px 0 12px; }
 
+// ─── Selección múltiple de servicios / repuestos al registrar garantía ───
+// Dropdown estilo "select múltiple": botón que despliega un panel con
+// checkboxes debajo, igual a un combobox nativo pero con casillas.
+
+.ms-dropdown {
+  position: relative;
+
+  &__trigger {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    background: rgba($black, 0.5);
+    border: 1px solid rgba($gray-mid, 0.25);
+    border-radius: 6px;
+    padding: 10px 14px;
+    color: $white;
+    font-size: 0.88rem;
+    font-family: inherit;
+    cursor: pointer;
+    transition: border-color 0.2s;
+
+    &:hover { border-color: rgba($orange, 0.4); }
+
+    i {
+      font-size: 0.7rem;
+      color: $gray-mid;
+      transition: transform 0.2s;
+      flex-shrink: 0;
+
+      &.is-open { transform: rotate(180deg); }
+    }
+  }
+
+  &__placeholder { color: rgba($gray-mid, 0.7); }
+
+  &__panel {
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    right: 0;
+    z-index: 20;
+    max-height: 180px;
+    overflow-y: auto;
+    background: $gray-dark;
+    border: 1px solid rgba($orange, 0.3);
+    border-radius: 8px;
+    box-shadow: 0 10px 30px rgba($black, 0.6);
+    padding: 6px;
+  }
+
+  &__empty {
+    font-size: 0.8rem;
+    color: $gray-mid;
+    padding: 8px 6px;
+    margin: 0;
+  }
+
+  &__option {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 7px 8px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    color: $gray-light;
+    transition: background 0.15s;
+
+    &:hover { background: rgba($orange, 0.08); }
+
+    input[type="checkbox"] {
+      width: 15px;
+      height: 15px;
+      accent-color: $orange;
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+  }
+}
+
 .form-actions {
   display: flex; justify-content: flex-end; gap: 8px; margin-top: 4px;
 }
@@ -203,7 +287,8 @@ textarea.form-input { resize: vertical; }
 }
 
 // ── Table ─────────────────────────────────────────────────────────────────────
-.table-wrap { overflow-x: auto; border-radius: 8px; }
+.table-wrap { overflow-x: auto;
+  -webkit-overflow-scrolling: touch; border-radius: 8px; }
 
 .gar-table {
   width: 100%; border-collapse: collapse; font-size: 0.84rem;
@@ -321,6 +406,7 @@ textarea.form-input { resize: vertical; }
 .workshop-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  @media (max-width: 480px) { grid-template-columns: 1fr; }
   gap: 16px;
   margin-top: 8px;
 }
@@ -479,6 +565,83 @@ textarea.form-input { resize: vertical; }
 
 .evidence-meta { font-size: 0.75rem; color: $gray-mid; margin: 0; }
 
+// ── Dropzone único para evidencias ──────────────────────────────────────────
+.ev-dropzone {
+  position: relative;
+  width: 100%;
+  min-height: 130px;
+  margin-top: 6px;
+  border-radius: 8px;
+  border: 1.5px dashed $border;
+  background: rgba($white, 0.03);
+  cursor: pointer;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 16px;
+  text-align: center;
+  transition: border-color 0.2s, background 0.2s;
+  box-sizing: border-box;
+
+  &:hover { border-color: $orange; background: rgba($orange, 0.04); }
+
+  &__input { display: none; }
+
+  &__icon { font-size: 1.6rem; opacity: 0.8; }
+
+  span {
+    font-size: 0.85rem;
+    color: $gray-light;
+    font-weight: 600;
+  }
+
+  small {
+    font-size: 0.72rem;
+    color: $gray-mid;
+  }
+
+  &.has-preview {
+    cursor: default;
+    padding: 0;
+  }
+
+  &__img {
+    width: 100%;
+    max-height: 180px;
+    object-fit: contain;
+    background: rgba($black, 0.3);
+    display: block;
+  }
+
+  &__filename {
+    font-size: 0.82rem;
+    color: $gray-light;
+    word-break: break-all;
+    padding: 0 8px;
+  }
+
+  &__remove {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 8px;
+    padding: 7px 12px;
+    border-radius: 6px;
+    border: 1px solid rgba($red, 0.35);
+    background: rgba($red, 0.08);
+    color: lighten($red, 12%);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.2s;
+
+    &:hover { background: rgba($red, 0.18); }
+  }
+}
+
 // ── Modals ────────────────────────────────────────────────────────────────────
 .modal-overlay {
   position: fixed; inset: 0;
@@ -516,6 +679,8 @@ textarea.form-input { resize: vertical; }
 
 .modal-body {
   padding: 24px;
+  @media (max-width: 768px) { padding: 16px; }
+  @media (max-width: 480px) { padding: 12px; }
   overflow-y: auto;
   flex: 1;
 }
@@ -527,3 +692,99 @@ textarea.form-input { resize: vertical; }
 }
 
 .modal-desc { font-size: 0.88rem; color: $gray-light; margin-bottom: 16px; }
+
+// ── Evidence thumbnail en tarjeta ─────────────────────────────────────────────
+.evidence-thumb {
+  width: 100%;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid $border-dim;
+
+  &__img {
+    width: 100%;
+    max-height: 140px;
+    object-fit: cover;
+    display: block;
+    cursor: pointer;
+    transition: opacity 0.2s;
+
+    &:hover { opacity: 0.82; }
+  }
+}
+
+// ── Modal imagen ampliada ─────────────────────────────────────────────────────
+.image-modal-overlay {
+  z-index: 2000;
+  background: rgba(0, 0, 0, 0.92);
+}
+
+.image-modal {
+  position: relative;
+  max-width: 90vw;
+  max-height: 90vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &__close {
+    position: absolute;
+    top: -36px;
+    right: 0;
+    background: none;
+    border: none;
+    color: $white;
+    font-size: 1.4rem;
+    cursor: pointer;
+    line-height: 1;
+    opacity: 0.8;
+    &:hover { opacity: 1; }
+  }
+
+  &__img {
+    max-width: 90vw;
+    max-height: 85vh;
+    object-fit: contain;
+    border-radius: 8px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+  }
+}
+
+// ── Modal de confirmación (eliminar) ──────────────────────────────────────────
+.modal--confirm {
+  .modal-header {
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 28px 24px 16px;
+    gap: 10px;
+    border-bottom: none;
+  }
+
+  .modal-footer {
+    justify-content: center;
+    gap: 12px;
+    padding-top: 8px;
+  }
+}
+
+.confirm-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+
+  &--danger {
+    background: rgba(#DC2626, 0.12);
+    border: 2px solid rgba(#DC2626, 0.4);
+    color: #DC2626;
+  }
+}
+
+.modal-subtitle {
+  font-size: 0.82rem;
+  color: #6E6E6E;
+  margin: 0;
+}

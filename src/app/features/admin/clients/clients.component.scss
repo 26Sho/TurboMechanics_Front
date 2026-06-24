@@ -9,6 +9,8 @@ $border: #3A3A3A;
 .page {
   animation: fadeSlideIn 0.4s ease;
   padding: 24px;
+  @media (max-width: 768px) { padding: 16px; }
+  @media (max-width: 480px) { padding: 12px; }
   background: $bg-dark;
   min-height: 100vh;
 
@@ -89,6 +91,7 @@ $border: #3A3A3A;
 .clients-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  @media (max-width: 480px) { grid-template-columns: 1fr; }
   gap: 16px;
 }
 
@@ -230,6 +233,7 @@ $border: #3A3A3A;
   overflow: hidden;
 
   &--sm { max-width: 420px; }
+  &--lg { max-width: 1100px; max-height: 90vh; }
 }
 
 .modal-header {
@@ -241,11 +245,17 @@ $border: #3A3A3A;
 }
 
 .modal-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
   font-family: 'Barlow Condensed', sans-serif;
   font-size: 1.2rem;
   font-weight: 700;
   color: #fff;
   margin: 0;
+  text-transform: uppercase;
+
+  svg { color: #DC2626; }
 }
 
 .modal-close {
@@ -320,8 +330,19 @@ $border: #3A3A3A;
   &:hover:not(:disabled) { border-color: $text-dim; color: #fff; }
 }
 
+.btn-danger {
+  background: #DC2626;
+  color: #fff;
+  &:hover:not(:disabled) {
+    background: #b91c1c;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 14px rgba(#DC2626, 0.4);
+  }
+}
+
 // ── Tabla historial ───────────────────────────────────────────────────────────
-.table-wrap { overflow-x: auto; }
+.table-wrap { overflow-x: auto;
+  -webkit-overflow-scrolling: touch; }
 
 .turbo-table {
   width: 100%;
@@ -373,6 +394,7 @@ $border: #3A3A3A;
 
 // ── Misc ──────────────────────────────────────────────────────────────────────
 .text-accent  { color: $accent; }
+.text-danger  { color: #f87171; font-size: 0.8rem; margin-top: 4px; display: block; }
 .text-muted   { color: $text-dim; font-size: 0.88rem; }
 .spacer       { flex: 1; }
 .empty-state  { padding: 40px; text-align: center; }

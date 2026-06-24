@@ -1,0 +1,35 @@
+$sidebar-collapsed: 64px;
+$sidebar-width:     240px;
+$topbar-height:     60px;
+
+.layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+.main-content {
+  flex: 1;
+  margin-left: $sidebar-collapsed;
+  margin-top: $topbar-height;
+  padding: 28px;
+  transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  background: #0D0D0D;
+  min-height: calc(100vh - #{$topbar-height});
+  animation: fadeSlideIn 0.4s ease;
+
+  &.expanded { margin-left: $sidebar-width; }
+
+  @media (max-width: 768px) {
+    margin-left: 0 !important;
+    padding: 16px;
+  }
+
+  @media (max-width: 480px) {
+    padding: 12px;
+  }
+}
+
+@keyframes fadeSlideIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}

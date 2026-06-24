@@ -6,8 +6,8 @@ import { Observable } from 'rxjs';
 
 export interface WarrantyRequest {
   workOrderId: number;
-  serviceId?: number | null;
-  sparePartId?: number | null;
+  serviceIds?: number[];
+  sparePartIds?: number[];
   startDate: string;
   endDate: string;
   observations?: string;
@@ -15,6 +15,18 @@ export interface WarrantyRequest {
 
 export interface CloseWarrantyRequest {
   closureReason: string;
+}
+
+export interface ServiceCoverageItem {
+  id: number;
+  name: string;
+}
+
+export interface SparePartCoverageItem {
+  id: number | null;
+  name: string;
+  reference: string;
+  deleted: boolean;
 }
 
 export interface Warranty {
@@ -25,11 +37,9 @@ export interface Warranty {
   clientName: string;
   clientIdentification: string;
   vehiclePlate: string;
-  serviceId: number;
-  serviceName: string;
-  sparePartId: number;
-  sparePartName: string;
-  sparePartReference: string;
+  services: ServiceCoverageItem[];
+  spareParts: SparePartCoverageItem[];
+  coverageSummary: string;
   startDate: string;
   endDate: string;
   status: 'ACTIVA' | 'VENCIDA' | 'CERRADA';
@@ -138,10 +148,32 @@ export interface WorkEvidence {
   evidenceType: 'IMAGEN' | 'VIDEO' | 'DOCUMENTO';
   mimeType: string;
   filePath: string;
+  fileUrl?: string;
   fileSizeBytes: number;
   description: string;
   uploadedBy: string;
   uploadedAt: string;
+}
+
+// ── Nuevas interfaces para dropdowns ────────────────────────────────────────
+
+export interface WorkOrderOption {
+  id: number;
+  numberorder: string;
+  clientname: string;
+  vehicleplate: string;
+}
+
+export interface ServiceOption {
+  id: number;
+  name: string;
+  status?: string;
+}
+
+export interface SparePartOption {
+  id: number;
+  name: string;
+  reference?: string;
 }
 
 // ── Service ─────────────────────────────────────────────────────────────────
@@ -280,5 +312,22 @@ export class GarantiasService {
 
   deleteEvidence(id: number): Observable<{ message: string }> {
     return this.http.delete<{ message: string }>(`${this.BASE}/evidencias/${id}`, { headers: this.headers() });
+  }
+
+  // ── Dropdowns: Órdenes, Servicios, Repuestos ──────────────────────────────
+
+  /** Trae todas las órdenes de trabajo para el dropdown */
+  getWorkOrders(): Observable<WorkOrderOption[]> {
+    return this.http.get<WorkOrderOption[]>(`${this.BASE}/orders`, { headers: this.headers() });
+  }
+
+  /** Trae el catálogo de servicios para el dropdown */
+  getServiceCatalog(): Observable<ServiceOption[]> {
+    return this.http.get<ServiceOption[]>(`${this.BASE}/admin/catalogo`, { headers: this.headers() });
+  }
+
+  /** Trae el inventario de repuestos para el dropdown */
+  getSpareParts(): Observable<SparePartOption[]> {
+    return this.http.get<SparePartOption[]>(`${this.BASE}/admin/inventario`, { headers: this.headers() });
   }
 }

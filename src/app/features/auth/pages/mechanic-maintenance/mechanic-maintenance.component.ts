@@ -9,8 +9,9 @@ import {
 import { ToastService } from '../../../../shared/services/toast.service';
 import { AuthService } from '../../../../core/services/auth.service';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { WorkEvidenceService, WorkEvidenceResponse } from '../../../admin/service/work-evidence.service';
 
-type TabType = 'status' | 'progress' | 'issues';
+type TabType = 'status' | 'progress' | 'issues' | 'evidencias';
 
 export interface WorkOrderOption {
   id:          number;
@@ -55,14 +56,26 @@ export class MechanicMaintenanceComponent implements OnInit {
   savingIssue   = false;
   closingIssueId: number | null = null;
 
+  // ── HU 8.5 Evidencias ─────────────────────────────────────────────────────
+  evidences: WorkEvidenceResponse[] = [];
+  loadingEvidences = false;
+  uploadingEvidence = false;
+  deletingEvidenceId: number | null = null;
+  selectedFile: File | null = null;
+  evidenceDescription = '';
+  evidenceFilterType = '';
+  lightboxUrl: string | null = null;
+  lightboxMime: string | null = null;
+
   private readonly ordersUrl = 'http://localhost:9090/orders';
 
   constructor(
-    private fb:      FormBuilder,
-    private service: MaintenanceTrackingService,
-    private toast:   ToastService,
-    private auth:    AuthService,
-    private http:    HttpClient
+    private fb:              FormBuilder,
+    private service:         MaintenanceTrackingService,
+    private toast:           ToastService,
+    private auth:            AuthService,
+    private http:            HttpClient,
+    private evidenceService: WorkEvidenceService
   ) {}
 
   ngOnInit(): void {
@@ -128,6 +141,7 @@ export class MechanicMaintenanceComponent implements OnInit {
         this.statusSearched = true;
         this.loadProgress();
         this.loadIssues();
+        this.loadEvidences();
       },
       error: () => {
         this.loadingStatus  = false;
@@ -257,5 +271,93 @@ export class MechanicMaintenanceComponent implements OnInit {
         this.closingIssueId = null;
       }
     });
+  }
+
+  // ── HU 8.5 Evidencias ─────────────────────────────────────────────────────
+
+  loadEvidences(): void {
+    if (!this.selectedOrderId) return;
+    this.loadingEvidences = true;
+    this.evidenceService.getEvidences(
+      this.selectedOrderId,
+      this.evidenceFilterType || undefined
+    ).subscribe({
+      next: (list) => { this.evidences = list ?? []; this.loadingEvidences = false; },
+      error: () => { this.loadingEvidences = false; this.toast.error('Error al cargar evidencias'); }
+    });
+  }
+
+  onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    this.selectedFile = input.files?.[0] ?? null;
+  }
+
+  uploadEvidence(): void {
+    if (!this.selectedFile || !this.selectedOrderId) return;
+    this.uploadingEvidence = true;
+    this.evidenceService.uploadEvidence(
+      this.selectedOrderId,
+      this.selectedFile,
+      this.evidenceDescription || undefined
+    ).subscribe({
+      next: (ev) => {
+        this.evidences.unshift(ev);
+        this.toast.success('Evidencia subida correctamente');
+        this.uploadingEvidence = false;
+        this.selectedFile = null;
+        this.evidenceDescription = '';
+        const input = document.getElementById('evidenceFileInput') as HTMLInputElement;
+        if (input) input.value = '';
+      },
+      error: (err) => {
+        this.toast.error(err.error?.message || 'Error al subir la evidencia');
+        this.uploadingEvidence = false;
+      }
+    });
+  }
+
+  deleteEvidence(id: number): void {
+    if (!confirm('¿Eliminar esta evidencia?')) return;
+    this.deletingEvidenceId = id;
+    this.evidenceService.deleteEvidence(id).subscribe({
+      next: () => {
+        this.evidences = this.evidences.filter(e => e.id !== id);
+        this.toast.success('Evidencia eliminada');
+        this.deletingEvidenceId = null;
+      },
+      error: (err) => {
+        this.toast.error(err.error?.message || 'Error al eliminar evidencia');
+        this.deletingEvidenceId = null;
+      }
+    });
+  }
+
+  onFilterChange(): void {
+    this.loadEvidences();
+  }
+
+  openLightbox(ev: WorkEvidenceResponse): void {
+    this.lightboxUrl  = ev.fileUrl;
+    this.lightboxMime = ev.mimeType;
+  }
+
+  closeLightbox(): void {
+    this.lightboxUrl  = null;
+    this.lightboxMime = null;
+  }
+
+  formatFileSize(bytes: number): string {
+    if (!bytes) return '—';
+    if (bytes < 1024) return bytes + ' B';
+    if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
+    return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
+  }
+
+  isImage(ev: WorkEvidenceResponse): boolean {
+    return ev.evidenceType === 'IMAGEN';
+  }
+
+  isVideo(ev: WorkEvidenceResponse): boolean {
+    return ev.evidenceType === 'VIDEO';
   }
 }

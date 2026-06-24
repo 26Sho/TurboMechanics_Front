@@ -183,3 +183,33 @@
   color: #6E6E6E; 
   margin-top: 8px;
 }
+
+// ─── Campo contraseña (registro/edición de mecánico) ──────────
+.input-password {
+  position: relative;
+
+  input { padding-right: 42px; width: 100%; }
+
+  .toggle-eye {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: $gray-mid;
+    display: flex;
+    align-items: center;
+    padding: 0;
+    transition: color 0.2s;
+    &:hover { color: $orange; }
+  }
+}
+
+.mec-hint {
+  display: block;
+  margin-top: 6px;
+  font-size: 0.78rem;
+  color: $gray-mid;
+}

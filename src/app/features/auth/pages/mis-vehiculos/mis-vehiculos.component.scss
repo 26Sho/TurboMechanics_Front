@@ -1,0 +1,407 @@
+$orange:    #F45D01;
+$black:     #0D0D0D;
+$gray-dark: #2B2B2B;
+$gray-card: #1A1A1A;
+$gray-mid:  #6E6E6E;
+$gray-light:#CFCFCF;
+$white:     #FFFFFF;
+$danger:    #DC2626;
+$border:    rgba(244, 93, 1, 0.25);
+$radius:    10px;
+
+.mv-wrapper {
+  min-height: 100vh;
+  background: $black;
+  padding: 92px 24px 64px;
+
+  @media (max-width: 768px) { padding: 80px 16px 48px; }
+  @media (max-width: 480px) { padding: 72px 12px 40px; }
+}
+
+.mv-page {
+  max-width: 1100px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+// ── Back btn ──────────────────────────────────────────────────
+.back-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 8px 14px;
+  border-radius: 8px;
+  background: rgba($orange, 0.08);
+  border: 1px solid $border;
+  color: $orange;
+  font-size: 13px;
+  font-weight: 600;
+  font-family: inherit;
+  text-decoration: none;
+  transition: all 0.2s ease;
+  margin-bottom: 16px;
+  align-self: flex-start;
+
+  svg { flex-shrink: 0; transition: transform 0.2s; }
+
+  &:hover {
+    background: rgba($orange, 0.16);
+    border-color: $orange;
+    transform: translateX(-2px);
+    svg { transform: translateX(-3px); }
+  }
+}
+
+// ── Header ────────────────────────────────────────────────────
+.mv-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid $border;
+}
+
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.header-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 12px;
+  background: rgba($orange, 0.12);
+  border: 1px solid $border;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: $orange;
+  flex-shrink: 0;
+}
+
+.header-title {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 1.7rem;
+  font-weight: 700;
+  color: $white;
+  margin: 0;
+}
+
+.header-sub {
+  font-size: 0.85rem;
+  color: $gray-mid;
+  display: block;
+  margin-top: 2px;
+}
+
+// ── Loading ───────────────────────────────────────────────────
+.mv-loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 80px 0;
+  color: $gray-mid;
+
+  .spinner {
+    width: 36px; height: 36px;
+    border: 3px solid $gray-dark;
+    border-top-color: $orange;
+    border-radius: 50%;
+    animation: spin 0.7s linear infinite;
+  }
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+// ── Empty ─────────────────────────────────────────────────────
+.mv-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+  padding: 80px 0;
+  color: $gray-mid;
+
+  svg { opacity: 0.3; }
+  p { font-size: 0.9rem; margin: 0; }
+}
+
+// ── Grid de tarjetas ──────────────────────────────────────────
+.mv-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  @media (max-width: 480px) { grid-template-columns: 1fr; }
+  gap: 20px;
+}
+
+.mv-card {
+  background: $gray-dark;
+  border: 1px solid $border;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: border-color 0.2s;
+
+  &:hover { border-color: $orange; }
+}
+
+.mv-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 20px;
+  background: rgba($orange, 0.06);
+  border-bottom: 1px solid $border;
+}
+
+.mv-plate {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 18px;
+  font-weight: 800;
+  color: $orange;
+  letter-spacing: 2px;
+}
+
+.mv-card__actions {
+  display: flex;
+  gap: 8px;
+}
+
+.btn-icon-sm {
+  width: 30px;
+  height: 30px;
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border: 1px solid rgba($white, 0.08);
+  background: rgba($white, 0.04);
+  transition: all 0.2s;
+
+  &.btn-edit {
+    color: $gray-mid;
+    &:hover { background: rgba($orange, 0.1); border-color: $border; color: $orange; }
+  }
+
+  &.btn-delete {
+    color: $gray-mid;
+    &:hover { background: rgba($danger, 0.1); border-color: rgba($danger, 0.4); color: $danger; }
+  }
+}
+
+.mv-card__body {
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.mv-info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.mv-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: $gray-mid;
+  flex-shrink: 0;
+}
+
+.mv-value {
+  font-size: 14px;
+  font-weight: 600;
+  color: $gray-light;
+  text-align: right;
+}
+
+// ── Botones ───────────────────────────────────────────────────
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 22px;
+  border-radius: 8px;
+  border: none;
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 0.95rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-transform: uppercase;
+
+  &:disabled { opacity: 0.45; cursor: not-allowed; }
+
+  &-primary {
+    background: linear-gradient(90deg, $danger, $orange);
+    color: $white;
+    &:hover:not(:disabled) { opacity: 0.9; transform: translateY(-1px); }
+  }
+
+  &-ghost {
+    background: transparent;
+    color: $orange;
+    border: 1px solid $border;
+    &:hover:not(:disabled) { background: rgba($orange, 0.08); }
+  }
+
+  &-danger {
+    background: $danger;
+    color: $white;
+    &:hover:not(:disabled) { opacity: 0.9; }
+  }
+}
+
+// ── Modales ───────────────────────────────────────────────────
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.75);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999;
+  padding: 1rem;
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+.modal-card {
+  background: $gray-card;
+  border: 1px solid $border;
+  border-radius: 14px;
+  width: 100%;
+  max-width: 560px;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: slideUp 0.25s ease;
+
+  &--sm { max-width: 400px; }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to   { transform: translateY(0);    opacity: 1; }
+}
+
+.modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 28px;
+  border-bottom: 1px solid rgba($white, 0.06);
+}
+
+.modal-title {
+  font-family: 'Rajdhani', sans-serif;
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: $white;
+  margin: 0;
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: $gray-mid;
+  display: flex;
+  align-items: center;
+  transition: color 0.2s;
+  &:hover { color: $white; }
+}
+
+.modal-body {
+  padding: 20px 28px 0;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.modal-confirm-text {
+  font-size: 0.9rem;
+  color: $gray-mid;
+  margin: 0;
+  line-height: 1.6;
+}
+
+.modal-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  padding: 20px 28px 24px;
+  border-top: 1px solid rgba($white, 0.06);
+  margin-top: 20px;
+}
+
+// ── Formulario ────────────────────────────────────────────────
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  @media (max-width: 500px) { grid-template-columns: 1fr; }
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-label {
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 0.8px;
+  text-transform: uppercase;
+  color: $gray-mid;
+
+  &.required::after { content: ' *'; color: $orange; }
+}
+
+.form-input {
+  background: $black;
+  border: 1px solid rgba($white, 0.08);
+  border-radius: 6px;
+  color: $white;
+  font-size: 14px;
+  padding: 10px 12px;
+  font-family: inherit;
+  outline: none;
+  width: 100%;
+  box-sizing: border-box;
+  transition: border-color 0.2s;
+
+  &::placeholder { color: $gray-mid; }
+  &:focus { border-color: $orange; }
+  &.input-error { border-color: $danger; }
+
+  option { background: $gray-dark; color: $white; }
+}
+
+.field-error {
+  font-size: 11px;
+  color: #F87171;
+  font-weight: 500;
+}
+
+// ── Spinner ───────────────────────────────────────────────────
+.spinner-sm {
+  width: 16px; height: 16px;
+  border: 2px solid rgba($white, 0.3);
+  border-top-color: $white;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+  display: inline-block;
+}
