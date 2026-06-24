@@ -20,12 +20,24 @@
 
         <div class="wo-card">
           <div class="wo-card-title">Datos del cliente</div>
+
+          <!-- Cliente no registrado (error del backend) -->
           <div class="wo-alert wo-alert-warning" *ngIf="clientNotFound">
             <span class="wo-alert-icon">⚠️</span>
-            <div><strong>Cliente no registrado</strong>
-              <p>Este cliente no está en el sistema. Se creará la orden con los datos ingresados manualmente.</p>
+            <div>
+              <strong>Cliente no registrado</strong>
+              <p>No se encontró este cliente en el sistema. Verifica la identificación o ingresa sus datos manualmente.</p>
             </div>
           </div>
+
+          <div class="wo-alert wo-alert-info" *ngIf="clientFirstOrder">
+            <span class="wo-alert-icon">👤</span>
+            <div>
+              <strong>Cliente registrado</strong>
+              <p>El cliente existe en el sistema, pero esta será su primera orden de trabajo.</p>
+            </div>
+          </div>
+
           <div class="wo-grid">
             <div class="form-group">
               <label class="wo-label">Identificación *</label>
@@ -51,12 +63,25 @@
 
         <div class="wo-card">
           <div class="wo-card-title">Datos del vehículo</div>
-          <div class="wo-alert wo-alert-info" *ngIf="vehicleNotFound">
-            <span class="wo-alert-icon">ℹ️</span>
-            <div><strong>Vehículo no registrado</strong>
-              <p>Esta placa no está registrada. Complete los datos del vehículo manualmente.</p>
+
+          <!-- Vehículo no registrado (error del backend) -->
+          <div class="wo-alert wo-alert-warning" *ngIf="vehicleNotFound">
+            <span class="wo-alert-icon">⚠️</span>
+            <div>
+              <strong>Vehículo no registrado</strong>
+              <p>Esta placa no se encontró en el sistema. Verifica la placa o ingresa los datos del vehículo manualmente.</p>
             </div>
           </div>
+
+          <!-- Primera orden del vehículo (respuesta vacía del backend) -->
+          <div class="wo-alert wo-alert-info" *ngIf="vehicleFirstOrder">
+            <span class="wo-alert-icon">🚗</span>
+            <div>
+              <strong>Primera orden de este vehículo</strong>
+              <p>Esta placa no tiene órdenes previas en el sistema. Por favor ingresa los datos del vehículo manualmente.</p>
+            </div>
+          </div>
+
           <div class="wo-grid wo-grid-3">
             <div class="form-group">
               <label class="wo-label">Placa *</label>
@@ -203,19 +228,17 @@
                 </td>
                 <td class="col-sub">{{ o.dateentry | date:'dd/MM/yyyy HH:mm' }}</td>
                 <td class="col-actions" (click)="$event.stopPropagation()">
-                  <!-- Asignar: solo admin y solo si NO tiene mecánico -->
-                  <button class="btn-action btn-assign" *ngIf="isAdmin() && canEdit(o) && !yaAsignado(o)"
+                  <button class="btn-action btn-assign" *ngIf="(isAdmin() || isMechanic()) && canEdit(o) && !yaAsignado(o)"
                     (click)="openAsignar(o, $event)" title="Asignar mecánico">👤</button>
-                  <!-- Reasignar: solo admin y solo si YA tiene mecánico -->
-                  <button class="btn-action btn-assign" *ngIf="isAdmin() && canEdit(o) && yaAsignado(o)"
+                  <button class="btn-action btn-assign" *ngIf="(isAdmin() || isMechanic()) && canEdit(o) && yaAsignado(o)"
                     (click)="openAsignar(o, $event)" title="Reasignar mecánico" style="opacity:0.7">🔁</button>
-                  <!-- Cambiar estado: admin y mecánico -->
                   <button class="btn-action btn-state" *ngIf="canChangeState(o)" (click)="openChangeState(o, $event)"
                     title="Cambiar estado">✓</button>
                   <button class="btn-action btn-edit" *ngIf="canEdit(o)" (click)="openEdit(o, $event)"
                     title="Editar orden">✏️</button>
                   <button class="btn-action btn-cancel" *ngIf="isAdmin() && o.stateorder === 'RECIBIDO'"
-                    (click)="openCancel(o, $event)" title="Cancelar orden">✕</button> <button class="btn-action btn-pdf"
+                    (click)="openCancel(o, $event)" title="Cancelar orden">✕</button>
+                  <button class="btn-action btn-pdf"
                     (click)="descargarComprobante(o, $event)" [disabled]="downloadingId === o.id"
                     title="Descargar comprobante PDF">
                     <span *ngIf="downloadingId !== o.id">📄</span>
@@ -233,25 +256,58 @@
     <ng-container *ngIf="activeTab === 'buscar'">
       <div class="wo-card">
         <div class="wo-card-title">Buscar orden</div>
+        <div class="wo-search-criteria">
+          <p class="wo-search-criteria__label">Buscar por:</p>
+          <div class="wo-criteria-grid">
+            <button type="button" class="wo-criteria-btn"
+              [class.wo-criteria-btn--active]="searchType === 'number'"
+              (click)="searchType = 'number'; onSearchTypeChange()">
+              <span class="wo-criteria-icon">🔢</span>
+              <span class="wo-criteria-text">N° Orden</span>
+            </button>
+            <button type="button" class="wo-criteria-btn"
+              [class.wo-criteria-btn--active]="searchType === 'plate'"
+              (click)="searchType = 'plate'; onSearchTypeChange()">
+              <span class="wo-criteria-icon">🚘</span>
+              <span class="wo-criteria-text">Placa</span>
+            </button>
+            <button type="button" class="wo-criteria-btn"
+              [class.wo-criteria-btn--active]="searchType === 'client'"
+              (click)="searchType = 'client'; onSearchTypeChange()">
+              <span class="wo-criteria-icon">🪪</span>
+              <span class="wo-criteria-text">Identificación</span>
+            </button>
+            <button type="button" class="wo-criteria-btn"
+              [class.wo-criteria-btn--active]="searchType === 'state'"
+              (click)="searchType = 'state'; onSearchTypeChange()">
+              <span class="wo-criteria-icon">📋</span>
+              <span class="wo-criteria-text">Estado</span>
+            </button>
+          </div>
+        </div>
+
         <div class="wo-search-row">
-          <select class="form-style wo-select" [(ngModel)]="searchType" (ngModelChange)="onSearchTypeChange()">
-            <option value="number">Por N° orden</option>
-            <option value="plate">Por placa</option>
-            <option value="client">Por identificación</option>
-            <option value="state">Por estado</option>
-          </select>
-          <ng-container *ngIf="searchType === 'state'; else textSearchInput">
-            <select class="form-style wo-search-input" [(ngModel)]="searchValue">
+          <ng-container *ngIf="searchType === 'state'">
+            <select class="form-style wo-search-input" [(ngModel)]="searchValue" (ngModelChange)="doSearch()">
               <option value="">Selecciona un estado...</option>
               <option *ngFor="let s of stateOrders" [value]="s.value">{{ s.label }}</option>
             </select>
           </ng-container>
-          <ng-template #textSearchInput>
-            <input type="text" class="form-style wo-search-input" placeholder="Ingresa el valor..."
-              [(ngModel)]="searchValue" (keyup.enter)="doSearch()" />
-          </ng-template>
-          <button class="btn-primary" (click)="doSearch()" [disabled]="isLoading">{{ isLoading ? '...' : 'Buscar'
-            }}</button>
+
+          <ng-container *ngIf="searchType !== 'state'">
+            <div class="wo-dropdown-wrap">
+              <select class="form-style wo-search-input"
+                [(ngModel)]="searchValue"
+                [disabled]="loadingSuggestions"
+                (ngModelChange)="doSearch()">
+                <option value="">
+                  {{ loadingSuggestions ? 'Cargando...' : dropdownPlaceholder() }}
+                </option>
+                <option *ngFor="let s of suggestions" [value]="s">{{ s }}</option>
+              </select>
+              <span class="wo-dropdown-spinner" *ngIf="loadingSuggestions">⏳</span>
+            </div>
+          </ng-container>
         </div>
         <div *ngIf="!isLoading && !searchPerformed" class="wo-empty">Selecciona un criterio e ingresa un valor para
           buscar.</div>
@@ -292,16 +348,17 @@
                 </td>
                 <td class="col-sub">{{ o.dateentry | date:'dd/MM/yyyy HH:mm' }}</td>
                 <td class="col-actions" (click)="$event.stopPropagation()">
-                  <button class="btn-action btn-assign" *ngIf="isAdmin() && canEdit(o) && !yaAsignado(o)"
+                  <button class="btn-action btn-assign" *ngIf="(isAdmin() || isMechanic()) && canEdit(o) && !yaAsignado(o)"
                     (click)="openAsignar(o, $event)" title="Asignar mecánico">👤</button>
-                  <button class="btn-action btn-assign" *ngIf="isAdmin() && canEdit(o) && yaAsignado(o)"
+                  <button class="btn-action btn-assign" *ngIf="(isAdmin() || isMechanic()) && canEdit(o) && yaAsignado(o)"
                     (click)="openAsignar(o, $event)" title="Reasignar mecánico" style="opacity:0.7">🔁</button>
                   <button class="btn-action btn-state" *ngIf="canChangeState(o)" (click)="openChangeState(o, $event)"
                     title="Cambiar estado">✓</button>
                   <button class="btn-action btn-edit" *ngIf="canEdit(o)" (click)="openEdit(o, $event)"
                     title="Editar orden">✏️</button>
                   <button class="btn-action btn-cancel" *ngIf="isAdmin() && o.stateorder === 'RECIBIDO'"
-                    (click)="openCancel(o, $event)" title="Cancelar orden">✕</button> <button class="btn-action btn-pdf"
+                    (click)="openCancel(o, $event)" title="Cancelar orden">✕</button>
+                  <button class="btn-action btn-pdf"
                     (click)="descargarComprobante(o, $event)" [disabled]="downloadingId === o.id"
                     title="Descargar comprobante PDF">
                     <span *ngIf="downloadingId !== o.id">📄</span>
@@ -446,10 +503,10 @@
       <button class="btn-state-change" *ngIf="detailOrder && canChangeState(detailOrder)"
         (click)="openChangeState(detailOrder)">✓ Cambiar estado</button>
       <button class="btn-assign-detail"
-        *ngIf="detailOrder && isAdmin() && canEdit(detailOrder) && !yaAsignado(detailOrder)"
+        *ngIf="detailOrder && (isAdmin() || isMechanic()) && canEdit(detailOrder) && !yaAsignado(detailOrder)"
         (click)="openAsignar(detailOrder)">👤 Asignar mecánico</button>
       <button class="btn-assign-detail"
-        *ngIf="detailOrder && isAdmin() && canEdit(detailOrder) && yaAsignado(detailOrder)"
+        *ngIf="detailOrder && (isAdmin() || isMechanic()) && canEdit(detailOrder) && yaAsignado(detailOrder)"
         (click)="openAsignar(detailOrder)">🔁 Reasignar mecánico</button>
       <button class="btn-warning" *ngIf="detailOrder && canEdit(detailOrder)" (click)="openEdit(detailOrder)">✏️
         Actualizar información</button>
