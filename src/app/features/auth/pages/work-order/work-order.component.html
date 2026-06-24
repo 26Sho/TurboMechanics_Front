@@ -228,15 +228,15 @@
                 </td>
                 <td class="col-sub">{{ o.dateentry | date:'dd/MM/yyyy HH:mm' }}</td>
                 <td class="col-actions" (click)="$event.stopPropagation()">
-                  <button class="btn-action btn-assign" *ngIf="isAdmin() && canEdit(o) && !yaAsignado(o)"
+                  <button class="btn-action btn-assign" *ngIf="(isAdmin() || isMechanic()) && canEdit(o) && !yaAsignado(o)"
                     (click)="openAsignar(o, $event)" title="Asignar mecánico">👤</button>
-                  <button class="btn-action btn-assign" *ngIf="isAdmin() && canEdit(o) && yaAsignado(o)"
+                  <button class="btn-action btn-assign" *ngIf="(isAdmin() || isMechanic()) && canEdit(o) && yaAsignado(o)"
                     (click)="openAsignar(o, $event)" title="Reasignar mecánico" style="opacity:0.7">🔁</button>
                   <button class="btn-action btn-state" *ngIf="canChangeState(o)" (click)="openChangeState(o, $event)"
                     title="Cambiar estado">✓</button>
                   <button class="btn-action btn-edit" *ngIf="canEdit(o)" (click)="openEdit(o, $event)"
                     title="Editar orden">✏️</button>
-                  <button class="btn-action btn-cancel" *ngIf="isAdmin() && o.stateorder === 'RECIBIDO'"
+                  <button class="btn-action btn-cancel" *ngIf="(isAdmin() || isMechanic()) && o.stateorder === 'RECIBIDO'"
                     (click)="openCancel(o, $event)" title="Cancelar orden">✕</button>
                   <button class="btn-action btn-pdf"
                     (click)="descargarComprobante(o, $event)" [disabled]="downloadingId === o.id"
@@ -348,15 +348,15 @@
                 </td>
                 <td class="col-sub">{{ o.dateentry | date:'dd/MM/yyyy HH:mm' }}</td>
                 <td class="col-actions" (click)="$event.stopPropagation()">
-                  <button class="btn-action btn-assign" *ngIf="isAdmin() && canEdit(o) && !yaAsignado(o)"
+                  <button class="btn-action btn-assign" *ngIf="(isAdmin() || isMechanic()) && canEdit(o) && !yaAsignado(o)"
                     (click)="openAsignar(o, $event)" title="Asignar mecánico">👤</button>
-                  <button class="btn-action btn-assign" *ngIf="isAdmin() && canEdit(o) && yaAsignado(o)"
+                  <button class="btn-action btn-assign" *ngIf="(isAdmin() || isMechanic()) && canEdit(o) && yaAsignado(o)"
                     (click)="openAsignar(o, $event)" title="Reasignar mecánico" style="opacity:0.7">🔁</button>
                   <button class="btn-action btn-state" *ngIf="canChangeState(o)" (click)="openChangeState(o, $event)"
                     title="Cambiar estado">✓</button>
                   <button class="btn-action btn-edit" *ngIf="canEdit(o)" (click)="openEdit(o, $event)"
                     title="Editar orden">✏️</button>
-                  <button class="btn-action btn-cancel" *ngIf="isAdmin() && o.stateorder === 'RECIBIDO'"
+                  <button class="btn-action btn-cancel" *ngIf="(isAdmin() || isMechanic()) && o.stateorder === 'RECIBIDO'"
                     (click)="openCancel(o, $event)" title="Cancelar orden">✕</button>
                   <button class="btn-action btn-pdf"
                     (click)="descargarComprobante(o, $event)" [disabled]="downloadingId === o.id"
@@ -503,14 +503,14 @@
       <button class="btn-state-change" *ngIf="detailOrder && canChangeState(detailOrder)"
         (click)="openChangeState(detailOrder)">✓ Cambiar estado</button>
       <button class="btn-assign-detail"
-        *ngIf="detailOrder && isAdmin() && canEdit(detailOrder) && !yaAsignado(detailOrder)"
+        *ngIf="detailOrder && (isAdmin() || isMechanic()) && canEdit(detailOrder) && !yaAsignado(detailOrder)"
         (click)="openAsignar(detailOrder)">👤 Asignar mecánico</button>
       <button class="btn-assign-detail"
-        *ngIf="detailOrder && isAdmin() && canEdit(detailOrder) && yaAsignado(detailOrder)"
+        *ngIf="detailOrder && (isAdmin() || isMechanic()) && canEdit(detailOrder) && yaAsignado(detailOrder)"
         (click)="openAsignar(detailOrder)">🔁 Reasignar mecánico</button>
       <button class="btn-warning" *ngIf="detailOrder && canEdit(detailOrder)" (click)="openEdit(detailOrder)">✏️
         Actualizar información</button>
-      <button class="btn-danger" *ngIf="detailOrder && isAdmin() && canEdit(detailOrder)"
+      <button class="btn-danger" *ngIf="detailOrder && (isAdmin() || isMechanic()) && canEdit(detailOrder)"
         (click)="openCancel(detailOrder)">✕ Cancelar orden</button>
     </div>
   </div>
