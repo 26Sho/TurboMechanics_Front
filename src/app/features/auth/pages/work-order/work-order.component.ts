@@ -22,10 +22,12 @@ export class WorkOrderComponent implements OnInit {
   editForm!: FormGroup;
   cancelForm!: FormGroup;
 
-  isLoading       = false;
-  todayStr        = '';
-  clientNotFound  = false;
-  vehicleNotFound = false;
+  isLoading        = false;
+  todayStr         = '';
+  clientNotFound   = false;
+  clientFirstOrder = false;
+  vehicleNotFound   = false;
+  vehicleFirstOrder = false;
 
   levelfuel:      LevelFuel | null = null;
   statescratches: StateCondition   = 'SIN_NOVEDAD';
@@ -226,7 +228,6 @@ export class WorkOrderComponent implements OnInit {
     return order.stateorder !== 'CANCELADO' && order.stateorder !== 'ENTREGADO';
   }
 
-  // ya tiene mecánico asignado — bloquea el botón asignar
   yaAsignado(order: WorkOrderResponse): boolean {
     return !!order.assignedMechanicName;
   }
@@ -237,38 +238,73 @@ export class WorkOrderComponent implements OnInit {
     if (tab === 'buscar') this._loadDropdownOptions();
   }
 
+  // ── Identificación: usa /exists para distinguir nuevo vs no registrado ────
   onIdentificationBlur(): void {
     const id = this.orderForm.get('clientidentification')?.value?.trim();
-    if (!id) { this.clientNotFound = false; return; }
-    this.workOrderService.listByClient(id).subscribe({
-      next: (orders) => {
-        if (orders.length > 0) {
-          this.clientNotFound = false;
-          if (!this.orderForm.get('clientname')?.value)  this.orderForm.patchValue({ clientname:  orders[0].clientname });
-          if (!this.orderForm.get('clientphone')?.value) this.orderForm.patchValue({ clientphone: orders[0].clientphone });
-        } else { this.clientNotFound = true; }
+    if (!id) {
+      this.clientNotFound   = false;
+      this.clientFirstOrder = false;
+      return;
+    }
+    this.workOrderService.clientExists(id).subscribe({
+      next: () => {
+        // 200 → cliente existe en la tabla de usuarios, revisar si tiene órdenes
+        this.clientNotFound = false;
+        this.workOrderService.listByClient(id).subscribe({
+          next: (orders) => {
+            if (orders.length > 0) {
+              // Tiene órdenes previas → autocompletar, sin alerta
+              this.clientFirstOrder = false;
+              if (!this.orderForm.get('clientname')?.value)
+                this.orderForm.patchValue({ clientname: orders[0].clientname });
+              if (!this.orderForm.get('clientphone')?.value)
+                this.orderForm.patchValue({ clientphone: orders[0].clientphone });
+            } else {
+              // Registrado pero sin órdenes → alerta azul
+              this.clientFirstOrder = true;
+            }
+          }
+        });
       },
-      error: () => { this.clientNotFound = true; }
+      error: () => {
+        // 404 → cédula no existe en el sistema → alerta amarilla
+        this.clientFirstOrder = false;
+        this.clientNotFound   = true;
+      }
     });
   }
 
+  // ── Placa: array vacío = primera orden, error = no registrada ─────────────
   onPlateBlur(): void {
     const plate = this.orderForm.get('vehicleplate')?.value?.trim().toUpperCase();
-    if (!plate) { this.vehicleNotFound = false; return; }
+    if (!plate) {
+      this.vehicleNotFound   = false;
+      this.vehicleFirstOrder = false;
+      return;
+    }
     this.workOrderService.listByPlate(plate).subscribe({
       next: (orders) => {
         if (orders.length > 0) {
-          this.vehicleNotFound = false;
+          this.vehicleNotFound   = false;
+          this.vehicleFirstOrder = false;
           const last = orders[orders.length - 1];
           const patch: any = {};
           if (!this.orderForm.get('vehiclebrand')?.value) patch.vehiclebrand = last.vehiclebrand;
           if (!this.orderForm.get('vehiclemodel')?.value) patch.vehiclemodel = last.vehiclemodel;
           if (!this.orderForm.get('vehicleyear')?.value)  patch.vehicleyear  = last.vehicleyear;
-          if (!this.orderForm.get('vehiclecolor')?.value && last.vehiclecolor) patch.vehiclecolor = last.vehiclecolor;
+          if (!this.orderForm.get('vehiclecolor')?.value && last.vehiclecolor)
+            patch.vehiclecolor = last.vehiclecolor;
           this.orderForm.patchValue(patch);
-        } else { this.vehicleNotFound = true; }
+        } else {
+          // Sin órdenes previas → primera vez de este vehículo
+          this.vehicleNotFound   = false;
+          this.vehicleFirstOrder = true;
+        }
       },
-      error: () => { this.vehicleNotFound = true; }
+      error: () => {
+        this.vehicleFirstOrder = false;
+        this.vehicleNotFound   = true;
+      }
     });
   }
 
@@ -309,9 +345,14 @@ export class WorkOrderComponent implements OnInit {
 
   clearForm(): void {
     this.orderForm.reset();
-    this.levelfuel = null; this.statescratches = 'SIN_NOVEDAD';
-    this.statedents = 'SIN_NOVEDAD'; this.priority = 'NORMAL';
-    this.clientNotFound = false; this.vehicleNotFound = false;
+    this.levelfuel         = null;
+    this.statescratches    = 'SIN_NOVEDAD';
+    this.statedents        = 'SIN_NOVEDAD';
+    this.priority          = 'NORMAL';
+    this.clientNotFound    = false;
+    this.clientFirstOrder  = false; 
+    this.vehicleNotFound   = false;
+    this.vehicleFirstOrder = false;
   }
 
   closeConfirmation(): void { this.showConfirmation = false; this.confirmedOrder = null; }

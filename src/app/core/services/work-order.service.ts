@@ -27,6 +27,11 @@ export class WorkOrderService {
     return this.http.get<WorkOrderResponse>(`${this.apiUrl}/${id}`, { headers: this.getHeaders() });
   }
 
+  // Verifica si el cliente tiene órdenes previas — 200 si existe, 404 si no
+  clientExists(identification: string): Observable<void> {
+    return this.http.get<void>(`${this.apiUrl}/client/exists/${identification}`,{ headers: this.getHeaders() });
+  }
+
   getByNumber(numberorder: string): Observable<WorkOrderResponse> {
     return this.http.get<WorkOrderResponse>(`${this.apiUrl}/number/${numberorder}`, { headers: this.getHeaders() });
   }
@@ -51,7 +56,6 @@ export class WorkOrderService {
     return this.http.patch<{ message: string; order: WorkOrderResponse }>(`${this.apiUrl}/${id}/cancel`, { cancellationreason }, { headers: this.getHeaders() });
   }
 
-  // ── Cambiar estado ────────────────────────────────────────────────────────
   changeState(id: number, state: StateOrder): Observable<{ message: string; order: WorkOrderResponse }> {
     return this.http.patch<{ message: string; order: WorkOrderResponse }>(
       `${this.apiUrl}/${id}/state`,
@@ -60,7 +64,6 @@ export class WorkOrderService {
     );
   }
 
-  // ── HU 6.7 — Asignación de mecánicos ─────────────────────────────────────
   getMechanicAvailability(): Observable<MechanicAvailabilityDTO[]> {
     return this.http.get<MechanicAvailabilityDTO[]>(
       'http://localhost:9090/mecanicos/disponibilidad',
