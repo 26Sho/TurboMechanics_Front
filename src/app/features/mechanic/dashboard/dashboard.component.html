@@ -22,13 +22,25 @@
     </div>
 
     <!-- Stats cards -->
-    <div class="dash-stats dash-stats--2">
+    <div class="dash-stats dash-stats--3">
       <div class="dash-loading" *ngIf="loadingStats">
         <div class="dash-spinner"></div>
         <span>Cargando estadísticas...</span>
       </div>
 
       <ng-container *ngIf="!loadingStats">
+
+        <!-- Clientes -->
+        <div class="stat-card stat-card--link" style="--accent: #F45D01" routerLink="/mechanic/clients">
+          <div class="stat-card__icon" style="color:#F45D01; background:rgba(244,93,1,0.12);">
+            <i class="fas fa-users"></i>
+          </div>
+          <div class="stat-card__body">
+            <span class="stat-card__value" style="color:#F45D01;">{{ totalClientes }}</span>
+            <span class="stat-card__label">Clientes</span>
+            <span class="stat-card__sub">registrados</span>
+          </div>
+        </div>
 
         <!-- Órdenes de Trabajo -->
         <div class="stat-card stat-card--link" style="--accent: #FFD60A" routerLink="/mechanic/work-order">

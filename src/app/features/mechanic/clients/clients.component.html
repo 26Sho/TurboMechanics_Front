@@ -1,1 +1,182 @@
-<p>clients works!</p>
+<div class="page">
+
+  <div class="page-header">
+    <div>
+      <h1 class="page-title">Clientes</h1>
+      <p class="page-sub">Base de clientes — <span class="text-accent">{{ clients.length }} registros</span></p>
+    </div>
+  </div>
+
+  <!-- BARRA DE BÚSQUEDA -->
+  <div class="filters-bar card">
+    <div class="search-group">
+      <label class="search-label">Buscar por documento, nombre o correo</label>
+      <input type="text" class="turbo-input" placeholder="Ej: 1094567890" [(ngModel)]="search" />
+    </div>
+    <div class="spacer"></div>
+    <span class="text-muted">{{ filteredClients.length }} resultado(s)</span>
+  </div>
+
+
+  <div class="loading-state" *ngIf="isLoading">
+    <p class="text-muted">Cargando clientes...</p>
+  </div>
+
+  <!-- GRID DE CLIENTES -->
+  <div class="clients-grid" *ngIf="!isLoading">
+    <div class="client-card card" *ngFor="let c of filteredClients" (click)="verHistorial(c)">
+
+      <div class="client-header">
+        <div class="client-avatar">
+          {{ c.username | slice:0:2 | uppercase }}
+        </div>
+        <div class="client-info">
+          <p class="client-name">{{ c.username }}</p>
+          <p class="client-since">CC: {{ c.identification }}</p>
+        </div>
+      </div>
+
+      <div class="client-meta">
+        <div class="meta-item">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07A19.5 19.5 0 013.07 9.81a19.79 19.79 0 01-3.07-8.63A2 2 0 012 0h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L6.09 7.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 14.92z" />
+          </svg>
+          {{ c.phone }}
+        </div>
+        <div class="meta-item">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+            <polyline points="22,6 12,13 2,6" />
+          </svg>
+          {{ c.email }}
+        </div>
+      </div>
+
+      <div class="card-actions">
+        <button class="btn-action edit" (click)="abrirEditar(c, $event)">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M11 4H4a2 2 0 00-2 2v14a2 2 0 002 2h14a2 2 0 002-2v-7"/>
+            <path d="M18.5 2.5a2.121 2.121 0 013 3L12 15l-4 1 1-4 9.5-9.5z"/>
+          </svg>
+          Editar
+        </button>
+      </div>
+
+    </div>
+
+
+    <div class="empty-state" *ngIf="filteredClients.length === 0">
+      <p class="text-muted">No se encontraron clientes.</p>
+    </div>
+  </div>
+
+
+  <!-- MODAL: HISTORIAL (RF 2.2) -->
+  <div class="modal-overlay" *ngIf="showHistory" (click)="cerrarModales()">
+    <div class="modal modal--lg" (click)="$event.stopPropagation()">
+
+      <div class="modal-header">
+        <h2 class="modal-title">
+          Historial de servicios —
+          <span class="text-accent">{{ historyClient?.username }}</span>
+        </h2>
+        <button class="modal-close" (click)="cerrarModales()">✕</button>
+      </div>
+
+      <div class="modal-body">
+
+        <p class="text-muted" *ngIf="loadingHistory">Cargando historial...</p>
+
+        <p class="text-muted" *ngIf="!loadingHistory && history.length === 0">
+          Este cliente no tiene órdenes registradas.
+        </p>
+
+        <div class="table-wrap" *ngIf="!loadingHistory && history.length > 0">
+          <table class="turbo-table">
+            <thead>
+              <tr>
+                <th>N° Orden</th>
+                <th>Vehículo</th>
+                <th>Fallas reportadas</th>
+                <th>Fecha entrada</th>
+                <th>Estado</th>
+                <th>Prioridad</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let h of history">
+                <td><span class="order-id">{{ h.numberorder }}</span></td>
+                <td>
+                  <p style="margin:0; font-size:13px; color:#CFCFCF;">
+                    {{ h.vehiclebrand }} {{ h.vehiclemodel }} {{ h.vehicleyear }}
+                  </p>
+                  <p style="margin:0; font-size:12px; color:#6E6E6E;">
+                    {{ h.vehicleplate }} · {{ h.vehiclecolor }}
+                  </p>
+                </td>
+                <td style="font-size:12px; color:#CFCFCF; max-width:180px;">
+                  {{ h.failuresreported }}
+                </td>
+                <td style="font-size:12px; color:#CFCFCF;">
+                  {{ h.dateentry | date:'dd/MM/yyyy' }}
+                </td>
+                <td>
+                  <span class="badge" [ngClass]="statusClass(h.stateorder)">
+                    {{ h.stateorder }}
+                  </span>
+                </td>
+                <td>
+                  <span class="badge badge--neutral">{{ h.priority }}</span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+
+  <!-- MODAL: EDITAR (RF 2.4) -->
+  <div class="modal-overlay" *ngIf="showEdit" (click)="cerrarModales()">
+    <div class="modal modal--sm" (click)="$event.stopPropagation()">
+
+      <div class="modal-header">
+        <h2 class="modal-title">Editar cliente</h2>
+        <button class="modal-close" (click)="cerrarModales()">✕</button>
+      </div>
+
+      <div class="modal-body">
+        <div class="form-group">
+          <label class="form-label">Nombre</label>
+          <input class="turbo-input" type="text" [(ngModel)]="editForm.username" placeholder="Nombre completo" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Identificación</label>
+          <input class="turbo-input" type="number" [(ngModel)]="editForm.identification" readonly />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Teléfono</label>
+          <input class="turbo-input" type="text" [(ngModel)]="editForm.phone" placeholder="Ej: 3001234567" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Correo</label>
+          <input class="turbo-input" type="email" [(ngModel)]="editForm.email" placeholder="correo@ejemplo.com" />
+          <small class="text-danger" *ngIf="editForm.email && !isEditEmailValid">
+            Correo inválido. Debe tener un dominio con extensión, ej: nombre&#64;dominio.com
+          </small>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button class="btn btn-ghost" (click)="cerrarModales()">Cancelar</button>
+        <button class="btn btn-primary" (click)="guardarEdicion()" [disabled]="savingEdit || !isEditEmailValid">
+          {{ savingEdit ? 'Guardando...' : 'Guardar cambios' }}
+        </button>
+      </div>
+
+    </div>
+  </div>
+
+</div>

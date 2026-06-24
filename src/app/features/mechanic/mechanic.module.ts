@@ -23,6 +23,9 @@ import { MovementsComponent } from '../admin/movements/movements.component';
 import { VehicleComponent } from '../auth/pages/vehicle/vehicle.component';
 import { WhatsappComponent } from './whatsapp/whatsapp.component';
 import { PerfilComponent } from '../shared/perfil/perfil.component';
+import { MecanicosComponent } from './mecanicos/mecanicos.component';
+import { BillingComponent } from './billing/billing.component';
+import { GarantiasComponent } from './garantias/garantias.component';
 
 const routes: Routes = [
   {
@@ -45,6 +48,9 @@ const routes: Routes = [
       { path: 'vehicles', component: VehicleComponent },
       { path: 'whatsapp', component: WhatsappComponent },
       { path: 'perfil', component: PerfilComponent },
+      { path: 'mecanicos', component: MecanicosComponent },
+      { path: 'billing', component: BillingComponent },
+      { path: 'garantias', component: GarantiasComponent },
     ]
   }
 ];
@@ -61,6 +67,9 @@ const routes: Routes = [
     InventoryComponent,
     ClientsComponent,
     WhatsappComponent,
+    MecanicosComponent,
+    BillingComponent,
+    GarantiasComponent,
   ],
   imports: [
     CommonModule,

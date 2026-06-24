@@ -1,0 +1,240 @@
+<!-- mecanicos.component.html (vista mecánico) -->
+<div class="inv-page">
+
+  <!-- ─── Header ─────────────────────────────────────────── -->
+  <div class="inv-page__header">
+    <div>
+      <h1 class="inv-page__title"><i class="fas fa-hard-hat"></i> Mecánicos</h1>
+      <p class="inv-page__subtitle">Consulta el personal técnico del taller TurboMechanics</p>
+    </div>
+  </div>
+
+  <!-- ─── Toolbar ─────────────────────────────────────────── -->
+  <div class="inv-toolbar">
+    <div class="inv-search">
+      <i class="fas fa-search"></i>
+      <input type="text" placeholder="Buscar por nombre, cargo o documento..."
+             [(ngModel)]="busqueda" (input)="aplicarFiltros()" />
+    </div>
+    <div class="inv-filtros">
+      <button [class.active]="filtroEstado === 'todos'"      (click)="setFiltro('todos')">Todos</button>
+      <button [class.active]="filtroEstado === 'ACTIVO'"     (click)="setFiltro('ACTIVO')">
+        <i class="fas fa-circle" style="font-size:0.5rem;color:#2ecc71"></i> Activos
+      </button>
+      <button [class.active]="filtroEstado === 'INACTIVO'"   (click)="setFiltro('INACTIVO')">Inactivos</button>
+      <button [class.active]="filtroEstado === 'VACACIONES'" (click)="setFiltro('VACACIONES')">Vacaciones</button>
+      <button [class.active]="filtroEstado === 'LICENCIA'"   (click)="setFiltro('LICENCIA')">Licencia</button>
+      <button [class.active]="filtroEstado === 'SUSPENDIDO'" (click)="setFiltro('SUSPENDIDO')">Suspendidos</button>
+    </div>
+  </div>
+
+  <!-- ─── Loading ─────────────────────────────────────────── -->
+  <div class="inv-loading" *ngIf="cargando">
+    <i class="fas fa-spinner fa-spin"></i> Cargando mecánicos...
+  </div>
+
+  <!-- ─── Tabla (misma info que admin, sin acciones de editar/eliminar/estado) ─── -->
+  <div class="inv-table-wrap" *ngIf="!cargando">
+    <table class="inv-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Nombre</th>
+          <th>Documento</th>
+          <th>Cargo</th>
+          <th>Ingreso</th>
+          <th>Teléfono</th>
+          <th>Salario</th>
+          <th>Cap.</th>
+          <th>Estado</th>
+          <th>Acciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let m of mecanicosFiltered; let i = index">
+          <td>{{ i + 1 }}</td>
+          <td>
+            <div class="mec-nombre">
+              <span class="mec-avatar">{{ m.name.charAt(0).toUpperCase() }}</span>
+              <div>
+                <strong>{{ m.name }}</strong>
+                <small *ngIf="m.email" class="mec-email">{{ m.email }}</small>
+              </div>
+            </div>
+          </td>
+          <td><code>{{ m.document }}</code></td>
+          <td class="inv-table__desc">{{ m.position }}</td>
+          <td>{{ formatFecha(m.hireDate) }}</td>
+          <td>{{ m.phone || '—' }}</td>
+          <td><span class="inv-badge inv-badge--price">{{ formatPeso(m.salary) }}</span></td>
+          <td><span class="mec-capacity">{{ m.maxOrderCapacity }}</span></td>
+          <td>
+            <span class="inv-badge" [ngClass]="estadoBadgeClass(m.laborStatus)">
+              {{ estadoLabel(m.laborStatus) }}
+            </span>
+          </td>
+          <td class="inv-table__actions">
+            <button class="inv-action-btn inv-action-btn--info"
+                    title="Ver historial de trabajos" (click)="verHistorial(m)">
+              <i class="fas fa-history"></i>
+            </button>
+            <button class="inv-action-btn inv-action-btn--ausencia"
+                    title="Ver / registrar ausencias" (click)="verAusencias(m)">
+              <i class="fas fa-calendar-times"></i>
+            </button>
+          </td>
+        </tr>
+        <tr *ngIf="mecanicosFiltered.length === 0">
+          <td colspan="10" class="inv-table__empty">
+            <i class="fas fa-users-slash"></i> No hay mecánicos que mostrar
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="inv-footer-info" *ngIf="!cargando">
+    Mostrando <strong>{{ mecanicosFiltered.length }}</strong> de
+    <strong>{{ mecanicos.length }}</strong> mecánicos
+  </div>
+</div>
+
+
+<!-- ═══ Modal — Historial de trabajos ════════════════════════ -->
+<div class="inv-modal" [class.open]="modalHistorial">
+  <div class="inv-modal__overlay" (click)="modalHistorial = false"></div>
+  <div class="inv-modal__box inv-modal__box--lg">
+    <div class="inv-modal__header">
+      <h2><i class="fas fa-history"></i> Historial — {{ mecanicoHistorialNombre }}</h2>
+      <button class="inv-modal__close" (click)="modalHistorial = false"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="inv-modal__body">
+      <div class="inv-loading" *ngIf="cargandoHistorial">
+        <i class="fas fa-spinner fa-spin"></i> Cargando historial...
+      </div>
+      <div class="inv-table-wrap" *ngIf="!cargandoHistorial && historial.length > 0">
+        <table class="inv-table">
+          <thead>
+            <tr><th>#</th><th>Orden</th><th>Cliente</th><th>Vehículo</th><th>Estado</th><th>Prioridad</th><th>Fecha</th></tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let h of historial; let i = index">
+              <td>{{ i + 1 }}</td>
+              <td><code>{{ h.numberorder }}</code></td>
+              <td>{{ h.clientname }}</td>
+              <td>{{ h.vehiclebrand }} {{ h.vehiclemodel }} — <code>{{ h.vehicleplate }}</code></td>
+              <td><span class="inv-badge inv-badge--active">{{ h.stateorder }}</span></td>
+              <td><span class="inv-badge" [ngClass]="prioridadClass(h.priority)">{{ h.priority }}</span></td>
+              <td>{{ formatDateTime(h.datecreation) }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div *ngIf="!cargandoHistorial && historial.length === 0" class="inv-table__empty">
+        <i class="fas fa-inbox"></i> No hay órdenes de trabajo registradas para este mecánico.
+      </div>
+    </div>
+    <div class="inv-modal__footer">
+      <button class="inv-btn inv-btn--ghost" (click)="modalHistorial = false">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══ Modal — Ausencias (ver + registrar, sin eliminar) ═════════ -->
+<div class="inv-modal" [class.open]="modalAusencias">
+  <div class="inv-modal__overlay" (click)="modalAusencias = false"></div>
+  <div class="inv-modal__box inv-modal__box--lg">
+    <div class="inv-modal__header">
+      <h2><i class="fas fa-calendar-times"></i> Ausencias — {{ mecanicoAusenciasNombre }}</h2>
+      <button class="inv-modal__close" (click)="modalAusencias = false"><i class="fas fa-times"></i></button>
+    </div>
+    <div class="inv-modal__body">
+
+      <div style="display:flex;justify-content:flex-end;margin-bottom:16px;">
+        <button class="inv-btn inv-btn--primary" (click)="abrirNuevaAusencia()">
+          <i class="fas fa-plus"></i> Registrar ausencia
+        </button>
+      </div>
+
+      <div class="inv-loading" *ngIf="cargandoAusencias">
+        <i class="fas fa-spinner fa-spin"></i> Cargando ausencias...
+      </div>
+      <div class="inv-table-wrap" *ngIf="!cargandoAusencias && ausencias.length > 0">
+        <table class="inv-table">
+          <thead>
+            <tr><th>#</th><th>Tipo</th><th>Inicio</th><th>Fin</th><th>Motivo</th><th>Registrado por</th></tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let a of ausencias; let i = index">
+              <td>{{ i + 1 }}</td>
+              <td><span class="inv-badge inv-badge--warning">{{ ausenciaLabel(a.absenceType) }}</span></td>
+              <td>{{ formatDateTime(a.startDate) }}</td>
+              <td>{{ formatDateTime(a.endDate) }}</td>
+              <td class="inv-table__desc">{{ a.reason }}</td>
+              <td>{{ a.registeredBy || '—' }}</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div *ngIf="!cargandoAusencias && ausencias.length === 0" class="inv-table__empty">
+        <i class="fas fa-calendar-check"></i> No hay ausencias registradas para este mecánico.
+      </div>
+    </div>
+    <div class="inv-modal__footer">
+      <button class="inv-btn inv-btn--ghost" (click)="modalAusencias = false">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+
+<!-- ═══ Modal — Nueva ausencia ════════════════════════════════ -->
+<div class="inv-modal" [class.open]="modalNuevaAusencia">
+  <div class="inv-modal__overlay" (click)="modalNuevaAusencia = false"></div>
+  <div class="inv-modal__box inv-modal__box--ausencia">
+    <div class="inv-modal__header">
+      <h2><i class="fas fa-calendar-plus"></i> Nueva Ausencia</h2>
+      <button class="inv-modal__close" (click)="modalNuevaAusencia = false"><i class="fas fa-times"></i></button>
+    </div>
+    <form [formGroup]="ausenciaForm" (ngSubmit)="guardarAusencia()">
+      <div class="inv-modal__body">
+
+        <div class="inv-form-group">
+          <label>Tipo de ausencia *</label>
+          <select formControlName="absenceType">
+            <option value="">Seleccionar...</option>
+            <option *ngFor="let t of tiposAusencia" [value]="t">{{ ausenciaLabel(t) }}</option>
+          </select>
+          <span class="inv-form-error" *ngIf="af['absenceType'].invalid && af['absenceType'].touched">Obligatorio</span>
+        </div>
+
+        <div class="inv-form-group">
+          <label>Fecha inicio *</label>
+          <input type="datetime-local" formControlName="startDate" />
+          <span class="inv-form-error" *ngIf="af['startDate'].invalid && af['startDate'].touched">Obligatorio</span>
+        </div>
+
+        <div class="inv-form-group">
+          <label>Fecha fin *</label>
+          <input type="datetime-local" formControlName="endDate" />
+          <span class="inv-form-error" *ngIf="af['endDate'].invalid && af['endDate'].touched">Obligatorio</span>
+        </div>
+
+        <div class="inv-form-group">
+          <label>Motivo *</label>
+          <textarea formControlName="reason" rows="3" placeholder="Describe el motivo de la ausencia..."></textarea>
+          <span class="inv-form-error" *ngIf="af['reason'].invalid && af['reason'].touched">Mínimo 5 caracteres</span>
+        </div>
+
+      </div>
+      <div class="inv-modal__footer">
+        <button type="button" class="inv-btn inv-btn--ghost" (click)="modalNuevaAusencia = false">Cancelar</button>
+        <button type="submit" class="inv-btn inv-btn--primary" [disabled]="guardandoAusencia">
+          <i class="fas fa-spinner fa-spin" *ngIf="guardandoAusencia"></i>
+          <i class="fas fa-save" *ngIf="!guardandoAusencia"></i>
+          Guardar
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
