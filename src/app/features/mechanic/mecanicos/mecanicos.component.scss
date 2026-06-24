@@ -1,0 +1,214 @@
+@use '../../admin/shared/inventario-shared' as *;
+// ─── Avatar del mecánico ─────────────────────────────────────
+.mec-nombre {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.mec-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, $red, $orange);
+  color: $white;
+  font-family: $font-heading;
+  font-weight: 700;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.mec-email {
+  display: block;
+  color: $gray-mid;
+  font-size: 0.78rem;
+  margin-top: 2px;
+}
+
+// ─── Capacidad máxima ─────────────────────────────────────────
+.mec-capacity {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba($blue, 0.12);
+  color: $blue;
+  font-family: $font-heading;
+  font-weight: 700;
+  font-size: 0.85rem;
+  border: 1px solid rgba($blue, 0.25);
+}
+
+// ─── Formulario en dos columnas ──────────────────────────────
+.mec-form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+  margin-bottom: 4px;
+
+  @media (max-width: 600px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+// ─── Botones de acción ────────────────────────────────────────
+.inv-action-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-size: 0.85rem;
+  transition: all 0.2s ease;
+
+  &--info {
+    background: rgba($blue, 0.12);
+    color: $blue;
+    &:hover { background: rgba($blue, 0.25); transform: translateY(-1px); }
+  }
+
+  &--ausencia {
+    background: rgba($yellow, 0.12);
+    color: $yellow;
+    border: 1px solid rgba($yellow, 0.25);
+    &:hover { background: rgba($yellow, 0.25); transform: translateY(-1px); }
+  }
+
+  &--toggle {
+    background: rgba($orange, 0.12);
+    color: $orange;
+    &:hover { background: rgba($orange, 0.25); transform: translateY(-1px); }
+  }
+
+  &--price {
+    background: rgba($gray-mid, 0.12);
+    color: $gray-light;
+    &:hover { background: rgba($gray-mid, 0.25); transform: translateY(-1px); }
+  }
+
+  &--delete {
+    background: rgba($red, 0.12);
+    color: $red;
+    &:hover { background: rgba($red, 0.25); transform: translateY(-1px); }
+  }
+}
+
+// ─── Formulario ──────────────────────────────────────────────
+.inv-form-group {
+  select {
+    width: 100%;
+    background: rgba(#0D0D0D, 0.5);
+    border: 1px solid rgba(#6E6E6E, 0.25);
+    border-radius: 6px;
+    padding: 10px 14px;
+    color: #FFFFFF;
+    font-family: 'Inter', sans-serif;
+    font-size: 0.9rem;
+    outline: none;
+    cursor: pointer;
+    transition: border-color 0.2s;
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%236E6E6E' stroke-width='1.5' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+
+    &:focus { border-color: #F45D01; }
+
+    option {
+      background: #2B2B2B;
+      color: #FFFFFF;
+    }
+  }
+
+  input[type="date"],
+  input[type="datetime-local"] {
+    color: #FFFFFF !important;
+    color-scheme: dark;
+
+    &::-webkit-datetime-edit                { color: #FFFFFF; }
+    &::-webkit-datetime-edit-fields-wrapper { color: #FFFFFF; }
+    &::-webkit-datetime-edit-text           { color: #6E6E6E; }
+    &::-webkit-datetime-edit-day-field      { color: #FFFFFF; }
+    &::-webkit-datetime-edit-month-field    { color: #FFFFFF; }
+    &::-webkit-datetime-edit-year-field     { color: #FFFFFF; }
+    &::-webkit-datetime-edit-hour-field     { color: #FFFFFF; }
+    &::-webkit-datetime-edit-minute-field   { color: #FFFFFF; }
+
+    &::-webkit-calendar-picker-indicator {
+      filter: invert(1);
+      cursor: pointer;
+      opacity: 0.8;
+      &:hover { opacity: 1; }
+    }
+  }
+
+  input[readonly] {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}
+
+// ─── Modal más grande ─────────────────────────────────────────
+.inv-modal__box--lg {
+  max-width: 720px;
+}
+
+// ─── Modal ausencia — tamaño controlado ──────────────────────
+.inv-modal__box--ausencia {
+  max-width: 480px;
+  width: 100%;
+}
+
+// ─── Loading ─────────────────────────────────────────────────
+.inv-loading {
+  text-align: center;
+  padding: 40px;
+  color: #6E6E6E;
+  font-size: 1rem;
+  i { margin-right: 8px; color: #F45D01; }
+}
+
+// ─── Footer info ─────────────────────────────────────────────
+.inv-footer-info {
+  font-size: 0.85rem;        
+  color: #6E6E6E; 
+  margin-top: 8px;
+}
+
+// ─── Campo contraseña (registro/edición de mecánico) ──────────
+.input-password {
+  position: relative;
+
+  input { padding-right: 42px; width: 100%; }
+
+  .toggle-eye {
+    position: absolute;
+    right: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: $gray-mid;
+    display: flex;
+    align-items: center;
+    padding: 0;
+    transition: color 0.2s;
+    &:hover { color: $orange; }
+  }
+}
+
+.mec-hint {
+  display: block;
+  margin-top: 6px;
+  font-size: 0.78rem;
+  color: $gray-mid;
+}

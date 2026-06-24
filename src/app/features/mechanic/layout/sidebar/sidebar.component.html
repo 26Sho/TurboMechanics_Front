@@ -18,6 +18,10 @@
       <span class="nav-icon"><i class="fas fa-chart-bar"></i></span>
       <span class="nav-label" *ngIf="!sidebarService.collapsed()">Dashboard</span>
     </a>
+    <a class="nav-item" routerLink="clients" routerLinkActive="active" title="Clientes" (click)="sidebarService.closeMobile()">
+      <span class="nav-icon"><i class="fas fa-users"></i></span>
+      <span class="nav-label" *ngIf="!sidebarService.collapsed()">Clientes</span>
+    </a>
     <a class="nav-item" routerLink="work-order" routerLinkActive="active" title="Órdenes de trabajo" (click)="sidebarService.closeMobile()">
       <span class="nav-icon"><i class="fas fa-clipboard-list"></i></span>
       <span class="nav-label" *ngIf="!sidebarService.collapsed()">Orden de Trabajo</span>
@@ -45,6 +49,18 @@
     <a class="nav-item" routerLink="maintenance" routerLinkActive="active" title="Mantenimiento" (click)="sidebarService.closeMobile()">
       <span class="nav-icon"><i class="fas fa-wrench"></i></span>
       <span class="nav-label" *ngIf="!sidebarService.collapsed()">Mantenimiento</span>
+    </a>
+    <a class="nav-item" routerLink="mecanicos" routerLinkActive="active" title="Mecánicos" (click)="sidebarService.closeMobile()">
+      <span class="nav-icon"><i class="fas fa-hard-hat"></i></span>
+      <span class="nav-label" *ngIf="!sidebarService.collapsed()">Mecánicos</span>
+    </a>
+    <a class="nav-item" routerLink="billing" routerLinkActive="active" title="Facturación" (click)="sidebarService.closeMobile()">
+      <span class="nav-icon"><i class="fas fa-file-invoice-dollar"></i></span>
+      <span class="nav-label" *ngIf="!sidebarService.collapsed()">Facturación</span>
+    </a>
+    <a class="nav-item" routerLink="garantias" routerLinkActive="active" title="Garantías" (click)="sidebarService.closeMobile()">
+      <span class="nav-icon"><i class="fas fa-clipboard-check"></i></span>
+      <span class="nav-label" *ngIf="!sidebarService.collapsed()">Garantías</span>
     </a>
     <a class="nav-item" routerLink="whatsapp" routerLinkActive="active" (click)="sidebarService.closeMobile()">
       <span class="nav-icon"><i class="fab fa-whatsapp"></i></span>

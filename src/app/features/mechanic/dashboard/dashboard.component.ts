@@ -12,9 +12,10 @@ export class DashboardComponent implements OnInit {
 
   orders  = signal<any[]>([]);
 
-  totalOrdenes = 0;
-  totalCitas   = 0;
-  loadingStats = true;
+  totalOrdenes  = 0;
+  totalCitas    = 0;
+  totalClientes = 0;
+  loadingStats  = true;
 
   stats: any[] = [];
 
@@ -29,12 +30,14 @@ export class DashboardComponent implements OnInit {
   cargarDatosDashboard(): void {
     const hoy = new Date().toISOString().split('T')[0];
     forkJoin({
-      ordenes: this.http.get<any[]>(`${this.apiUrl}/orders`),
-      citas:   this.http.get<any[]>(`${this.apiUrl}/appointments/agenda/daily?date=${hoy}`)
+      ordenes:  this.http.get<any[]>(`${this.apiUrl}/orders`),
+      citas:    this.http.get<any[]>(`${this.apiUrl}/appointments/agenda/daily?date=${hoy}`),
+      clientes: this.http.get<any[]>(`${this.apiUrl}/admin/users`)
     }).subscribe({
-      next: ({ ordenes, citas }) => {
-        this.totalOrdenes = ordenes.length;
-        this.totalCitas   = citas.length;
+      next: ({ ordenes, citas, clientes }) => {
+        this.totalOrdenes  = ordenes.length;
+        this.totalCitas    = citas.length;
+        this.totalClientes = clientes.length;
         this.orders.set(ordenes.slice(-5).reverse());
         this.loadingStats = false;
         this.construirStats();
@@ -48,6 +51,13 @@ export class DashboardComponent implements OnInit {
 
   construirStats(): void {
     this.stats = [
+      {
+        label: 'Clientes',
+        value: this.totalClientes,
+        sub: 'registrados',
+        accent: '#F45D01',
+        icon: `fas fa-users`
+      },
       {
         label: 'Órdenes de Trabajo',
         value: this.totalOrdenes,
