@@ -236,7 +236,7 @@
                     title="Cambiar estado">✓</button>
                   <button class="btn-action btn-edit" *ngIf="canEdit(o)" (click)="openEdit(o, $event)"
                     title="Editar orden">✏️</button>
-                  <button class="btn-action btn-cancel" *ngIf="(isAdmin() || isMechanic()) && o.stateorder === 'RECIBIDO'"
+                  <button class="btn-action btn-cancel" *ngIf="isAdmin() && o.stateorder === 'RECIBIDO'"
                     (click)="openCancel(o, $event)" title="Cancelar orden">✕</button>
                   <button class="btn-action btn-pdf"
                     (click)="descargarComprobante(o, $event)" [disabled]="downloadingId === o.id"
@@ -356,7 +356,7 @@
                     title="Cambiar estado">✓</button>
                   <button class="btn-action btn-edit" *ngIf="canEdit(o)" (click)="openEdit(o, $event)"
                     title="Editar orden">✏️</button>
-                  <button class="btn-action btn-cancel" *ngIf="(isAdmin() || isMechanic()) && o.stateorder === 'RECIBIDO'"
+                  <button class="btn-action btn-cancel" *ngIf="isAdmin() && o.stateorder === 'RECIBIDO'"
                     (click)="openCancel(o, $event)" title="Cancelar orden">✕</button>
                   <button class="btn-action btn-pdf"
                     (click)="descargarComprobante(o, $event)" [disabled]="downloadingId === o.id"
