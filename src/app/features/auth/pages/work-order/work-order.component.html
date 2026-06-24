@@ -20,13 +20,24 @@
 
         <div class="wo-card">
           <div class="wo-card-title">Datos del cliente</div>
-          <div class="wo-alert wo-alert-info" *ngIf="clientNotFound">
-            <span class="wo-alert-icon">👤</span>
+
+          <!-- Cliente no registrado (error del backend) -->
+          <div class="wo-alert wo-alert-warning" *ngIf="clientNotFound">
+            <span class="wo-alert-icon">⚠️</span>
             <div>
-              <strong>Primera orden de este cliente</strong>
-              <p>Este cliente no tiene órdenes previas en el sistema. Por favor ingresa su nombre y teléfono manualmente.</p>
+              <strong>Cliente no registrado</strong>
+              <p>No se encontró este cliente en el sistema. Verifica la identificación o ingresa sus datos manualmente.</p>
             </div>
           </div>
+
+          <div class="wo-alert wo-alert-info" *ngIf="clientFirstOrder">
+            <span class="wo-alert-icon">👤</span>
+            <div>
+              <strong>Cliente registrado</strong>
+              <p>El cliente existe en el sistema, pero esta será su primera orden de trabajo.</p>
+            </div>
+          </div>
+
           <div class="wo-grid">
             <div class="form-group">
               <label class="wo-label">Identificación *</label>
@@ -52,13 +63,25 @@
 
         <div class="wo-card">
           <div class="wo-card-title">Datos del vehículo</div>
-          <div class="wo-alert wo-alert-info" *ngIf="vehicleNotFound">
+
+          <!-- Vehículo no registrado (error del backend) -->
+          <div class="wo-alert wo-alert-warning" *ngIf="vehicleNotFound">
+            <span class="wo-alert-icon">⚠️</span>
+            <div>
+              <strong>Vehículo no registrado</strong>
+              <p>Esta placa no se encontró en el sistema. Verifica la placa o ingresa los datos del vehículo manualmente.</p>
+            </div>
+          </div>
+
+          <!-- Primera orden del vehículo (respuesta vacía del backend) -->
+          <div class="wo-alert wo-alert-info" *ngIf="vehicleFirstOrder">
             <span class="wo-alert-icon">🚗</span>
             <div>
               <strong>Primera orden de este vehículo</strong>
               <p>Esta placa no tiene órdenes previas en el sistema. Por favor ingresa los datos del vehículo manualmente.</p>
             </div>
           </div>
+
           <div class="wo-grid wo-grid-3">
             <div class="form-group">
               <label class="wo-label">Placa *</label>
