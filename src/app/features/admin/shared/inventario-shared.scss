@@ -21,6 +21,8 @@ $font-body:    'Inter', sans-serif;
   min-height: 100vh;
   font-family: $font-body;
   color: $white;
+  max-width: 100%;
+  overflow-x: hidden;
 
   @media (max-width: 768px) { padding: 16px; }
 }
@@ -174,12 +176,22 @@ $font-body:    'Inter', sans-serif;
   border: 1px solid rgba($gray-mid, 0.12);
   overflow-x: auto;
   margin-bottom: 16px;
+
+  // Scrollbar discreta, por si llega a hacer falta en pantallas muy angostas
+  &::-webkit-scrollbar { height: 6px; }
+  &::-webkit-scrollbar-track { background: transparent; }
+  &::-webkit-scrollbar-thumb {
+    background: rgba($orange, 0.35);
+    border-radius: 10px;
+    &:hover { background: rgba($orange, 0.55); }
+  }
 }
 
 .inv-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: 0.9rem;
+  font-size: 0.88rem;
+  table-layout: auto;
 
   thead tr {
     background: rgba($black, 0.6);
@@ -187,11 +199,11 @@ $font-body:    'Inter', sans-serif;
   }
 
   th {
-    padding: 14px 16px;
+    padding: 12px 12px;
     font-family: $font-heading;
-    font-size: 0.78rem;
+    font-size: 0.74rem;
     font-weight: 700;
-    letter-spacing: 1.5px;
+    letter-spacing: 1.2px;
     text-transform: uppercase;
     color: $gray-mid;
     text-align: left;
@@ -199,7 +211,7 @@ $font-body:    'Inter', sans-serif;
   }
 
   td {
-    padding: 13px 16px;
+    padding: 11px 12px;
     color: $gray-light;
     border-bottom: 1px solid rgba($gray-mid, 0.08);
     vertical-align: middle;
@@ -212,7 +224,7 @@ $font-body:    'Inter', sans-serif;
   }
 
   &__desc {
-    max-width: 260px;
+    max-width: 220px;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -220,7 +232,7 @@ $font-body:    'Inter', sans-serif;
 
   &__actions {
     display: flex;
-    gap: 6px;
+    gap: 5px;
     white-space: nowrap;
   }
 
@@ -237,8 +249,32 @@ $font-body:    'Inter', sans-serif;
     border: 1px solid rgba($gray-mid, 0.2);
     border-radius: 4px;
     padding: 2px 8px;
-    font-size: 0.82rem;
+    font-size: 0.8rem;
     color: $orange;
+  }
+}
+
+// ─── Columnas responsivas ──────────────────────────────────
+// Cuando el sidebar está EXPANDIDO (.main-content.expanded), hay menos
+// espacio horizontal disponible: ocultamos las columnas menos críticas
+// (Documento y Cap.) para evitar el scroll dentro de la tabla.
+// El número de columna depende del orden real en el <thead>.
+.main-content.expanded {
+  .inv-table {
+    th:nth-child(3), td:nth-child(3), // Documento
+    th:nth-child(8), td:nth-child(8) { // Cap.
+      display: none;
+    }
+  }
+}
+
+// En pantallas angostas, ocultamos también Ingreso y Teléfono
+@media (max-width: 1100px) {
+  .inv-table {
+    th:nth-child(5), td:nth-child(5), // Ingreso
+    th:nth-child(6), td:nth-child(6) { // Teléfono
+      display: none;
+    }
   }
 }
 

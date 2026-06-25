@@ -9,6 +9,7 @@ $topbar-height: 60px;
 
 .main-content {
   flex: 1;
+  min-width: 0; // ← FIX: sin esto, el flex item no se achica y empuja todo el layout
   margin-left: $sidebar-collapsed;
   margin-top: $topbar-height;
   padding: 28px;
