@@ -1,4 +1,4 @@
 export const environment = {
   production: false,
-  apiUrl: 'http://localhost:9090'
+  apiUrl: 'https://turbomechanics-production.up.railway.app'
 };
