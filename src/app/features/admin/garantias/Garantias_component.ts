@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ElementRef, ViewChild } from '@angular/core';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import {
@@ -6,6 +6,8 @@ import {
   WorkOrderOption, ServiceOption, SparePartOption
 } from '../service/garantias.service';
 import { ToastService } from '../../../shared/services/toast.service';
+
+declare const google: any;
 
 type TabType = 'garantias' | 'talleres' | 'calidad' | 'evidencias';
 type HttpErr = { error?: { message?: string } };
@@ -15,12 +17,20 @@ interface WorkEvidenceWithPreview extends WorkEvidence {
   rawUrl?: string;
 }
 
+// ⚠️ API key de Google Maps pegada directo en el código (decisión del equipo).
+// Debe tener "Maps JavaScript API" habilitada en Google Cloud Console.
+const GOOGLE_MAPS_API_KEY = '';
+
 @Component({
   selector: 'app-garantias',
   templateUrl: './garantias.component.html',
   styleUrls: ['./garantias.component.scss']
 })
 export class GarantiasComponent implements OnInit {
+
+  // Contenedor del mapa de talleres, dentro del mismo card (solo existe
+  // cuando activeTab === 'talleres' y hay talleres cargados).
+  @ViewChild('workshopsMapContainer') workshopsMapContainer?: ElementRef<HTMLDivElement>;
 
   activeTab: TabType = 'garantias';
 
@@ -60,8 +70,6 @@ export class GarantiasComponent implements OnInit {
   loadingSpareParts = false;
 
   // Selección múltiple de servicios/repuestos al REGISTRAR una garantía nueva
-  // (permite cubrir varios servicios y/o repuestos de una sola orden sin tener
-  // que repetir el formulario; cada combinación genera su propia garantía)
   selectedServiceIds: number[] = [];
   selectedSparePartIds: number[] = [];
   serviceSearchTerm = '';
@@ -78,6 +86,13 @@ export class GarantiasComponent implements OnInit {
   editingWorkshop: Workshop | null = null;
   showWorkshopForm = false;
   deletingWorkshopId: number | null = null;
+
+  // Estado del mapa de talleres (Google Maps)
+  workshopsMapError = false;
+  private workshopsMap: any;
+  private workshopsMarkers: any[] = [];
+  private workshopsMapReady = false;
+  private static googleMapsLoadingPromise: Promise<void> | null = null;
 
   // ── CONTROL DE CALIDAD ────────────────────────────────────────────────────
   qualitySearchForm!: FormGroup;
@@ -102,11 +117,9 @@ export class GarantiasComponent implements OnInit {
   evidenceTipo = '';
   deletingEvidenceId: number | null = null;
 
-  // Modal confirmar eliminar evidencia
   showDeleteEvidenceModal = false;
   pendingDeleteEvidenceId: number | null = null;
 
-  // Modal confirmar eliminar taller
   showDeleteWorkshopModal = false;
   pendingDeleteWorkshopId: number | null = null;
 
@@ -126,7 +139,6 @@ export class GarantiasComponent implements OnInit {
     this.loadDropdownData();
   }
 
-  /** Carga en paralelo las listas para los dropdowns */
   private loadDropdownData(): void {
     this.loadingWorkOrders = true;
     this.svc.getWorkOrders().subscribe({
@@ -190,6 +202,19 @@ export class GarantiasComponent implements OnInit {
   }
 
   // ─────────────────────────────────────────────────────────────────────────
+  // NAVEGACIÓN DE TABS
+  // ─────────────────────────────────────────────────────────────────────────
+
+  setActiveTab(tab: TabType): void {
+    this.activeTab = tab;
+    if (tab === 'talleres') {
+      // El contenedor del mapa se destruye/recrea con cada *ngIf, así que
+      // hay que esperar al siguiente ciclo de render para volver a pintarlo.
+      setTimeout(() => this.tryRenderWorkshopsMap(), 0);
+    }
+  }
+
+  // ─────────────────────────────────────────────────────────────────────────
   // GARANTÍAS
   // ─────────────────────────────────────────────────────────────────────────
 
@@ -209,7 +234,6 @@ export class GarantiasComponent implements OnInit {
     this.showServiceDropdown = false;
     this.showSparePartDropdown = false;
     if (warranty) {
-      // Edición: se precargan todos los servicios/repuestos que ya cubre
       this.selectedServiceIds = (warranty.services || []).map(s => s.id);
       this.selectedSparePartIds = (warranty.spareParts || [])
         .filter(p => !p.deleted && p.id != null)
@@ -228,14 +252,12 @@ export class GarantiasComponent implements OnInit {
     this.showWarrantyForm = true;
   }
 
-  /** Alterna la selección de un servicio en el formulario de registro/edición */
   toggleServiceSelection(id: number): void {
     const idx = this.selectedServiceIds.indexOf(id);
     if (idx >= 0) this.selectedServiceIds.splice(idx, 1);
     else this.selectedServiceIds.push(id);
   }
 
-  /** Alterna la selección de un repuesto en el formulario de registro/edición */
   toggleSparePartSelection(id: number): void {
     const idx = this.selectedSparePartIds.indexOf(id);
     if (idx >= 0) this.selectedSparePartIds.splice(idx, 1);
@@ -250,7 +272,6 @@ export class GarantiasComponent implements OnInit {
     return this.selectedSparePartIds.includes(id);
   }
 
-  /** Servicios que coinciden con el texto buscado y aún no han sido seleccionados */
   get filteredServiceOptions(): ServiceOption[] {
     const term = this.serviceSearchTerm.trim().toLowerCase();
     return this.serviceCatalog.filter(s =>
@@ -259,7 +280,6 @@ export class GarantiasComponent implements OnInit {
     );
   }
 
-  /** Repuestos que coinciden con el texto buscado y aún no han sido seleccionados */
   get filteredSparePartOptions(): SparePartOption[] {
     const term = this.sparePartSearchTerm.trim().toLowerCase();
     return this.spareParts.filter(p =>
@@ -314,7 +334,6 @@ export class GarantiasComponent implements OnInit {
     }
     if (this.warrantyForm.invalid) return;
 
-    // Una sola garantía cubre todos los servicios y repuestos seleccionados
     const payload = {
       ...this.warrantyForm.value,
       serviceIds: this.selectedServiceIds,
@@ -428,7 +447,13 @@ export class GarantiasComponent implements OnInit {
   loadWorkshops(): void {
     this.loadingWorkshops = true;
     this.svc.getWorkshops(this.workshopCity || undefined).subscribe({
-      next: (data: Workshop[]) => { this.workshops = data; this.loadingWorkshops = false; },
+      next: (data: Workshop[]) => {
+        this.workshops = data;
+        this.loadingWorkshops = false;
+        if (this.activeTab === 'talleres') {
+          setTimeout(() => this.tryRenderWorkshopsMap(), 0);
+        }
+      },
       error: (_err: unknown) => { this.loadingWorkshops = false; this.toast.error('Error al cargar talleres'); }
     });
   }
@@ -493,6 +518,164 @@ export class GarantiasComponent implements OnInit {
         this.deletingWorkshopId = null;
       }
     });
+  }
+
+  // ── Mapa de talleres (Google Maps JS API), dentro del mismo card ─────────
+
+  private loadGoogleMaps(): Promise<void> {
+    if (typeof google !== 'undefined' && google.maps) {
+      return Promise.resolve();
+    }
+
+    if (GarantiasComponent.googleMapsLoadingPromise) {
+      return GarantiasComponent.googleMapsLoadingPromise;
+    }
+
+    GarantiasComponent.googleMapsLoadingPromise = new Promise<void>((resolve, reject) => {
+      const existingScript = document.querySelector('script[data-google-maps]') as HTMLScriptElement | null;
+      if (existingScript) {
+        if (typeof google !== 'undefined' && google.maps) {
+          resolve();
+        } else {
+          existingScript.addEventListener('load', () => resolve());
+          existingScript.addEventListener('error', () => reject(new Error('Google Maps script failed to load')));
+        }
+        return;
+      }
+
+      const script = document.createElement('script');
+      script.src = ``;
+      script.async = true;
+      script.defer = true;
+      script.setAttribute('data-google-maps', 'true');
+      script.onload = () => resolve();
+      script.onerror = () => reject(new Error('Google Maps script failed to load'));
+      document.head.appendChild(script);
+    });
+
+    return GarantiasComponent.googleMapsLoadingPromise;
+  }
+
+  /** Intenta pintar el mapa: espera a que el contenedor exista en el DOM
+   *  (puede no existir todavía si *ngIf aún no terminó de renderizar). */
+  private tryRenderWorkshopsMap(): void {
+    if (this.activeTab !== 'talleres' || this.loadingWorkshops || this.workshops.length === 0) {
+      return;
+    }
+    if (!this.workshopsMapContainer) {
+      // El contenedor todavía no está en el DOM; reintenta en el próximo tick.
+      setTimeout(() => this.tryRenderWorkshopsMap(), 50);
+      return;
+    }
+
+    this.loadGoogleMaps()
+      .then(() => this.renderWorkshopsMap())
+      .catch((err) => {
+        console.error('No se pudo cargar Google Maps:', err);
+        this.workshopsMapError = true;
+      });
+  }
+
+  private renderWorkshopsMap(): void {
+    if (typeof google === 'undefined' || !google.maps || !this.workshopsMapContainer) {
+      this.workshopsMapError = true;
+      return;
+    }
+
+    const el = this.workshopsMapContainer.nativeElement;
+
+    if (!this.workshopsMap) {
+      this.workshopsMap = new google.maps.Map(el, {
+        center: { lat: 4.5339, lng: -75.6814 },
+        zoom: 12,
+        zoomControl: true,
+        streetViewControl: false,
+        mapTypeControl: false,
+        fullscreenControl: true,
+        styles: this.darkMapStyle()
+      });
+      this.workshopsMapReady = true;
+    }
+
+    // Redibuja marcadores con la lista actual de talleres
+    this.workshopsMarkers.forEach(m => m.setMap(null));
+    this.workshopsMarkers = [];
+
+    const bounds = new google.maps.LatLngBounds();
+    let hasPoints = false;
+
+    this.workshops.forEach(w => {
+      if (w.latitude == null || w.longitude == null) return;
+      hasPoints = true;
+
+      const marker = new google.maps.Marker({
+        position: { lat: w.latitude, lng: w.longitude },
+        map: this.workshopsMap,
+        title: w.name,
+        icon: this.pinIcon(w.active ? '#F45D01' : '#6E6E6E', 28)
+      });
+
+      const info = new google.maps.InfoWindow({
+        content: `
+          <div style="font-family: sans-serif; max-width: 220px;">
+            <strong>${this.escapeHtml(w.name)}</strong><br>
+            ${this.escapeHtml(w.address)}, ${this.escapeHtml(w.city)}${w.state ? ', ' + this.escapeHtml(w.state) : ''}<br>
+            ${w.phone ? this.escapeHtml(w.phone) + '<br>' : ''}
+            ${w.schedule ? this.escapeHtml(w.schedule) : ''}<br>
+            <span style="color:${w.active ? '#22C55E' : '#6E6E6E'}; font-weight:600;">
+              ${w.active ? 'Activo' : 'Inactivo'}
+            </span>
+          </div>
+        `
+      });
+      marker.addListener('click', () => info.open(this.workshopsMap, marker));
+
+      this.workshopsMarkers.push(marker);
+      bounds.extend({ lat: w.latitude, lng: w.longitude });
+    });
+
+    if (hasPoints) {
+      this.workshopsMap.fitBounds(bounds, 50);
+    }
+
+    // Si el card estaba oculto cuando se creó el mapa, Google Maps puede
+    // quedarse con tiles a medio cargar; forzamos un resize.
+    requestAnimationFrame(() => google.maps.event.trigger(this.workshopsMap, 'resize'));
+  }
+
+  private pinIcon(color: string, size: number): any {
+    const svg = `
+      <svg xmlns="http://www.w3.org/2000/svg" width="${size}" height="${size}" viewBox="0 0 24 24">
+        <path fill="${color}" stroke="#ffffff" stroke-width="1.2"
+          d="M12 2C7.6 2 4 5.6 4 10c0 6 8 12 8 12s8-6 8-12c0-4.4-3.6-8-8-8z"/>
+        <circle cx="12" cy="10" r="3" fill="#ffffff"/>
+      </svg>`;
+    return {
+      url: 'data:image/svg+xml;charset=UTF-8,' + encodeURIComponent(svg),
+      scaledSize: new google.maps.Size(size, size),
+      anchor: new google.maps.Point(size / 2, size)
+    };
+  }
+
+  private darkMapStyle(): any[] {
+    return [
+      { elementType: 'geometry', stylers: [{ color: '#1a1a1a' }] },
+      { elementType: 'labels.text.stroke', stylers: [{ color: '#1a1a1a' }] },
+      { elementType: 'labels.text.fill', stylers: [{ color: '#cfcfcf' }] },
+      { featureType: 'road', elementType: 'geometry', stylers: [{ color: '#2b2b2b' }] },
+      { featureType: 'road', elementType: 'labels.text.fill', stylers: [{ color: '#8a8a8a' }] },
+      { featureType: 'water', elementType: 'geometry', stylers: [{ color: '#0d0d0d' }] },
+      { featureType: 'poi', elementType: 'geometry', stylers: [{ color: '#242424' }] },
+      { featureType: 'administrative', elementType: 'geometry', stylers: [{ color: '#3a3a3a' }] }
+    ];
+  }
+
+  private escapeHtml(value: string): string {
+    if (!value) { return ''; }
+    return value
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
   }
 
   // ─────────────────────────────────────────────────────────────────────────
