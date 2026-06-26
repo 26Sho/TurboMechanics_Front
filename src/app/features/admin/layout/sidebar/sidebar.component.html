@@ -1,7 +1,7 @@
-<aside class="sidebar" [class.collapsed]="sidebarService.collapsed()" [class.mobile-open]="sidebarService.mobileOpen()">
-
 <!-- Overlay móvil -->
 <div class="sidebar-overlay" [class.visible]="sidebarService.mobileOpen()" (click)="closeMobile()"></div>
+
+<aside class="sidebar" [class.collapsed]="sidebarService.collapsed()" [class.mobile-open]="sidebarService.mobileOpen()">
 
   <div class="sidebar__logo">
     <img src="assets/Logo.png" alt="Turbo Mechanics" class="logo-img" />
@@ -19,7 +19,8 @@
        [routerLink]="item.route"
        routerLinkActive="active"
        class="nav-item"
-       [title]="item.label">
+       [title]="item.label"
+       (click)="closeMobile()">
       <span class="nav-icon" [innerHTML]="item.icon"></span>
       <span class="nav-label" *ngIf="!sidebarService.collapsed()">{{ item.label }}</span>
       <span class="nav-badge" *ngIf="item.badge && !sidebarService.collapsed()">{{ item.badge }}</span>

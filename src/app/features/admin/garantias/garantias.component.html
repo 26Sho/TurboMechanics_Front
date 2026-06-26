@@ -18,10 +18,10 @@
 
     <!-- ══ TABS ═════════════════════════════════════════════════════════════ -->
     <div class="gar-tabs">
-      <button class="gar-tab" [class.active]="activeTab === 'garantias'" (click)="activeTab = 'garantias'">Garantías</button>
-      <button class="gar-tab" [class.active]="activeTab === 'talleres'" (click)="activeTab = 'talleres'">Talleres</button>
-      <button class="gar-tab" [class.active]="activeTab === 'calidad'" (click)="activeTab = 'calidad'">Control de Calidad</button>
-      <button class="gar-tab" [class.active]="activeTab === 'evidencias'" (click)="activeTab = 'evidencias'">Evidencias</button>
+      <button class="gar-tab" [class.active]="activeTab === 'garantias'" (click)="setActiveTab('garantias')">Garantías</button>
+      <button class="gar-tab" [class.active]="activeTab === 'talleres'" (click)="setActiveTab('talleres')">Talleres</button>
+      <button class="gar-tab" [class.active]="activeTab === 'calidad'" (click)="setActiveTab('calidad')">Control de Calidad</button>
+      <button class="gar-tab" [class.active]="activeTab === 'evidencias'" (click)="setActiveTab('evidencias')">Evidencias</button>
     </div>
 
     <!-- ══ TAB: GARANTÍAS ═══════════════════════════════════════════════════ -->
@@ -181,41 +181,71 @@
             <button class="btn btn-primary" (click)="openWorkshopForm()">+ Registrar</button>
           </div>
         </div>
+
         <div class="spinner-wrap" *ngIf="loadingWorkshops"><span class="spinner"></span></div>
         <div class="empty-state" *ngIf="!loadingWorkshops && workshops.length === 0">No hay talleres registrados.</div>
-        <div class="workshop-grid" *ngIf="!loadingWorkshops && workshops.length > 0">
-          <div class="workshop-card" *ngFor="let w of workshops">
-            <div class="workshop-card__header">
-              <div class="workshop-icon">
-                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
-                  <polyline points="9 22 9 12 15 12 15 22"/>
-                </svg>
+
+        <!-- ══ Layout: lista a la izquierda, mapa (Google Maps) a la derecha, MISMO card ══ -->
+        <div class="workshops-layout" *ngIf="!loadingWorkshops && workshops.length > 0">
+
+          <!-- Columna izquierda: tarjetas de talleres -->
+          <div class="workshops-layout__list">
+            <div class="workshop-card" *ngFor="let w of workshops">
+              <div class="workshop-card__header">
+                <div class="workshop-icon">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/>
+                    <polyline points="9 22 9 12 15 12 15 22"/>
+                  </svg>
+                </div>
+                <div>
+                  <p class="workshop-name">{{ w.name }}</p>
+                  <span class="badge" [class]="w.active ? 'badge--active' : 'badge--expired'">{{ w.active ? 'Activo' : 'Inactivo' }}</span>
+                </div>
               </div>
-              <div>
-                <p class="workshop-name">{{ w.name }}</p>
-                <span class="badge" [class]="w.active ? 'badge--active' : 'badge--expired'">{{ w.active ? 'Activo' : 'Inactivo' }}</span>
+              <div class="workshop-info">
+                <p><strong>Ciudad:</strong> {{ w.city }}{{ w.state ? ', ' + w.state : '' }}</p>
+                <p><strong>Dirección:</strong> {{ w.address }}</p>
+                <p *ngIf="w.phone"><strong>Teléfono:</strong> {{ w.phone }}</p>
+                <p *ngIf="w.email"><strong>Email:</strong> {{ w.email }}</p>
+                <p *ngIf="w.schedule"><strong>Horario:</strong> {{ w.schedule }}</p>
+                <p *ngIf="w.distanceKm != null"><strong>Distancia:</strong> {{ w.distanceKm | number:'1.1-1' }} km</p>
+                <p class="coord-row">
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                    <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
+                  </svg>
+                  {{ w.latitude | number:'1.4-4' }}, {{ w.longitude | number:'1.4-4' }}
+                </p>
               </div>
-            </div>
-            <div class="workshop-info">
-              <p><strong>Ciudad:</strong> {{ w.city }}{{ w.state ? ', ' + w.state : '' }}</p>
-              <p><strong>Dirección:</strong> {{ w.address }}</p>
-              <p *ngIf="w.phone"><strong>Teléfono:</strong> {{ w.phone }}</p>
-              <p *ngIf="w.email"><strong>Email:</strong> {{ w.email }}</p>
-              <p *ngIf="w.schedule"><strong>Horario:</strong> {{ w.schedule }}</p>
-              <p *ngIf="w.distanceKm != null"><strong>Distancia:</strong> {{ w.distanceKm | number:'1.1-1' }} km</p>
-              <p class="coord-row">
-                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
-                </svg>
-                {{ w.latitude | number:'1.4-4' }}, {{ w.longitude | number:'1.4-4' }}
-              </p>
-            </div>
-            <div class="workshop-card__actions">
-              <button class="btn btn-sm btn-secondary" (click)="openWorkshopForm(w)">Editar</button>
-              <button class="btn btn-sm btn-danger" (click)="confirmDeleteWorkshop(w.id)" [disabled]="deletingWorkshopId === w.id">Eliminar</button>
+              <div class="workshop-card__actions">
+                <button class="btn btn-sm btn-secondary" (click)="openWorkshopForm(w)">Editar</button>
+                <button class="btn btn-sm btn-danger" (click)="confirmDeleteWorkshop(w.id)" [disabled]="deletingWorkshopId === w.id">Eliminar</button>
+              </div>
             </div>
           </div>
+
+          <!-- Columna derecha: UN SOLO mapa de Google con todos los talleres como pines -->
+          <div class="workshops-layout__map">
+            <h3 class="workshops-map-heading">
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="color:#F45D01">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/>
+              </svg>
+              Mapa de Talleres
+            </h3>
+
+            <div class="workshops-gmap-frame">
+              <div #workshopsMapContainer class="workshops-gmap"></div>
+
+              <div class="workshops-gmap-error" *ngIf="workshopsMapError">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/>
+                  <line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>
+                </svg>
+                <span>No se pudo cargar el mapa. Verifica tu conexión o la API key de Google Maps.</span>
+              </div>
+            </div>
+          </div>
+
         </div>
       </div>
     </ng-container>
@@ -454,9 +484,6 @@
             <span class="error-msg" *ngIf="isInvalid(warrantyForm, 'workOrderId')">Campo requerido</span>
           </div>
         </div>
-        <!-- Se pueden cubrir varios servicios y/o repuestos en UNA SOLA garantía,
-             tanto al crear como al editar. Dropdown estilo "select múltiple":
-             un botón que al hacer clic despliega la lista con checkboxes debajo. -->
         <div class="form-row">
           <div class="form-group flex-1">
             <label class="form-label">Servicios cubiertos</label>

@@ -10,6 +10,9 @@
       <p class="location__desc">
         Estamos ubicados en el corazón del Quindío, fácilmente accesibles.
         Contamos con amplio parqueadero y horario extendido para tu comodidad.
+        <ng-container *ngIf="!loadingWorkshops && nearbyWorkshops.length > 0">
+          También puedes ver nuestros <strong>{{ nearbyWorkshops.length }}</strong> talleres de la franquicia marcados en el mapa.
+        </ng-container>
       </p>
 
       <div class="location__details">
@@ -24,33 +27,37 @@
         </div>
       </div>
 
-      <a href="https://maps.google.com/?q=Armenia,Quindio,Colombia"
-         target="_blank" class="btn btn--primary">
-        <i class="fas fa-directions"></i> Cómo llegar
-      </a>
+      <div class="location__actions">
+        <a href="https://maps.google.com/?q=Armenia,Quindio,Colombia"
+           target="_blank" class="btn btn--primary">
+          <i class="fas fa-directions"></i> Cómo llegar
+        </a>
+        <button class="btn-retry" *ngIf="locationDenied" (click)="requestLocation()">
+          <i class="fas fa-location-arrow"></i> Usar mi ubicación
+        </button>
+      </div>
     </div>
 
-    <!-- Map -->
+    <!-- Map: un solo mapa interactivo (Google Maps) con TODOS los talleres como pines -->
     <div class="location__map-wrap">
       <div class="location__map-frame">
         <div class="location__map-header">
           <i class="fas fa-map-marked-alt"></i>
-          <span>TurboMechanics – Armenia, Quindío</span>
-          <div class="location__map-pulse"></div>
+          <span>TurboMechanics – Talleres de la Franquicia</span>
+          <div class="location__map-pulse" *ngIf="loadingWorkshops"></div>
         </div>
-        <iframe
-          [src]="mapUrl"
-          width="100%"
-          height="100%"
-          style="border:0;"
-          allowfullscreen
-          loading="lazy"
-          referrerpolicy="no-referrer-when-downgrade"
-          title="Ubicación TurboMechanics Armenia Quindío">
-        </iframe>
-        <div class="location__map-overlay-pin">
-          <i class="fas fa-map-marker-alt"></i>
-          <span>Armenia, Quindío</span>
+
+        <!-- Contenedor donde Google Maps renderiza el mapa con los pines -->
+        <div #mapContainer class="location__gmap"></div>
+
+        <div class="location__map-loading" *ngIf="loadingWorkshops">
+          <span class="spinner-orange"></span>
+          <span>Buscando talleres...</span>
+        </div>
+
+        <div class="location__map-error" *ngIf="mapError">
+          <i class="fas fa-exclamation-triangle"></i>
+          <span>No se pudo cargar el mapa. Verifica tu conexión o la API key de Google Maps.</span>
         </div>
       </div>
     </div>
