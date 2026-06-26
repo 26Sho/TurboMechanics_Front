@@ -5,6 +5,7 @@ import { PaymentMethodService } from '../service/payment-method.service';
 import { ToastService } from '../../../shared/services/toast.service';
 
 @Component({
+  standalone: false,
   selector: 'app-payment-methods',
   templateUrl: './payment-methods.component.html',
   styleUrls: ['./payment-methods.component.scss']

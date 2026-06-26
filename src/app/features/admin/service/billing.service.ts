@@ -3,10 +3,11 @@ import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { Bill, GenerateBillRequest } from '../../../core/models/billing.model';
 
+import { environment } from '../../../../environments/environment';
 @Injectable({ providedIn: 'root' })
 export class BillingService {
 
-  private readonly apiUrl = 'http://localhost:9090/facturas';
+  private readonly apiUrl = `${environment.apiUrl}/facturas`;
 
   constructor(private http: HttpClient) { }
 

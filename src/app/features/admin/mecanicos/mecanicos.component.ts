@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { ToastService } from 'src/app/shared/services/toast.service';
 
+import { environment } from '../../../../environments/environment';
 export type LaborStatus = 'ACTIVO' | 'INACTIVO' | 'VACACIONES' | 'LICENCIA' | 'SUSPENDIDO';
 export type AbsenceType = 'INCAPACIDAD' | 'VACACIONES' | 'PERMISO' | 'CALAMIDAD' | 'OTRO';
 
@@ -57,7 +58,7 @@ export interface MechanicAbsenceResponseDTO {
 })
 export class MecanicosComponent implements OnInit {
 
-  private apiUrl = 'http://localhost:9090/mecanicos';
+  private apiUrl = `${environment.apiUrl}/mecanicos`;
 
   mecanicos: MechanicResponseDTO[] = [];
   mecanicosFiltered: MechanicResponseDTO[] = [];

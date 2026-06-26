@@ -3,6 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 
 @Component({
+  standalone: false,
   selector: 'app-estimate-response',
   templateUrl: './estimate-response.component.html',
   styleUrls: ['./estimate-response.component.scss']

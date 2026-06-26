@@ -3,6 +3,7 @@ import { Subscription } from 'rxjs';
 import { Toast, ToastService } from '../../services/toast.service';
 
 @Component({
+  standalone: false,
   selector: 'app-toast',
   templateUrl: './toast.component.html',
   styleUrls: ['./toast.component.scss']

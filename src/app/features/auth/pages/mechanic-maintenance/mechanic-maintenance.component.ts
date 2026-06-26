@@ -11,6 +11,7 @@ import { AuthService } from '../../../../core/services/auth.service';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { WorkEvidenceService, WorkEvidenceResponse } from '../../../admin/service/work-evidence.service';
 
+import { environment } from '../../../../../environments/environment';
 type TabType = 'status' | 'progress' | 'issues' | 'evidencias';
 
 export interface WorkOrderOption {
@@ -21,6 +22,7 @@ export interface WorkOrderOption {
 }
 
 @Component({
+  standalone: false,
   selector: 'app-mechanic-maintenance',
   templateUrl: './mechanic-maintenance.component.html',
   styleUrls: ['./mechanic-maintenance.component.scss']
@@ -67,7 +69,7 @@ export class MechanicMaintenanceComponent implements OnInit {
   lightboxUrl: string | null = null;
   lightboxMime: string | null = null;
 
-  private readonly ordersUrl = 'http://localhost:9090/orders';
+  private readonly ordersUrl = `${environment.apiUrl}/orders`;
 
   constructor(
     private fb:              FormBuilder,

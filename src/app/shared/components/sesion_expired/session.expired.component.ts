@@ -4,6 +4,7 @@ import { Subscription } from 'rxjs';
 import { SessionExpiredService } from '../../../core/services/session.expired.service';
 
 @Component({
+  standalone: false,
   selector: 'app-session-expired',
   templateUrl: './session.expired.component.html',
   styleUrls: ['./session.expired.component.scss']

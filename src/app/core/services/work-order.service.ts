@@ -3,10 +3,11 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { AssignMechanicRequest, MechanicAvailabilityDTO, StateOrder, WorkOrderRequest, WorkOrderResponse, WorkOrderUpdateRequest } from '../models/work-order';
 
+import { environment } from '../../../environments/environment';
 @Injectable({ providedIn: 'root' })
 export class WorkOrderService {
 
-  private readonly apiUrl = 'http://localhost:9090/orders';
+  private readonly apiUrl = `${environment.apiUrl}/orders`;
 
   constructor(private http: HttpClient) { }
 
@@ -66,7 +67,7 @@ export class WorkOrderService {
 
   getMechanicAvailability(): Observable<MechanicAvailabilityDTO[]> {
     return this.http.get<MechanicAvailabilityDTO[]>(
-      'http://localhost:9090/mecanicos/disponibilidad',
+      `${environment.apiUrl}/mecanicos/disponibilidad`,
       { headers: this.getHeaders() }
     );
   }
@@ -74,7 +75,7 @@ export class WorkOrderService {
   assignMechanic(orderId: number, mechanicDocument: number): Observable<WorkOrderResponse> {
     const body: AssignMechanicRequest = { mechanicDocument };
     return this.http.post<WorkOrderResponse>(
-      `http://localhost:9090/mecanicos/ordenes/${orderId}/asignar`,
+      `${environment.apiUrl}/mecanicos/ordenes/${orderId}/asignar`,
       body,
       { headers: this.getHeaders() }
     );
@@ -82,7 +83,7 @@ export class WorkOrderService {
 
   unassignMechanic(orderId: number): Observable<WorkOrderResponse> {
     return this.http.delete<WorkOrderResponse>(
-      `http://localhost:9090/mecanicos/ordenes/${orderId}/desasignar`,
+      `${environment.apiUrl}/mecanicos/ordenes/${orderId}/desasignar`,
       { headers: this.getHeaders() }
     );
   }

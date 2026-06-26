@@ -11,6 +11,7 @@ import { MercadoPagoService } from 'src/app/core/services/mercado-pagos-service.
 type TabType = 'generate' | 'history';
 
 @Component({
+  standalone: false,
   selector: 'app-billing',
   templateUrl: './billing.component.html',
   styleUrls: ['./billing.component.scss']

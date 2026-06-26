@@ -6,6 +6,7 @@ import { VehicleResponse } from 'src/app/core/models/vehicle';
 import { ToastService } from 'src/app/shared/services/toast.service';
 
 @Component({
+  standalone: false,
   selector: 'app-vehicle-history',
   templateUrl: './vehicle-history.component.html',
   styleUrl: './vehicle-history.component.scss',

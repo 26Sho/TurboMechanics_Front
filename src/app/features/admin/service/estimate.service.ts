@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
+import { environment } from '../../../../environments/environment';
 export interface Estimate {
   id: number;
   workOrder: { id: number; numberorder: string };
@@ -26,7 +27,7 @@ export interface SentEstimateRequest {
 @Injectable({ providedIn: 'root' })
 export class EstimateService {
 
-  private readonly apiUrl = 'http://localhost:9090/presupuestos';
+  private readonly apiUrl = `${environment.apiUrl}/presupuestos`;
 
   constructor(private http: HttpClient) {}
 

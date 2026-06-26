@@ -6,6 +6,7 @@ import { AssociateOwnerRequest, UserResponse, VehicleRequest, VehicleResponse } 
 type Tab = 'registrar' | 'lista' | 'asociar';
 
 @Component({
+  standalone: false,
   selector: 'app-vehicle',
   templateUrl: './vehicle.component.html',
   styleUrl: './vehicle.component.scss',

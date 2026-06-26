@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
+import { environment } from '../../../environments/environment';
 // ── DTOs ──────────────────────────────────────────────────────────────────────
 
 export interface ReviewRequestDTO {
@@ -31,8 +32,8 @@ export interface DeliveredOrderOption {
 @Injectable({ providedIn: 'root' })
 export class ReviewService {
 
-  private readonly apiUrl = 'http://localhost:9090/reviews';
-  private readonly ordersUrl = 'http://localhost:9090/orders';
+  private readonly apiUrl = `${environment.apiUrl}/reviews`;
+  private readonly ordersUrl = `${environment.apiUrl}/orders`;
 
   constructor(private http: HttpClient) {}
 

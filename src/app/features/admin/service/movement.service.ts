@@ -3,10 +3,11 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { MovementPay, RegisterMovementRequest } from '../../../core/models/billing.model';
 
+import { environment } from '../../../../environments/environment';
 @Injectable({ providedIn: 'root' })
 export class MovementService {
 
-  private readonly apiUrl = 'http://localhost:9090/movimientos';
+  private readonly apiUrl = `${environment.apiUrl}/movimientos`;
 
   constructor(private http: HttpClient) { }
 

@@ -7,6 +7,7 @@ import { AuthService } from '../../../core/services/auth.service';
 type TabType = 'agenda' | 'reminders';
 
 @Component({
+  standalone: false,
   selector: 'app-appointments',
   templateUrl: './appointments.component.html',
   styleUrls: ['./appointments.component.scss']

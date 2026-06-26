@@ -17,6 +17,7 @@ import { VehiculoClienteResponse } from 'src/app/core/models/vehiculo-cliente';
 type TabType = 'status' | 'consent';
 
 @Component({
+  standalone: false,
   selector: 'app-maintenance-tracking',
   templateUrl: './maintenance-tracking.component.html',
   styleUrls: ['./maintenance-tracking.component.scss']

@@ -4,6 +4,7 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { ToastService } from 'src/app/shared/services/toast.service';
 import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
 
+import { environment } from '../../../../environments/environment';
 interface SparePartsResponseDTO {
   id: number;
   name: string;
@@ -41,7 +42,7 @@ interface HistoryCheckResponseDTO {
 })
 export class InventarioRepuestosComponent implements OnInit {
 
-  private apiUrl = 'http://localhost:9090/admin/inventario';
+  private apiUrl = `${environment.apiUrl}/admin/inventario`;
 
   repuestos: SparePartsResponseDTO[] = [];
   repuestosFiltrados: SparePartsResponseDTO[] = [];

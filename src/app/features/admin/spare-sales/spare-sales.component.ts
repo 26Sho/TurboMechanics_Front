@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { AuthService } from 'src/app/core/services/auth.service';
 
+import { environment } from '../../../../environments/environment';
 export interface SpareSale {
   id: number;
   sparePartName: string;
@@ -16,6 +17,7 @@ export interface SpareSale {
 }
 
 @Component({
+  standalone: false,
   selector: 'app-spare-sales',
   templateUrl: './spare-sales.component.html',
   styleUrls: ['./spare-sales.component.scss']
@@ -27,7 +29,7 @@ export class SpareSalesComponent implements OnInit {
   loading                    = false;
   search                     = '';
 
-  private readonly apiUrl = 'http://localhost:9090/spare-sales';
+  private readonly apiUrl = `${environment.apiUrl}/spare-sales`;
 
   constructor(private http: HttpClient, private auth: AuthService) {}
 

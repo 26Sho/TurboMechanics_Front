@@ -4,6 +4,7 @@ import { AuthService } from 'src/app/core/services/auth.service';
 import { ToastService } from 'src/app/shared/services/toast.service';
 
 @Component({
+  standalone: false,
   selector: 'app-recover-password',
   templateUrl: './recover-password.component.html',
   styleUrl: './recover-password.component.scss'

@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
+import { environment } from '../../../../environments/environment';
 export interface Appointment {
   id: number;
   users: { id: number; username: string; identification: number };
@@ -40,7 +41,7 @@ export interface SendReminderRequest {
 @Injectable({ providedIn: 'root' })
 export class AppointmentService {
 
-  private readonly apiUrl = 'http://localhost:9090/appointments';
+  private readonly apiUrl = `${environment.apiUrl}/appointments`;
 
   constructor(private http: HttpClient) {}
 

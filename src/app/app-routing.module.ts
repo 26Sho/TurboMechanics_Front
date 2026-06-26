@@ -30,7 +30,7 @@ import { CashierComponent } from './features/admin/cashier/cashier.component';
 import { EstimatesComponent } from './features/admin/estimates/estimates.component';
 import { AppointmentsComponent } from './features/admin/appointments/appointments.component';
 import { AppointmentsComponent as ClientAppointmentsComponent } from './features/auth/pages/appointments/appointments.component';
-import { GarantiasComponent } from './features/admin/garantias/Garantias_component';
+import { GarantiasComponent } from './features/admin/garantias/Garantias.component';
 import { ResenasAdminComponent } from './features/admin/resenas/resenas.component';
 import { MaintenanceTrackingComponent } from './features/auth/pages/maintenance-tracking/maintenance-tracking.component';
 import { EstimateApproveComponent } from './features/auth/pages/estimate-approve/estimate-approve.component';

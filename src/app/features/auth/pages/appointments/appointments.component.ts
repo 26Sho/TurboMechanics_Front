@@ -9,6 +9,7 @@ import { VehiculoClienteResponse } from 'src/app/core/models/vehiculo-cliente';
 type TabType = 'register' | 'manage' | 'availability';
 
 @Component({
+  standalone: false,
   selector: 'app-appointments',
   templateUrl: './appointments.component.html',
   styleUrls: ['./appointments.component.scss']

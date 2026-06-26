@@ -5,6 +5,7 @@ import { ToastService } from '../../../shared/services/toast.service';
 import { MovementConcept, MovementPay, MovementType, RegisterMovementRequest } from '../../../core/models/billing.model';
 
 @Component({
+  standalone: false,
   selector: 'app-movements',
   templateUrl: './movements.component.html',
   styleUrls: ['./movements.component.scss']

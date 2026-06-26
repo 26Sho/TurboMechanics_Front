@@ -14,6 +14,7 @@ import { InventoryComponent } from './inventory/inventory.component';
 import { ClientsComponent } from './clients/clients.component';
 
 // Componentes del proyecto actual que reutiliza el mecánico
+// (pertenecen a AdminModule / AuthModule, por eso esos módulos se importan abajo)
 import { AppointmentsComponent } from '../admin/appointments/appointments.component';
 import { MechanicMaintenanceComponent } from '../auth/pages/mechanic-maintenance/mechanic-maintenance.component';
 import { WorkOrderComponent } from '../auth/pages/work-order/work-order.component';
@@ -26,6 +27,8 @@ import { PerfilComponent } from '../shared/perfil/perfil.component';
 import { MecanicosComponent } from './mecanicos/mecanicos.component';
 import { BillingComponent } from './billing/billing.component';
 import { GarantiasComponent } from './garantias/garantias.component';
+import { AuthModule } from '../auth/auth.module';
+import { AdminModule } from '../admin/admin.module';
 
 const routes: Routes = [
   {
@@ -75,7 +78,9 @@ const routes: Routes = [
     CommonModule,
     FormsModule,
     ReactiveFormsModule,
-    RouterModule.forChild(routes)
+    RouterModule.forChild(routes),
+    AuthModule,
+    AdminModule
   ]
 })
 export class MechanicModule { }

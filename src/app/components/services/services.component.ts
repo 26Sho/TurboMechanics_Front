@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../../core/services/auth.service';
 
+import { environment } from '../../../environments/environment';
 export interface ServiceResponseDTO {
   id:          number;
   name:        string;
@@ -42,7 +43,7 @@ export class ServicesComponent implements OnInit {
   services: ServiceResponseDTO[] = [];
   loading = false;
 
-  private readonly apiUrl = 'http://localhost:9090/admin/catalogo/public/servicios';
+  private readonly apiUrl = `${environment.apiUrl}/admin/catalogo/public/servicios`;
 
   constructor(private http: HttpClient, private auth: AuthService) {}
 

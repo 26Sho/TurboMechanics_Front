@@ -3,7 +3,9 @@ import { HttpClient } from '@angular/common/http';
 import { AdminService } from '../service/admin.service';
 import { forkJoin } from 'rxjs';
 
+import { environment } from '../../../../environments/environment';
 @Component({
+  standalone: false,
   selector: 'app-dashboard',
   templateUrl: './dashboard.component.html',
   styleUrls: ['./dashboard.component.scss']
@@ -21,7 +23,7 @@ export class DashboardComponent implements OnInit {
 
   stats: any[] = [];
 
-  private apiUrl = 'http://localhost:9090';
+  private apiUrl = `${environment.apiUrl}`;
 
   constructor(
     private _adminService: AdminService,

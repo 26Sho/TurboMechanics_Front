@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
+import { environment } from '../../../../environments/environment';
 export type StateOrder =
   | 'RECIBIDO' | 'EN_DIAGNOSTICO' | 'EN_REPARACION'
   | 'LISTO' | 'ENTREGADO' | 'CANCELADO';
@@ -78,7 +79,7 @@ export interface NotificationConsentRequest {
 @Injectable({ providedIn: 'root' })
 export class MaintenanceTrackingService {
 
-  private readonly apiUrl = 'http://localhost:9090/maintenance';
+  private readonly apiUrl = `${environment.apiUrl}/maintenance`;
 
   constructor(private http: HttpClient) {}
 

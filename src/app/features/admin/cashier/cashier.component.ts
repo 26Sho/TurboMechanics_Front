@@ -9,6 +9,7 @@ import autoTable from 'jspdf-autotable';
 type TabType = 'cashier' | 'report';
 
 @Component({
+  standalone: false,
   selector: 'app-cashier',
   templateUrl: './cashier.component.html',
   styleUrls: ['./cashier.component.scss']

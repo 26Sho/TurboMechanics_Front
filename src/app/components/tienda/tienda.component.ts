@@ -5,6 +5,7 @@ import { ToastService } from 'src/app/shared/services/toast.service';
 import { TiendaService, Repuesto, PagoResponse } from 'src/app/core/services/tienda.service';
 
 @Component({
+  standalone: false,
   selector: 'app-tienda',
   templateUrl: './tienda.component.html',
   styleUrls: ['./tienda.component.scss']
