@@ -502,6 +502,13 @@ textarea.form-input { resize: vertical; }
   }
 }
 
+// Respaldo: si el CSS global del admin fuerza texto blanco en todo,
+// esto garantiza que el contenido de los popups de Google Maps siga siendo legible.
+::ng-deep .gm-style-iw,
+::ng-deep .gm-style-iw * {
+  color: #1a1a1a !important;
+}
+
 // ── Workshop card ─────────────────────────────────────────────────────────────
 .workshop-card {
   background: rgba($white, 0.04);

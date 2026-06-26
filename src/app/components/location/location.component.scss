@@ -200,6 +200,39 @@ $font-heading: 'Rajdhani', sans-serif;
       max-width: 280px;
     }
   }
+
+  &__map-legend {
+    position: absolute;
+    top: 56px;
+    right: 12px;
+    z-index: 10;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    background: rgba($black, 0.85);
+    border: 1px solid rgba($orange, 0.2);
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 0.74rem;
+    color: $gray-light;
+
+    span {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+    }
+  }
+
+  &__legend-dot {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    flex-shrink: 0;
+
+    &--workshop  { background: $orange; }
+    &--visitor   { background: #3B82F6; }
+  }
 }
 
 .btn-retry {
@@ -238,4 +271,11 @@ $font-heading: 'Rajdhani', sans-serif;
 ::ng-deep .location__gmap .gm-style-cc,
 ::ng-deep .location__gmap a[href^="https://maps.google.com/maps"] {
   display: none !important;
+}
+
+// Respaldo: si el CSS global del sitio fuerza texto blanco en todo,
+// esto garantiza que el contenido de los popups de Google Maps siga siendo legible.
+::ng-deep .gm-style-iw,
+::ng-deep .gm-style-iw * {
+  color: #1a1a1a !important;
 }

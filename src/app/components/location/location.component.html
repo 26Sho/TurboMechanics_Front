@@ -59,6 +59,11 @@
           <i class="fas fa-exclamation-triangle"></i>
           <span>No se pudo cargar el mapa. Verifica tu conexión o la API key de Google Maps.</span>
         </div>
+
+        <div class="location__map-legend" *ngIf="!mapError">
+          <span><i class="location__legend-dot location__legend-dot--workshop"></i> Talleres</span>
+          <span><i class="location__legend-dot location__legend-dot--visitor"></i> Tu ubicación</span>
+        </div>
       </div>
     </div>
 

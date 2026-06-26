@@ -19,7 +19,7 @@ interface WorkEvidenceWithPreview extends WorkEvidence {
 
 // ⚠️ API key de Google Maps pegada directo en el código (decisión del equipo).
 // Debe tener "Maps JavaScript API" habilitada en Google Cloud Console.
-const GOOGLE_MAPS_API_KEY = '';
+const GOOGLE_MAPS_API_KEY = 'AIzaSyCRNfERJjshgPygGis2vchgLSebEWLsrwY';
 
 @Component({
   selector: 'app-garantias',
@@ -544,7 +544,7 @@ export class GarantiasComponent implements OnInit {
       }
 
       const script = document.createElement('script');
-      script.src = ``;
+      script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&v=weekly`;
       script.async = true;
       script.defer = true;
       script.setAttribute('data-google-maps', 'true');
@@ -617,12 +617,14 @@ export class GarantiasComponent implements OnInit {
 
       const info = new google.maps.InfoWindow({
         content: `
-          <div style="font-family: sans-serif; max-width: 220px;">
-            <strong>${this.escapeHtml(w.name)}</strong><br>
-            ${this.escapeHtml(w.address)}, ${this.escapeHtml(w.city)}${w.state ? ', ' + this.escapeHtml(w.state) : ''}<br>
-            ${w.phone ? this.escapeHtml(w.phone) + '<br>' : ''}
-            ${w.schedule ? this.escapeHtml(w.schedule) : ''}<br>
-            <span style="color:${w.active ? '#22C55E' : '#6E6E6E'}; font-weight:600;">
+          <div style="font-family: sans-serif; max-width: 220px; color: #1a1a1a;">
+            <strong style="color:#1a1a1a; font-size:14px;">${this.escapeHtml(w.name)}</strong><br>
+            <span style="color:#3a3a3a;">${this.escapeHtml(w.address)}</span><br>
+            <span style="color:#3a3a3a;">${this.escapeHtml(w.city)}${w.state ? ', ' + this.escapeHtml(w.state) : ''}</span><br>
+            <span style="color:#3a3a3a;">Colombia</span>
+            ${w.phone ? `<br><span style="color:#3a3a3a;">${this.escapeHtml(w.phone)}</span>` : ''}
+            ${w.schedule ? `<br><span style="color:#3a3a3a;">${this.escapeHtml(w.schedule)}</span>` : ''}
+            <br><span style="color:${w.active ? '#22C55E' : '#6E6E6E'}; font-weight:600;">
               ${w.active ? 'Activo' : 'Inactivo'}
             </span>
           </div>
