@@ -9,42 +9,63 @@
       <p>Taller mecánico especializado enfocado en diagnóstico preciso,
          mantenimiento preventivo y reparaciones con garantía total.</p>
       <div class="footer__social">
-        <a href="https://wa.me/573212139466" aria-label="WhatsApp" target="_blank"><i class="fab fa-whatsapp"></i></a>
+        <a href="https://wa.me/573212139466" aria-label="WhatsApp" target="_blank" rel="noopener" title="WhatsApp">
+          <i class="fab fa-whatsapp"></i>
+        </a>
+        <a href="https://mail.google.com/mail/?view=cm&fs=1&to=TurboMechanicsTaller@gmail.com&su=Consulta%20TurboMechanics"
+           aria-label="Correo" target="_blank" rel="noopener" title="Escríbenos por correo">
+          <i class="fas fa-envelope"></i>
+        </a>
       </div>
     </div>
 
-    <!-- Navegación -->
+    <!-- Navegación: mismos destinos exactos que el navbar de arriba -->
     <div class="footer__nav">
       <h4>Navegación</h4>
       <ul>
         <li><a (click)="scrollTo('inicio')" style="cursor:pointer">Inicio</a></li>
         <li><a (click)="scrollTo('nosotros')" style="cursor:pointer">Nosotros</a></li>
         <li><a (click)="scrollTo('servicios')" style="cursor:pointer">Servicios</a></li>
+        <li><a (click)="scrollTo('tienda')" style="cursor:pointer">Tienda</a></li>
         <li><a (click)="scrollTo('ubicacion')" style="cursor:pointer">Ubicación</a></li>
         <li><a (click)="scrollTo('contacto')" style="cursor:pointer">Contacto</a></li>
+        <li><a (click)="scrollTo('resenas')" style="cursor:pointer">Reseñas</a></li>
+        <li><a (click)="goToAppointments()" style="cursor:pointer">Agendar Cita</a></li>
       </ul>
     </div>
 
-    <!-- Servicios -->
+    <!-- Servicios: llevan a la sección de Servicios (no hay página individual por servicio) -->
     <div class="footer__services">
       <h4>Servicios</h4>
       <ul>
-        <li><a href="#">Cambio de aceite</a></li>
-        <li><a href="#">Mantenimiento preventivo</a></li>
-        <li><a href="#">Sincronización</a></li>
-        <li><a href="#">Frenos</a></li>
-        <li><a href="#">Suspensión</a></li>
-        <li><a href="#">Sistema eléctrico</a></li>
+        <li><a (click)="scrollTo('servicios')" style="cursor:pointer">Cambio de aceite</a></li>
+        <li><a (click)="scrollTo('servicios')" style="cursor:pointer">Mantenimiento preventivo</a></li>
+        <li><a (click)="scrollTo('servicios')" style="cursor:pointer">Sincronización</a></li>
+        <li><a (click)="scrollTo('servicios')" style="cursor:pointer">Frenos</a></li>
+        <li><a (click)="scrollTo('servicios')" style="cursor:pointer">Suspensión</a></li>
+        <li><a (click)="scrollTo('servicios')" style="cursor:pointer">Sistema eléctrico</a></li>
       </ul>
     </div>
 
-    <!-- Contacto -->
+    <!-- Contacto: ahora cada dato es un link funcional, igual que en la sección de Contacto -->
     <div class="footer__contact">
       <h4>Contacto</h4>
       <ul>
-        <li><i class="fas fa-map-marker-alt"></i> Armenia, Quindío, Colombia</li>
-        <li><i class="fas fa-phone"></i> +57 321 213 9466</li>
-        <li><i class="fas fa-envelope"></i> TurboMechanicsTaller&#64;gmail.com</li>
+        <li>
+          <a href="https://maps.google.com/?q=Armenia,Quindio,Colombia" target="_blank" rel="noopener">
+            <i class="fas fa-map-marker-alt"></i> Armenia, Quindío, Colombia
+          </a>
+        </li>
+        <li>
+          <a href="tel:+573212139466">
+            <i class="fas fa-phone"></i> +57 321 213 9466
+          </a>
+        </li>
+        <li>
+          <a href="https://mail.google.com/mail/?view=cm&fs=1&to=TurboMechanicsTaller@gmail.com&su=Consulta%20TurboMechanics" target="_blank" rel="noopener">
+            <i class="fas fa-envelope"></i> TurboMechanicsTaller&#64;gmail.com
+          </a>
+        </li>
         <li><i class="fas fa-clock"></i> Lun–Sáb: 7am – 6pm</li>
       </ul>
     </div>

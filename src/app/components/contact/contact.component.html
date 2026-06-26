@@ -11,7 +11,8 @@
         *ngFor="let ch of channels"
         [href]="ch.href"
         class="contact__channel"
-        target="_blank">
+        [attr.target]="ch.external ? '_blank' : null"
+        [attr.rel]="ch.external ? 'noopener' : null">
         <div class="contact__channel-icon" [ngClass]="'contact__channel-icon--' + ch.iconType">
           <i [class]="ch.iconClass"></i>
         </div>
