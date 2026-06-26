@@ -26,8 +26,8 @@ export interface Workshop {
 
 // ⚠️ API key de Google Maps pegada directo en el código (decisión del equipo).
 // Generada en Google Cloud Console > APIs & Services > Credentials.
-// Debe tener "Maps JavaScript API" habilitada para el proyecto.
-const GOOGLE_MAPS_API_KEY = '';
+// Debe tener "Maps JavaScript API" Y "Geocoding API" habilitadas para el proyecto.
+const GOOGLE_MAPS_API_KEY = 'AIzaSyCRNfERJjshgPygGis2vchgLSebEWLsrwY';
 
 @Component({
   selector: 'app-location',
@@ -46,6 +46,8 @@ export class LocationComponent implements OnInit, AfterViewInit {
     { icon: 'fab fa-whatsapp', label: 'WhatsApp',  value: '+57 321 213 9466' }
   ];
 
+  // Esta página es pública: el mapa, la sede y los talleres de la franquicia
+  // se muestran tanto a visitantes anónimos como a clientes logueados.
   nearbyWorkshops: Workshop[] = [];
   loadingWorkshops = false;
   locationDenied   = false;
@@ -53,14 +55,22 @@ export class LocationComponent implements OnInit, AfterViewInit {
   mapError         = false;
 
   private map: any;
+  private geocoder: any;
   private markers: any[] = [];
   private mapReady = false;
   private readonly BASE = 'http://localhost:9090';
 
-  // Coordenadas del taller principal (Armenia, Quindío) — tomadas del embed
-  // de Google Maps que ya existía en el componente original.
+  // Coordenadas del taller principal (Armenia, Quindío)
   private readonly MAIN_LAT = 4.5339;
   private readonly MAIN_LNG = -75.6814;
+
+  // Coordenadas del visitante (si las acepta), para mostrar su pin "Tu ubicación"
+  private visitorLat: number | null = null;
+  private visitorLng: number | null = null;
+  private visitorMarker: any;
+
+  // Cache de direcciones ya geocodificadas, para no repetir llamadas a la API
+  private addressCache: Map<string, string> = new Map();
 
   private static googleMapsLoadingPromise: Promise<void> | null = null;
 
@@ -102,7 +112,7 @@ export class LocationComponent implements OnInit, AfterViewInit {
       }
 
       const script = document.createElement('script');
-      script.src = ``;
+      script.src = `https://maps.googleapis.com/maps/api/js?key=${GOOGLE_MAPS_API_KEY}&v=weekly`;
       script.async = true;
       script.defer = true;
       script.setAttribute('data-google-maps', 'true');
@@ -134,36 +144,54 @@ export class LocationComponent implements OnInit, AfterViewInit {
       styles: this.darkMapStyle()
     });
 
-    // Marcador del taller principal (sede)
-    const mainMarker = new google.maps.Marker({
-      position: { lat: this.MAIN_LAT, lng: this.MAIN_LNG },
-      map: this.map,
-      title: 'TurboMechanics - Sede principal',
-      icon: this.pinIcon('#D62828', 34)
-    });
-
-    const mainInfo = new google.maps.InfoWindow({
-      content: '<strong>TurboMechanics</strong><br>Armenia, Quindío (sede principal)'
-    });
-    mainMarker.addListener('click', () => mainInfo.open(this.map, mainMarker));
+    this.geocoder = new google.maps.Geocoder();
 
     this.mapReady = true;
 
+    // Si ya tenemos la ubicación del visitante (llegó antes de que el mapa cargara)
+    if (this.visitorLat != null && this.visitorLng != null) {
+      this.renderVisitorMarker();
+    }
+
     if (this.nearbyWorkshops.length > 0) {
       this.renderWorkshopMarkers();
+    } else {
+      // Aunque no haya talleres todavía, centramos según lo que tengamos
+      this.fitMapToVisible();
     }
   }
 
-  // ── Pinta los pines de los talleres dentro del MISMO mapa ────────────────
+  // ── Pin de "Tu ubicación" (visitante, logueado o no) ──────────────────────
+  private renderVisitorMarker(): void {
+    if (!this.mapReady || !this.map || this.visitorLat == null || this.visitorLng == null) return;
+
+    if (this.visitorMarker) {
+      this.visitorMarker.setMap(null);
+    }
+
+    this.visitorMarker = new google.maps.Marker({
+      position: { lat: this.visitorLat, lng: this.visitorLng },
+      map: this.map,
+      title: 'Tu ubicación',
+      icon: this.pinIcon('#3B82F6', 30),
+      zIndex: 999
+    });
+
+    const info = new google.maps.InfoWindow({ content: this.loadingInfoHtml('Tu ubicación') });
+    this.visitorMarker.addListener('click', () => {
+      info.open(this.map, this.visitorMarker);
+      this.fillInfoWithAddress(info, this.visitorLat as number, this.visitorLng as number, 'Tu ubicación');
+    });
+
+    this.fitMapToVisible();
+  }
+
+  // ── Pinta los pines de los talleres registrados por el administrador ─────
   private renderWorkshopMarkers(): void {
     if (!this.mapReady || !this.map) return;
 
-    // Limpiar marcadores anteriores antes de redibujar
     this.markers.forEach(m => m.setMap(null));
     this.markers = [];
-
-    const bounds = new google.maps.LatLngBounds();
-    bounds.extend({ lat: this.MAIN_LAT, lng: this.MAIN_LNG });
 
     this.nearbyWorkshops.forEach(w => {
       const marker = new google.maps.Marker({
@@ -173,25 +201,96 @@ export class LocationComponent implements OnInit, AfterViewInit {
         icon: this.pinIcon('#F45D01', 30)
       });
 
-      const info = new google.maps.InfoWindow({
-        content: `
-          <div style="font-family: sans-serif; max-width: 220px;">
-            <strong>${this.escapeHtml(w.name)}</strong><br>
-            ${this.escapeHtml(w.address)}, ${this.escapeHtml(w.city)}${w.state ? ', ' + this.escapeHtml(w.state) : ''}<br>
-            ${w.phone ? this.escapeHtml(w.phone) + '<br>' : ''}
-            ${w.schedule ? this.escapeHtml(w.schedule) : ''}
-          </div>
-        `
-      });
+      const content = this.wrapInfo(`
+        <strong style="color:#1a1a1a; font-size:14px;">${this.escapeHtml(w.name)}</strong><br>
+        <span style="color:#3a3a3a;">${this.escapeHtml(w.address)}</span><br>
+        <span style="color:#3a3a3a;">${this.escapeHtml(w.city)}${w.state ? ', ' + this.escapeHtml(w.state) : ''}</span><br>
+        <span style="color:#3a3a3a;">Colombia</span>
+        ${w.phone ? `<br><span style="color:#3a3a3a;">${this.escapeHtml(w.phone)}</span>` : ''}
+        ${w.schedule ? `<br><span style="color:#3a3a3a;">${this.escapeHtml(w.schedule)}</span>` : ''}
+      `);
+
+      const info = new google.maps.InfoWindow({ content });
       marker.addListener('click', () => info.open(this.map, marker));
 
       this.markers.push(marker);
-      bounds.extend({ lat: w.latitude, lng: w.longitude });
     });
 
-    if (this.nearbyWorkshops.length > 0) {
-      this.map.fitBounds(bounds, 60);
+    this.fitMapToVisible();
+  }
+
+  /** Ajusta el zoom/centro para que se vean: talleres + visitante (los que existan) */
+  private fitMapToVisible(): void {
+    if (!this.map) return;
+
+    const bounds = new google.maps.LatLngBounds();
+    let hasPoints = false;
+
+    this.nearbyWorkshops.forEach(w => {
+      bounds.extend({ lat: w.latitude, lng: w.longitude });
+      hasPoints = true;
+    });
+
+    if (this.visitorLat != null && this.visitorLng != null) {
+      bounds.extend({ lat: this.visitorLat, lng: this.visitorLng });
+      hasPoints = true;
     }
+
+    if (hasPoints) {
+      this.map.fitBounds(bounds, 60);
+    } else {
+      // Sin talleres ni ubicación del visitante: centramos en Armenia por defecto
+      this.map.setCenter({ lat: this.MAIN_LAT, lng: this.MAIN_LNG });
+      this.map.setZoom(13);
+    }
+  }
+
+  // ── Geocodificación inversa (solo para el pin de "Tu ubicación") ─────────
+  private reverseGeocode(lat: number, lng: number): Promise<string | null> {
+    const key = `${lat.toFixed(5)},${lng.toFixed(5)}`;
+    if (this.addressCache.has(key)) {
+      return Promise.resolve(this.addressCache.get(key) as string);
+    }
+    if (!this.geocoder) {
+      return Promise.resolve(null);
+    }
+
+    return new Promise((resolve) => {
+      this.geocoder.geocode({ location: { lat, lng } }, (results: any[], status: string) => {
+        if (status === 'OK' && results && results.length > 0) {
+          const neighborhoodResult = results.find((r: any) =>
+            r.types?.includes('sublocality') || r.types?.includes('neighborhood')
+          );
+          const formatted = (neighborhoodResult || results[0]).formatted_address as string;
+          this.addressCache.set(key, formatted);
+          resolve(formatted);
+        } else {
+          // Log para diagnóstico: revisa la consola si esto sigue fallando.
+          // Causas comunes: la API de Geocoding tardó en propagarse tras habilitarla
+          // (puede tardar hasta 5 min), o la facturación aún no terminó de activarse.
+          console.warn('Geocoding falló con status:', status);
+          resolve(null);
+        }
+      });
+    });
+  }
+
+  private loadingInfoHtml(title: string): string {
+    return this.wrapInfo(`<strong style="color:#1a1a1a;">${this.escapeHtml(title)}</strong><br><span style="color:#6E6E6E;">Buscando dirección...</span>`);
+  }
+
+  private wrapInfo(innerHtml: string): string {
+    return `<div style="font-family: sans-serif; max-width: 230px; font-size: 13px; line-height: 1.5; color: #1a1a1a;">${innerHtml}</div>`;
+  }
+
+  /** Actualiza el popup de "Tu ubicación" con la dirección geocodificada (o la oculta si falla) */
+  private fillInfoWithAddress(info: any, lat: number, lng: number, title: string): void {
+    this.reverseGeocode(lat, lng).then((address) => {
+      const addressLine = address
+        ? `<span style="color:#3a3a3a;">${this.escapeHtml(address)}</span>`
+        : `<span style="color:#9a9a9a; font-size:11px;">Lat: ${lat.toFixed(5)}, Lng: ${lng.toFixed(5)}</span>`;
+      info.setContent(this.wrapInfo(`<strong style="color:#1a1a1a; font-size:14px;">${this.escapeHtml(title)}</strong><br>${addressLine}`));
+    });
   }
 
   // ── Ícono de pin simple en SVG, sin depender de imágenes externas ────────
@@ -231,6 +330,7 @@ export class LocationComponent implements OnInit, AfterViewInit {
       .replace(/>/g, '&gt;');
   }
 
+  // ── Geolocalización del visitante (funciona logueado o no, es navegador) ─
   requestLocation(): void {
     if (!navigator.geolocation) {
       this.loadAllWorkshops();
@@ -239,10 +339,18 @@ export class LocationComponent implements OnInit, AfterViewInit {
     this.locationAsked = true;
     navigator.geolocation.getCurrentPosition(
       (pos) => {
+        this.visitorLat = pos.coords.latitude;
+        this.visitorLng = pos.coords.longitude;
+        this.locationDenied = false;
+        if (this.mapReady) {
+          this.renderVisitorMarker();
+        }
         this.loadNearbyWorkshops(pos.coords.latitude, pos.coords.longitude);
       },
       () => {
         this.locationDenied = true;
+        this.visitorLat = null;
+        this.visitorLng = null;
         this.loadAllWorkshops();
       }
     );
