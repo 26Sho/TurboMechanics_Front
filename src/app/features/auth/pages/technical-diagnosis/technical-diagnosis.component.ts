@@ -8,6 +8,7 @@ import { DiagnosisRequest, DiagnosisResponse, UrgencyLevel } from '../../../../c
 type ViewMode = 'form' | 'history';
 
 @Component({
+  standalone: false,
   selector: 'app-technical-diagnosis',
   templateUrl: './technical-diagnosis.component.html',
   styleUrls: ['./technical-diagnosis.component.scss']

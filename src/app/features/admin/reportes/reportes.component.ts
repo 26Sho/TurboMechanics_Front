@@ -5,6 +5,7 @@ import * as XLSX from 'xlsx';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 
+import { environment } from '../../../../environments/environment';
 interface ServiceResponseDTO {
   id: number;
   name: string;
@@ -39,8 +40,8 @@ type TabActivo = 'servicios' | 'masUsados' | 'stockCritico';
 })
 export class ReportesComponent implements OnInit {
 
-  private catalogoUrl   = 'http://localhost:9090/admin/catalogo';
-  private inventarioUrl = 'http://localhost:9090/admin/inventario';
+  private catalogoUrl   = `${environment.apiUrl}/admin/catalogo`;
+  private inventarioUrl = `${environment.apiUrl}/admin/inventario`;
 
   tabActivo: TabActivo = 'servicios';
   cargando = false;

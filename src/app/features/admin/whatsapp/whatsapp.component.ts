@@ -2,6 +2,7 @@ import { Component, OnDestroy, OnInit } from '@angular/core';
 import { WhatsappService, WhatsAppSessionResponse } from 'src/app/core/services/whatsapp.service';
 
 @Component({
+  standalone: false,
   selector: 'app-whatsapp',
   templateUrl: './whatsapp.component.html',
   styleUrls: ['./whatsapp.component.scss']

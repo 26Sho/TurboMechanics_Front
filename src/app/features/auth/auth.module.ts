@@ -44,6 +44,14 @@ import { NavbarModule } from '../../components/navbar/navbar.module';
     RouterModule,
     NavbarModule
   ],
-  exports: [AuthComponent, RecoverPasswordComponent]
+  exports: [
+    AuthComponent,
+    RecoverPasswordComponent,
+    WorkOrderComponent,
+    VehicleComponent,
+    VehicleHistoryComponent,
+    TechnicalDiagnosisComponent,
+    MechanicMaintenanceComponent
+  ]
 })
 export class AuthModule { }

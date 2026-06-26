@@ -22,6 +22,7 @@ interface WorkEvidenceWithPreview extends WorkEvidence {
 const GOOGLE_MAPS_API_KEY = 'AIzaSyCRNfERJjshgPygGis2vchgLSebEWLsrwY';
 
 @Component({
+  standalone: false,
   selector: 'app-garantias',
   templateUrl: './garantias.component.html',
   styleUrls: ['./garantias.component.scss']

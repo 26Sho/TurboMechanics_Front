@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable, BehaviorSubject } from 'rxjs';
 import { tap } from 'rxjs/operators';
+import { environment } from '../../../environments/environment';
 import {
   LoginRequest, LoginResponse, MessageResponse, RefreshTokenResponse,
   RegisterRequest, ForgotPasswordRequest, ValidateResetTokenRequest, ResetPasswordRequest
@@ -10,7 +11,7 @@ import {
 @Injectable({ providedIn: 'root' })
 export class AuthService {
 
-  private apiUrl = 'http://localhost:9090/auth';
+  private apiUrl = `${environment.apiUrl}/auth`;
 
   private authState$ = new BehaviorSubject<boolean>(this.isLoggedIn());
   authChanged = this.authState$.asObservable();

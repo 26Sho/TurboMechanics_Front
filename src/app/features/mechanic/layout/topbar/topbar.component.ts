@@ -4,6 +4,7 @@ import { SidebarService } from '../../service/sidebar.service';
 import { AuthService } from '../../../../core/services/auth.service';
 
 @Component({
+  standalone: false,
   selector: 'app-topbar',
   templateUrl: './topbar.component.html',
   styleUrls: ['./topbar.component.scss'],

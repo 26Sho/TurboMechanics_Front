@@ -4,10 +4,11 @@ import { Observable } from 'rxjs';
 import { DiagnosisRequest, DiagnosisResponse } from '../../../core/models/diagnosis.model';
 import { WorkOrderResponse } from '../../../core/models/work-order';
 
+import { environment } from '../../../../environments/environment';
 @Injectable({ providedIn: 'root' })
 export class DiagnosisService {
 
-  private readonly apiUrl = 'http://localhost:9090/diagnosis';
+  private readonly apiUrl = `${environment.apiUrl}/diagnosis`;
 
   constructor(private http: HttpClient) {}
 

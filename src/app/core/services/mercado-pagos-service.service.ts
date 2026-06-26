@@ -3,10 +3,11 @@ import { CreatePaymentRequest, CreatePaymentResponse, Payment } from "../models/
 import { HttpClient } from "@angular/common/http";
 import { Observable } from "rxjs";
 
+import { environment } from '../../../environments/environment';
 @Injectable({ providedIn: 'root' })
 export class MercadoPagoService {
 
-  private readonly apiUrl = 'http://localhost:9090/payments';
+  private readonly apiUrl = `${environment.apiUrl}/payments`;
 
   constructor(private http: HttpClient) {}
 

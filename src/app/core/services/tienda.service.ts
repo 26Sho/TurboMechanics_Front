@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
+import { environment } from '../../../environments/environment';
 export interface Repuesto {
   id:          number;
   name:        string;
@@ -33,7 +34,7 @@ export interface PagoResponse {
 @Injectable({ providedIn: 'root' })
 export class TiendaService {
 
-  private base = 'http://localhost:9090';
+  private base = `${environment.apiUrl}`;
 
   constructor(private http: HttpClient) {}
 

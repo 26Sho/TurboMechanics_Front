@@ -3,6 +3,7 @@ import { ToastService } from 'src/app/shared/services/toast.service';
 import { AdminService, UserRequest, UserResponse, WorkOrderResponse } from '../../admin/service/admin.service';
 
 @Component({
+  standalone: false,
   selector: 'app-clients',
   templateUrl: './clients.component.html',
   styleUrls: ['./clients.component.scss']

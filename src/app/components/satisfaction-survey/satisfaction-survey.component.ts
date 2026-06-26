@@ -6,6 +6,7 @@ import { WorkOrderService } from '../../core/services/work-order.service';
 import { WorkOrderResponse } from '../../core/models/work-order';
 
 @Component({
+  standalone: false,
   selector: 'app-satisfaction-survey',
   templateUrl: './satisfaction-survey.component.html',
   styleUrls: ['./satisfaction-survey.component.scss']

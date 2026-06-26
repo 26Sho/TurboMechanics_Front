@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
+import { environment } from '../../../../environments/environment';
 export interface WorkEvidenceResponse {
   id: number;
   workOrderId: number;
@@ -20,7 +21,7 @@ export interface WorkEvidenceResponse {
 @Injectable({ providedIn: 'root' })
 export class WorkEvidenceService {
 
-  private readonly baseUrl = 'http://localhost:9090/evidencias';
+  private readonly baseUrl = `${environment.apiUrl}/evidencias`;
 
   constructor(private http: HttpClient) {}
 

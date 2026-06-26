@@ -2,7 +2,9 @@ import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
 
+import { environment } from '../../../../../environments/environment';
 @Component({
+  standalone: false,
   selector: 'app-estimate-reject',
   templateUrl: './estimate-reject.component.html',
   styleUrls: ['./estimate-reject.component.scss']
@@ -14,7 +16,7 @@ export class EstimateRejectComponent implements OnInit {
   success  = false;
   alreadyResponded = false;
 
-  private readonly apiUrl = 'http://localhost:9090/presupuestos';
+  private readonly apiUrl = `${environment.apiUrl}/presupuestos`;
 
   constructor(
     private route: ActivatedRoute,

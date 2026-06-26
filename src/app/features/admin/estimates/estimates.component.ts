@@ -8,6 +8,7 @@ import { WorkOrderResponse } from '../../../core/models/work-order';
 type TabType = 'send' | 'list';
 
 @Component({
+  standalone: false,
   selector: 'app-estimates',
   templateUrl: './estimates.component.html',
   styleUrls: ['./estimates.component.scss']

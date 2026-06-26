@@ -10,6 +10,7 @@ type Tab = 'nueva' | 'lista' | 'buscar';
 type SearchType = 'number' | 'plate' | 'client' | 'state';
 
 @Component({
+  standalone: false,
   selector: 'app-work-order',
   templateUrl: './work-order.component.html',
   styleUrls: ['./work-order.component.scss'],

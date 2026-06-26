@@ -9,6 +9,7 @@ import { ToastService } from '../../../shared/services/toast.service';
 type HttpErr = { error?: { message?: string } };
 
 @Component({
+  standalone: false,
   selector: 'app-garantias',
   templateUrl: './garantias.component.html',
   styleUrls: ['./garantias.component.scss']

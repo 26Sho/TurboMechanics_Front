@@ -3,6 +3,7 @@ import { AdminVehiculosClienteService } from '../service/admin-vehiculos-cliente
 import { VehiculoClienteResponse } from 'src/app/core/models/vehiculo-cliente';
 
 @Component({
+  standalone: false,
   selector: 'app-admin-vehiculos-cliente',
   templateUrl: './vehiculos-cliente.component.html',
   styleUrls: ['./vehiculos-cliente.component.scss']

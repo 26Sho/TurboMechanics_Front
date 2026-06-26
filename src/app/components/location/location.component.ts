@@ -1,6 +1,7 @@
 import { Component, OnInit, AfterViewInit, ElementRef, ViewChild } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 
+import { environment } from '../../../environments/environment';
 declare const google: any;
 
 export interface LocationDetail {
@@ -58,7 +59,7 @@ export class LocationComponent implements OnInit, AfterViewInit {
   private geocoder: any;
   private markers: any[] = [];
   private mapReady = false;
-  private readonly BASE = 'http://localhost:9090';
+  private readonly BASE = `${environment.apiUrl}`;
 
   // Coordenadas del taller principal (Armenia, Quindío)
   private readonly MAIN_LAT = 4.5339;

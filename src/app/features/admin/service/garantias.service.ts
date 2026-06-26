@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
+import { environment } from '../../../../environments/environment';
 // ── Interfaces ──────────────────────────────────────────────────────────────
 
 export interface WarrantyRequest {
@@ -181,7 +182,7 @@ export interface SparePartOption {
 @Injectable({ providedIn: 'root' })
 export class GarantiasService {
 
-  private readonly BASE = 'http://localhost:9090';
+  private readonly BASE = `${environment.apiUrl}`;
 
   constructor(private http: HttpClient) {}
 

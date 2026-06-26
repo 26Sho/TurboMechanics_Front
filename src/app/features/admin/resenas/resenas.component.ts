@@ -3,6 +3,7 @@ import { ReviewService, ReviewResponseDTO } from '../../../core/services/review.
 import { ToastService } from '../../../shared/services/toast.service';
 
 @Component({
+  standalone: false,
   selector: 'app-resenas-admin',
   templateUrl: './resenas.component.html',
   styleUrls: ['./resenas.component.scss']

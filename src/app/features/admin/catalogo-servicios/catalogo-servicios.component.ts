@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { ToastService } from 'src/app/shared/services/toast.service';
 
+import { environment } from '../../../../environments/environment';
 interface ServiceResponseDTO {
   id: number;
   name: string;
@@ -24,7 +25,7 @@ interface ServiceHistoryCheckResponseDTO {
 })
 export class CatalogoServiciosComponent implements OnInit {
 
-  private apiUrl = 'http://localhost:9090/admin/catalogo';
+  private apiUrl = `${environment.apiUrl}/admin/catalogo`;
 
   servicios: ServiceResponseDTO[] = [];
   serviciosFiltrados: ServiceResponseDTO[] = [];

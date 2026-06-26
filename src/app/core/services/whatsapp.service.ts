@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
+import { environment } from '../../../environments/environment';
 export interface WhatsAppSessionResponse {
   status: 'connecting' | 'qr_pending' | 'open' | 'closed' | 'not_found';
   qr?: string;
@@ -17,7 +18,7 @@ export interface WhatsAppIncoming {
 
 @Injectable({ providedIn: 'root' })
 export class WhatsappService {
-  private base = 'http://localhost:9090/whatsapp';
+  private base = `${environment.apiUrl}/whatsapp`;
 
   constructor(private http: HttpClient) {}
 

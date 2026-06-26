@@ -5,6 +5,7 @@ import { VehiculoClienteResponse } from 'src/app/core/models/vehiculo-cliente';
 import { ToastService } from 'src/app/shared/services/toast.service';
 
 @Component({
+  standalone: false,
   selector: 'app-mis-vehiculos',
   templateUrl: './mis-vehiculos.component.html',
   styleUrls: ['./mis-vehiculos.component.scss']

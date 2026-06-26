@@ -5,6 +5,7 @@ import { ToastService } from 'src/app/shared/services/toast.service';
 import { LoginResponse } from 'src/app/core/models/auth';
 
 @Component({
+  standalone: false,
   selector: 'app-login',
   templateUrl: './login.component.html',
   styleUrls: ['./login.component.scss']

@@ -3,10 +3,11 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { VehiculoClienteResponse } from 'src/app/core/models/vehiculo-cliente';
 
+import { environment } from '../../../../environments/environment';
 @Injectable({ providedIn: 'root' })
 export class AdminVehiculosClienteService {
 
-  private apiUrl = 'http://localhost:9090/cliente/vehiculos';
+  private apiUrl = `${environment.apiUrl}/cliente/vehiculos`;
 
   constructor(private http: HttpClient) {}
 

@@ -6,6 +6,7 @@ import { ClienteVehicleService } from 'src/app/core/services/cliente-vehicle.ser
 import { VehiculoClienteResponse } from 'src/app/core/models/vehiculo-cliente';
 
 @Component({
+  standalone: false,
   selector: 'app-perfil',
   templateUrl: './perfil.component.html',
   styleUrls: ['./perfil.component.scss']

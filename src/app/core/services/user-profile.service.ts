@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
+import { environment } from '../../../environments/environment';
 export interface UserProfileResponse {
   id: number;
   username: string;
@@ -26,7 +27,7 @@ export interface ChangePasswordRequest {
 @Injectable({ providedIn: 'root' })
 export class UserProfileService {
 
-  private apiUrl = 'http://localhost:9090/users';
+  private apiUrl = `${environment.apiUrl}/users`;
 
   constructor(private http: HttpClient) {}
 

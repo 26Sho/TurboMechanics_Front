@@ -3,11 +3,12 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { AssociateOwnerRequest, UserResponse, VehicleRequest, VehicleResponse } from '../models/vehicle';
 
+import { environment } from '../../../environments/environment';
 @Injectable({ providedIn: 'root' })
 export class VehicleService {
 
-  private readonly apiUrl = 'http://localhost:9090/vehicles';
-  private readonly adminUrl = 'http://localhost:9090/admin';
+  private readonly apiUrl = `${environment.apiUrl}/vehicles`;
+  private readonly adminUrl = `${environment.apiUrl}/admin`;
 
   constructor(private http: HttpClient) {}
 

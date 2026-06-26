@@ -6,6 +6,7 @@ import { ToastService } from '../../../../shared/services/toast.service';
 import { Bill, CreatePaymentRequest } from '../../../../core/models/billing.model';
 
 @Component({
+  standalone: false,
   selector: 'app-client-bills',
   templateUrl: './client-bills.component.html',
   styleUrls: ['./client-bills.component.scss']
