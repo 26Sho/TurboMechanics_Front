@@ -28,7 +28,7 @@
       </div>
 
       <div class="location__actions">
-        <a href="https://maps.google.com/?q=Armenia,Quindio,Colombia"
+        <a [href]="getDirectionsUrl()"
            target="_blank" class="btn btn--primary">
           <i class="fas fa-directions"></i> Cómo llegar
         </a>
@@ -36,6 +36,9 @@
           <i class="fas fa-location-arrow"></i> Usar mi ubicación
         </button>
       </div>
+      <p class="location__nearest-hint" *ngIf="nearestWorkshopLabel">
+        <i class="fas fa-route"></i> Te lleva a: <strong>{{ nearestWorkshopLabel }}</strong>
+      </p>
     </div>
 
     <!-- Map: un solo mapa interactivo (Google Maps) con TODOS los talleres como pines -->

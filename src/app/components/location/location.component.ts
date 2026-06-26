@@ -69,6 +69,9 @@ export class LocationComponent implements OnInit, AfterViewInit {
   private visitorLng: number | null = null;
   private visitorMarker: any;
 
+  // Taller más cercano calculado, usado por el botón "Cómo llegar"
+  nearestWorkshop: Workshop | null = null;
+
   // Cache de direcciones ya geocodificadas, para no repetir llamadas a la API
   private addressCache: Map<string, string> = new Map();
 
@@ -361,8 +364,10 @@ export class LocationComponent implements OnInit, AfterViewInit {
     const params = new HttpParams().set('lat', lat).set('lng', lng).set('radio', 200);
     this.http.get<Workshop[]>(`${this.BASE}/talleres/cercanos`, { params }).subscribe({
       next: (data) => {
+        // El backend ya los devuelve ordenados por distancia, así que el primero es el más cercano.
         this.nearbyWorkshops = data ?? [];
         this.loadingWorkshops = false;
+        this.updateNearestWorkshop();
         this.renderWorkshopMarkers();
       },
       error: () => { this.loadAllWorkshops(); }
@@ -375,9 +380,76 @@ export class LocationComponent implements OnInit, AfterViewInit {
       next: (data) => {
         this.nearbyWorkshops = (data ?? []).filter(w => w.active);
         this.loadingWorkshops = false;
+        this.updateNearestWorkshop();
         this.renderWorkshopMarkers();
       },
       error: () => { this.loadingWorkshops = false; }
     });
+  }
+
+  /** Calcula cuál taller está más cerca del visitante (si tenemos su ubicación) */
+  private updateNearestWorkshop(): void {
+    if (this.nearbyWorkshops.length === 0) {
+      this.nearestWorkshop = null;
+      return;
+    }
+
+    if (this.visitorLat == null || this.visitorLng == null) {
+      // Sin ubicación del visitante: usamos el primero de la lista (o el que ya
+      // venga ordenado por distancia si vino de /cercanos).
+      this.nearestWorkshop = this.nearbyWorkshops[0];
+      return;
+    }
+
+    let closest = this.nearbyWorkshops[0];
+    let closestDist = this.haversineKm(this.visitorLat, this.visitorLng, closest.latitude, closest.longitude);
+
+    for (const w of this.nearbyWorkshops) {
+      const dist = this.haversineKm(this.visitorLat, this.visitorLng, w.latitude, w.longitude);
+      if (dist < closestDist) {
+        closest = w;
+        closestDist = dist;
+      }
+    }
+
+    this.nearestWorkshop = closest;
+  }
+
+  private haversineKm(lat1: number, lng1: number, lat2: number, lng2: number): number {
+    const R = 6371;
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLng = (lng2 - lng1) * Math.PI / 180;
+    const a = Math.sin(dLat / 2) ** 2 +
+      Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+      Math.sin(dLng / 2) ** 2;
+    return R * 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  }
+
+  /** URL para el botón "Cómo llegar": traza ruta real al taller más cercano si lo tenemos */
+  getDirectionsUrl(): string {
+    if (!this.nearestWorkshop) {
+      // Sin talleres registrados todavía: fallback genérico a Armenia, Quindío
+      return 'https://maps.google.com/?q=Armenia,Quindio,Colombia';
+    }
+
+    const destination = `${this.nearestWorkshop.latitude},${this.nearestWorkshop.longitude}`;
+    let url = `https://www.google.com/maps/dir/?api=1&destination=${destination}&travelmode=driving`;
+
+    if (this.visitorLat != null && this.visitorLng != null) {
+      // Si tenemos la ubicación del visitante, fijamos el origen exacto para
+      // que la ruta se calcule de inmediato sin pedirle permiso de nuevo a Google Maps.
+      url += `&origin=${this.visitorLat},${this.visitorLng}`;
+    }
+
+    return url;
+  }
+
+  /** Texto de ayuda bajo el botón, mostrando a qué taller te lleva */
+  get nearestWorkshopLabel(): string | null {
+    if (!this.nearestWorkshop) return null;
+    if (this.nearestWorkshop.distanceKm != null) {
+      return `${this.nearestWorkshop.name} · ${this.nearestWorkshop.distanceKm.toFixed(1)} km`;
+    }
+    return this.nearestWorkshop.name;
   }
 }
