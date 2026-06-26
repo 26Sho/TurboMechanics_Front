@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ActivatedRoute } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
+import { environment } from '../../../../../environments/environment';
 
 @Component({
   standalone: false,
@@ -23,7 +24,7 @@ export class EstimateResponseComponent implements OnInit {
   decision: 'APPROVED' | 'REJECTED' | null = null;
 
   private readonly apiUrl =
-    'http://localhost:9090/presupuestos/publico';
+    `${environment.apiUrl}/presupuestos/publico`;
 
   constructor(
     private route: ActivatedRoute,
