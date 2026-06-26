@@ -235,6 +235,18 @@ $font-heading: 'Rajdhani', sans-serif;
   }
 }
 
+.location__nearest-hint {
+  margin-top: 14px;
+  font-size: 0.85rem;
+  color: $gray-mid;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  i { color: $orange; }
+  strong { color: $white; }
+}
+
 .btn-retry {
   display: inline-flex;
   align-items: center;
